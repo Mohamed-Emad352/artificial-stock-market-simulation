@@ -1,6 +1,8 @@
-package Interaces;
+package Configurations;
 
-public interface IOrder {
+import Enums.Decision;
+
+public class Order {
     Decision decision = null;
     Integer quantity = 0;
     Trader trader = null;
