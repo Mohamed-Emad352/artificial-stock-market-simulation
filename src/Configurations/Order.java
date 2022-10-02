@@ -1,6 +1,7 @@
 package Configurations;
 
 import Enums.Decision;
+import Agents.Trader;
 
 public class Order {
     Decision decision = null;
