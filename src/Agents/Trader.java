@@ -28,6 +28,14 @@ abstract public class Trader {
         return currentCash;
     }
 
+    public void updateCash(Double newCash) {
+        this.currentCash += newCash;
+    }
+
+    public void updateStocksOwned(Integer newStocks) {
+        this.stocksOwned += newStocks;
+    }
+
     public void setCurrentCash(Double currentCash) {
         this.currentCash = currentCash;
     }
