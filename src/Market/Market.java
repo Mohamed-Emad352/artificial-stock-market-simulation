@@ -22,7 +22,6 @@ public class Market {
     public void updatePrice()
     {
         Random r = new Random();
-        //double val = r.nextGaussian() * 100 + 500; mean = 500, SD = 100
         Double noiseStandardDeviation = Math.sqrt(configuration.noiseVariance);
         Double noise =  r.nextGaussian() * noiseStandardDeviation + configuration.noiseMean ; //generate random term (noise)
         currentPrice = currentPrice + 1/configuration.liquidity  * netOrders + noise; //calculate the new price
