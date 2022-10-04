@@ -1,6 +1,6 @@
 package Configurations;
 
 public class TraderConfiguration {
-    Double ReactionCoefficient = 1.0;
-    Double Aggressiveness = 0.001;
+    public Double ReactionCoefficient = 1.0;
+    public Double Aggressiveness = 0.001;
 }
