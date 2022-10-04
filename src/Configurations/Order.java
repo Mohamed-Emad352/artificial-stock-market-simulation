@@ -4,7 +4,7 @@ import Enums.Decision;
 import Agents.Trader;
 
 public class Order {
-    Decision decision = null;
-    Integer quantity = 0;
-    Trader trader = null;
+    public Decision decision = null;
+    public Integer quantity = 0;
+    public Trader trader = null;
 }

@@ -1,6 +1,6 @@
 package Configurations;
 
 public class FundamentalAgentConfiguration {
-    Double FundamentalValueVolatility = 0.001;
-    Double InitialFundamentalValue = 990.0;
+    public Double FundamentalValueVolatility = 0.001;
+    public Double InitialFundamentalValue = 990.0;
 }
