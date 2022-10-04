@@ -1,8 +1,13 @@
 package Agents;
 
+import Configurations.Order;
+import Configurations.TraderConfiguration;
+import Enums.Decision;
+
 import java.util.LinkedList;
 
 abstract public class Trader {
+    private final TraderConfiguration config;
     private final Integer Id;
     private static Integer IdTracker = 1;
     private Double currentCash;
@@ -11,7 +16,8 @@ abstract public class Trader {
     private final LinkedList<Integer> stocksOwnedOverTime = new LinkedList<Integer>();
     private static Integer lastEvaluationTime = 0;
 
-    public Trader() {
+    public Trader(TraderConfiguration config) {
+        this.config = config;
         this.Id = IdTracker;
         IdTracker++;
     }
@@ -40,9 +46,11 @@ abstract public class Trader {
         this.currentCash = currentCash;
     }
 
-    public void constructOrder() {
-        // TODO Implement
-        // waiting on IOrder
+    public Order constructOrder() {
+        Order order = new Order();
+        order.trader = this;
+        order.decision = this.decideBuyOrSell();
+        return order;
     }
 
     public void pushToOwnedAssets(Double newCashOwned, Integer newStocksOwned) {
@@ -56,8 +64,7 @@ abstract public class Trader {
         return 0.0; // TODO Remove
     }
 
-    // Waiting on Decision
-    public abstract void decideBuyOrSell(); // TODO Replace void with Decision
+    public abstract Decision decideBuyOrSell();
 
     public abstract Integer getDesiredOrderVolume();
 
