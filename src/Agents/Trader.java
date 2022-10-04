@@ -45,11 +45,6 @@ abstract public class Trader {
         // waiting on IOrder
     }
 
-    public void requestOrder() {
-        // TODO Implement
-        // waiting on IOrder
-    }
-
     public void pushToOwnedAssets(Double newCashOwned, Integer newStocksOwned) {
         this.cashOwnedOverTime.push(newCashOwned);
         this.stocksOwnedOverTime.push(newStocksOwned);
