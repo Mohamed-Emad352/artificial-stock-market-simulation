@@ -1,5 +1,5 @@
 package Configurations;
 
 public class ChartistAgentConfiguration {
-    Integer movingAverageWindow = 240;
+    public Integer movingAverageWindow = 240;
 }
