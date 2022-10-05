@@ -30,7 +30,7 @@ public class Main {
         for (int day = 0; day < marketConfig.tradingDays; day++) {
             for (int  T = 0; T < numberOfTraders; T++) {
                 trader = marketConfig.traders.get(T);
-            //    trader.requestOrder();
+               //trader.requestOrder();
                // market.executeOrder();  //need order object
 
             }
