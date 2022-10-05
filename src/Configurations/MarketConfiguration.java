@@ -5,11 +5,12 @@ import java.util.LinkedList;
 
 
 public class MarketConfiguration {
-    Double InitialStockPrice = 1000.0;
-    Integer tradingDays = 240;
-    Double noiseVariance = 0.0058;
-    Double liquidity =  0.4308;
-    Integer numberOfFundamentalists = 70;
-    Integer numberOfChartists = 30;
-    LinkedList<Trader> traders = new LinkedList<Trader>();
+    public Double InitialStockPrice = 1000.0; //public by omnia
+    public Integer tradingDays = 240;
+    public Double noiseVariance = 0.0058;
+    public Double noiseMean = 0.0; //added by omnia
+    public Double liquidity =  0.4308;
+    public Integer numberOfFundamentalists = 70;
+    public Integer numberOfChartists = 30;
+    public LinkedList<Trader> traders = new LinkedList<Trader>();
 }
