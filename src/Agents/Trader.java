@@ -53,6 +53,11 @@ abstract public class Trader {
         return order;
     }
 
+    public void  requestOrder() {
+        Order order = this.constructOrder();
+        //this.config.market.executeOrder() // TODO UNCOMMENT
+    }
+
     public void pushToOwnedAssets(Double newCashOwned, Integer newStocksOwned) {
         this.cashOwnedOverTime.push(newCashOwned);
         this.stocksOwnedOverTime.push(newStocksOwned);
