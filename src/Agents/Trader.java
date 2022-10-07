@@ -1,8 +1,14 @@
 package Agents;
 
+import Configurations.Order;
+import Configurations.TraderConfiguration;
+import Enums.Decision;
+
 import java.util.LinkedList;
+import java.util.Random;
 
 abstract public class Trader {
+    private final TraderConfiguration config;
     private final Integer Id;
     private static Integer IdTracker = 1;
     private Double currentCash;
@@ -11,7 +17,8 @@ abstract public class Trader {
     private final LinkedList<Integer> stocksOwnedOverTime = new LinkedList<Integer>();
     private static Integer lastEvaluationTime = 0;
 
-    public Trader() {
+    public Trader(TraderConfiguration config) {
+        this.config = config;
         this.Id = IdTracker;
         IdTracker++;
     }
@@ -40,9 +47,16 @@ abstract public class Trader {
         this.currentCash = currentCash;
     }
 
-    public void constructOrder() {
-        // TODO Implement
-        // waiting on IOrder
+    public Order constructOrder() {
+        Order order = new Order();
+        order.trader = this;
+        order.decision = this.decideBuyOrSell();
+        return order;
+    }
+
+    public void requestOrder() {
+        Order order = this.constructOrder();
+        this.config.market.executeOrder(order);
     }
 
     public void pushToOwnedAssets(Double newCashOwned, Integer newStocksOwned) {
@@ -51,31 +65,37 @@ abstract public class Trader {
     }
 
     public Double getLimitPrice() {
-        // TODO Implement
-        // waiting on ITraderConfiguration
-        return 0.0; // TODO Remove
+        if (this.decideBuyOrSell() == Decision.Buy) {
+           return this.config.market.getCurrentPrice() * (
+                    1 + new Random().nextGaussian() * this.config.Aggressiveness
+            );
+        } else {
+            return this.config.market.getCurrentPrice() * (
+                    1 + new Random().nextGaussian() * this.config.Aggressiveness * -1
+            );
+        }
     }
 
-    // Waiting on Decision
-    public abstract void decideBuyOrSell(); // TODO Replace void with Decision
+    public abstract Decision decideBuyOrSell();
 
     public abstract Integer getDesiredOrderVolume();
 
     public Integer getPracticalOrderVolume() {
-        // TODO Implement
-        // Waiting on Decision
-        return 0; // TODO Remove
+        if (this.decideBuyOrSell() == Decision.Buy) {
+            return Math.min(this.getDesiredOrderVolume(), (int)(this.currentCash / this.getLimitPrice()));
+        }
+        else {
+            return Math.min(this.getDesiredOrderVolume(), this.stocksOwned);
+        }
     }
-
 
     public Double evaluateProfit(Integer currentTime) {
         return (this.currentCash -
         this.cashOwnedOverTime.get(lastEvaluationTime))
         +
         ((this.stocksOwnedOverTime.get(currentTime) -
-        this.stocksOwnedOverTime.get(lastEvaluationTime)) * 1000.0);
-        // TODO Replace 1000 with current price of the market
-        // waiting on Market
+        this.stocksOwnedOverTime.get(lastEvaluationTime)) *
+                this.config.market.getCurrentPrice());
     }
 
     public static void setLastEvaluationTime(Integer time) {
