@@ -19,6 +19,10 @@ public class Market {
         currentPrice = configuration.InitialStockPrice;
     }
 
+    public Double getCurrentPrice() {
+        return this.currentPrice;
+    }
+
     public void updatePrice()
     {
         Random r = new Random();
@@ -43,7 +47,7 @@ public class Market {
         Double NewCash = -1 * orderDirection * order.quantity * currentPrice ;
         order.trader.updateCash(NewCash);
         Integer NewNumbersOfStocks = orderDirection * order.quantity;
-        order.trader.updateNumberOfStocks(NewNumbersOfStocks) ;
+        order.trader.updateStocksOwned(NewNumbersOfStocks) ;
 
         // update net orders
         netOrders += order.quantity * orderDirection;  // update net order

@@ -26,24 +26,13 @@ public class Main {
 
         // temporary ..
         Integer numberOfTraders = marketConfig.numberOfChartists + marketConfig.numberOfFundamentalists;
-        Trader trader ;
+        Trader trader;
         for (int day = 0; day < marketConfig.tradingDays; day++) {
             for (int  T = 0; T < numberOfTraders; T++) {
                 trader = marketConfig.traders.get(T);
-               //trader.requestOrder();
-               // market.executeOrder();  //need order object
-
+                trader.requestOrder();
             }
         }
-
-
-
-
-
-
-
-
-
     }
 
 }

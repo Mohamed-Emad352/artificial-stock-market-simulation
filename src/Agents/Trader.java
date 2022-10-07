@@ -5,6 +5,7 @@ import Configurations.TraderConfiguration;
 import Enums.Decision;
 
 import java.util.LinkedList;
+import java.util.Random;
 
 abstract public class Trader {
     private final TraderConfiguration config;
@@ -53,9 +54,9 @@ abstract public class Trader {
         return order;
     }
 
-    public void  requestOrder() {
+    public void requestOrder() {
         Order order = this.constructOrder();
-        //this.config.market.executeOrder() // TODO UNCOMMENT
+        this.config.market.executeOrder(order);
     }
 
     public void pushToOwnedAssets(Double newCashOwned, Integer newStocksOwned) {
@@ -64,9 +65,15 @@ abstract public class Trader {
     }
 
     public Double getLimitPrice() {
-        // TODO Implement
-        // waiting on ITraderConfiguration
-        return 0.0; // TODO Remove
+        if (this.decideBuyOrSell() == Decision.Buy) {
+           return this.config.market.getCurrentPrice() * (
+                    1 + new Random().nextGaussian() * this.config.Aggressiveness
+            );
+        } else {
+            return this.config.market.getCurrentPrice() * (
+                    1 + new Random().nextGaussian() * this.config.Aggressiveness * -1
+            );
+        }
     }
 
     public abstract Decision decideBuyOrSell();
@@ -74,20 +81,21 @@ abstract public class Trader {
     public abstract Integer getDesiredOrderVolume();
 
     public Integer getPracticalOrderVolume() {
-        // TODO Implement
-        // Waiting on Decision
-        return 0; // TODO Remove
+        if (this.decideBuyOrSell() == Decision.Buy) {
+            return Math.min(this.getDesiredOrderVolume(), (int)(this.currentCash / this.getLimitPrice()));
+        }
+        else {
+            return Math.min(this.getDesiredOrderVolume(), this.stocksOwned);
+        }
     }
-
 
     public Double evaluateProfit(Integer currentTime) {
         return (this.currentCash -
         this.cashOwnedOverTime.get(lastEvaluationTime))
         +
         ((this.stocksOwnedOverTime.get(currentTime) -
-        this.stocksOwnedOverTime.get(lastEvaluationTime)) * 1000.0);
-        // TODO Replace 1000 with current price of the market
-        // waiting on Market
+        this.stocksOwnedOverTime.get(lastEvaluationTime)) *
+                this.config.market.getCurrentPrice());
     }
 
     public static void setLastEvaluationTime(Integer time) {
