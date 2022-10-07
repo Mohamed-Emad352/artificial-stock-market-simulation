@@ -1,4 +1,6 @@
 package Agents.Fundamentalists;
 
-public class Fundamentalist {
+import Agents.Trader;
+
+public class Fundamentalist{
 }
