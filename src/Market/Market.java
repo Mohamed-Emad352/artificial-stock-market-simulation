@@ -48,9 +48,11 @@ public class Market {
         order.trader.updateCash(NewCash);
         Integer NewNumbersOfStocks = orderDirection * order.quantity;
         order.trader.updateStocksOwned(NewNumbersOfStocks) ;
+        order.trader.pushToOwnedAssets();
 
         // update net orders
         netOrders += order.quantity * orderDirection;  // update net order
+
     }
 
     public Integer getNumOfFundamentalists()

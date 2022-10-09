@@ -9,10 +9,10 @@ import java.util.Random;
 
 abstract public class Trader {
     private final TraderConfiguration config;
-    private final Integer Id;
-    private static Integer IdTracker = 1;
-    private Double currentCash;
-    private Integer stocksOwned;
+    private final Integer Id ;
+    private static Integer IdTracker = 1 ;
+    private Double currentCash = 1000.0 ;
+    private Integer stocksOwned = 20 ;
     private final LinkedList<Double> cashOwnedOverTime = new LinkedList<Double>();
     private final LinkedList<Integer> stocksOwnedOverTime = new LinkedList<Integer>();
     private static Integer lastEvaluationTime = 0;
@@ -31,9 +31,7 @@ abstract public class Trader {
         this.stocksOwned = stocksOwned;
     }
 
-    public Double getCurrentCash() {
-        return currentCash;
-    }
+    public Double getCurrentCash() { return currentCash; }
 
     public void updateCash(Double newCash) {
         this.currentCash += newCash;
@@ -59,9 +57,9 @@ abstract public class Trader {
         this.config.market.executeOrder(order);
     }
 
-    public void pushToOwnedAssets(Double newCashOwned, Integer newStocksOwned) {
-        this.cashOwnedOverTime.push(newCashOwned);
-        this.stocksOwnedOverTime.push(newStocksOwned);
+    public void pushToOwnedAssets() {
+        this.cashOwnedOverTime.push(this.currentCash);
+        this.stocksOwnedOverTime.push(this.stocksOwned);
     }
 
     public Double getLimitPrice() {
