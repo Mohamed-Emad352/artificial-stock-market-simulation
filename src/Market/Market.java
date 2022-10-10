@@ -12,11 +12,20 @@ public class Market {
     private final LinkedList<Double> stockPricesOverTime = new LinkedList<Double>();
     private Integer netOrders;
     private MarketConfiguration configuration;
+    private Integer currentDay;
 
     public Market(MarketConfiguration Configuration)
     {
         configuration = Configuration;
         currentPrice = configuration.InitialStockPrice;
+    }
+
+    public void setCurrentDay(int day) {
+        currentDay = day;
+    }
+
+    public Integer getCurrentDay() {
+        return currentDay;
     }
 
     public Double getCurrentPrice() {
@@ -26,14 +35,14 @@ public class Market {
     public void updatePrice()
     {
         Random r = new Random();
-        //double val = r.nextGaussian() * 100 + 500; mean = 500, SD = 100
         Double noiseStandardDeviation = Math.sqrt(configuration.noiseVariance);
         Double noise =  r.nextGaussian() * noiseStandardDeviation + configuration.noiseMean ; //generate random term (noise)
         currentPrice = currentPrice + 1/configuration.liquidity  * netOrders + noise; //calculate the new price
     }
 
-    public void pushNewPriceToStockPrices(double price)
-    {stockPricesOverTime.add(price);}
+    public void pushNewPriceToStockPrices(double price) {
+        stockPricesOverTime.add(price);
+    }
 
     public void executeOrder(Order order){
         // update trader stocks & cash
@@ -51,8 +60,7 @@ public class Market {
         order.trader.pushToOwnedAssets();
 
         // update net orders
-        netOrders += order.quantity * orderDirection;  // update net order
-
+        netOrders += order.quantity * orderDirection;
     }
 
     public Integer getNumOfFundamentalists()
@@ -64,4 +72,13 @@ public class Market {
     public void pushTraderInList(Trader trader)
     {configuration.traders.add(trader);}
 
+    public Double getPriceFromList(int index) {
+        return stockPricesOverTime.get(index);
+    }
+
+    public void printAllPrices(){
+        for (int i = 0; i < stockPricesOverTime.size(); i++){
+            System.out.print(stockPricesOverTime.get(i) + " ");
+        }
+    }
 }
