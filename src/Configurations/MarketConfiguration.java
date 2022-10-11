@@ -12,5 +12,5 @@ public class MarketConfiguration {
     public Double liquidity =  0.4308;
     public Integer numberOfFundamentalists = 70;
     public Integer numberOfChartists = 30;
-    public LinkedList<Trader> traders = new LinkedList<Trader>();
+    public Double FundamentalValueVolatility = 0.001;
 }

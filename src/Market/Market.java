@@ -3,21 +3,31 @@ import Agents.Trader;
 import Configurations.MarketConfiguration;
 import Configurations.Order;
 import Enums.Decision;
-
 import java.lang.Math;
 import java.util.LinkedList;
 import java.util.Random;
+
+import static java.lang.Math.exp;
+
 public class Market {
     private Double currentPrice;
-    private final LinkedList<Double> stockPricesOverTime = new LinkedList<Double>();
-    private Integer netOrders;
-    private MarketConfiguration configuration;
+    private final LinkedList<Double> stockPricesOverTime = new LinkedList<>();
+    private Integer netOrders = 0;
+    public Double stockFundamentalValue = 990.0;
+    private final MarketConfiguration config;
     private Integer currentDay;
 
-    public Market(MarketConfiguration Configuration)
-    {
-        configuration = Configuration;
-        currentPrice = configuration.InitialStockPrice;
+    private final LinkedList<Trader> traders = new LinkedList<>();
+
+    public Market(MarketConfiguration Configuration) {
+        config = Configuration;
+        currentPrice = config.InitialStockPrice;
+        stockPricesOverTime.push(currentPrice);
+    }
+
+    public void updateFundamentalValue() {
+        Random r = new Random();
+        stockFundamentalValue *= exp(config.FundamentalValueVolatility * r.nextGaussian());
     }
 
     public void setCurrentDay(int day) {
@@ -35,9 +45,9 @@ public class Market {
     public void updatePrice()
     {
         Random r = new Random();
-        Double noiseStandardDeviation = Math.sqrt(configuration.noiseVariance);
-        Double noise =  r.nextGaussian() * noiseStandardDeviation + configuration.noiseMean ; //generate random term (noise)
-        currentPrice = currentPrice + 1/configuration.liquidity  * netOrders + noise; //calculate the new price
+        double noiseStandardDeviation = Math.sqrt(config.noiseVariance);
+        double noise =  r.nextGaussian() * noiseStandardDeviation + config.noiseMean;
+        currentPrice += (1 / config.liquidity) * netOrders + noise;
     }
 
     public void pushNewPriceToStockPrices(double price) {
@@ -59,26 +69,30 @@ public class Market {
         order.trader.updateStocksOwned(NewNumbersOfStocks) ;
         order.trader.pushToOwnedAssets();
 
-        // update net orders
         netOrders += order.quantity * orderDirection;
     }
 
     public Integer getNumOfFundamentalists()
-    { return configuration.numberOfFundamentalists;}
+    { return config.numberOfFundamentalists;}
 
     public Integer getNumOfChartists()
-    { return configuration.numberOfChartists;}
+    { return config.numberOfChartists;}
 
-    public void pushTraderInList(Trader trader)
-    {configuration.traders.add(trader);}
+    public void pushTraderInList(Trader trader) {
+        traders.add(trader);
+    }
+
+    public LinkedList<Trader> getTraders() {
+        return traders;
+    }
 
     public Double getPriceFromList(int index) {
         return stockPricesOverTime.get(index);
     }
 
     public void printAllPrices(){
-        for (int i = 0; i < stockPricesOverTime.size(); i++){
-            System.out.print(stockPricesOverTime.get(i) + " ");
+        for (Double aDouble : stockPricesOverTime) {
+            System.out.print(aDouble + " ");
         }
     }
 }
