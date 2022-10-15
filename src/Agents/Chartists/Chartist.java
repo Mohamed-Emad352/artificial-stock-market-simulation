@@ -1,24 +1,21 @@
 package Agents.Chartists;
 import Agents.Trader;
-import Configurations.ChartistAgentConfiguration;
-import Configurations.TraderConfiguration;
 import Enums.Decision;
+import Market.Market;
+
 import static java.lang.Math.abs;
 
 public class Chartist extends Trader {
-    Integer movingAverageWindowSize;
-    ChartistAgentConfiguration config;
+    private final Integer movingAverageWindowSize = 240;
 
-    public Chartist(ChartistAgentConfiguration config) {
-        super(config);
-        this.config = config;
-        movingAverageWindowSize = config.movingAverageWindow;
+    public Chartist(Market market) {
+        super(market);
     }
 
     @Override
     public Decision decideBuyOrSell() {
         double value;
-        value = config.market.getCurrentPrice() - getMovingAverage();
+        value = market.getCurrentPrice() - getMovingAverage();
         // apply sign (sgn) function to the value to determine the direction H
         if(value > 0) {
             return Decision.Buy;
@@ -33,14 +30,14 @@ public class Chartist extends Trader {
 
     @Override
     public Integer getDesiredOrderVolume() {
-        return (int)abs(config.ReactionCoefficient *
-                (config.market.getCurrentPrice() - getMovingAverage()));
+        return (int)abs(ReactionCoefficient *
+                (market.getCurrentPrice() - getMovingAverage()));
     }
 
     Double getMovingAverage(){
         double MA ;
         Double summationOfPrices = 0.0;
-        int Day = config.market.getCurrentDay();
+        int Day = market.getCurrentDay();
         int practicalMovingAverageWindowSize;
         if (Day < movingAverageWindowSize) {
             practicalMovingAverageWindowSize = Day;
@@ -49,7 +46,7 @@ public class Chartist extends Trader {
             practicalMovingAverageWindowSize = movingAverageWindowSize;
         }
         for (int i = 1; i <= practicalMovingAverageWindowSize; i++) {
-            summationOfPrices += config.market.getPriceFromList(Day-i);
+            summationOfPrices += market.getPriceFromList(Day-i);
         }
         MA = summationOfPrices / practicalMovingAverageWindowSize;
         return MA;

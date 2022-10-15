@@ -1,6 +1,5 @@
 package Market;
 import Agents.Trader;
-import Configurations.MarketConfiguration;
 import Configurations.Order;
 import Enums.Decision;
 import java.lang.Math;
@@ -10,24 +9,28 @@ import java.util.Random;
 import static java.lang.Math.exp;
 
 public class Market {
-    private Double currentPrice;
     private final LinkedList<Double> stockPricesOverTime = new LinkedList<>();
     private Integer netOrders = 0;
     public Double stockFundamentalValue = 990.0;
-    private final MarketConfiguration config;
     private Integer currentDay;
+    private Double currentPrice = 1000.0;
+    public final Integer tradingDays = 240;
+    private final Double noiseVariance = 0.0058;
+    private final Integer noiseMean = 0;
+    private final Double liquidity =  0.4308;
+    private final Integer numberOfFundamentalists = 70;
+    private final Integer numberOfChartists = 30;
+    private final Double FundamentalValueVolatility = 0.001;
 
     private final LinkedList<Trader> traders = new LinkedList<>();
 
-    public Market(MarketConfiguration Configuration) {
-        config = Configuration;
-        currentPrice = config.InitialStockPrice;
+    public Market() {
         stockPricesOverTime.push(currentPrice);
     }
 
     public void updateFundamentalValue() {
         Random r = new Random();
-        stockFundamentalValue *= exp(config.FundamentalValueVolatility * r.nextGaussian());
+        stockFundamentalValue *= exp(FundamentalValueVolatility * r.nextGaussian());
     }
 
     public void setCurrentDay(int day) {
@@ -45,9 +48,9 @@ public class Market {
     public void updatePrice()
     {
         Random r = new Random();
-        double noiseStandardDeviation = Math.sqrt(config.noiseVariance);
-        double noise =  r.nextGaussian() * noiseStandardDeviation + config.noiseMean;
-        currentPrice += (1 / config.liquidity) * netOrders + noise;
+        double noiseStandardDeviation = Math.sqrt(noiseVariance);
+        double noise =  r.nextGaussian() * noiseStandardDeviation + noiseMean;
+        currentPrice += (1 / liquidity) * netOrders + noise;
     }
 
     public void pushNewPriceToStockPrices(double price) {
@@ -73,10 +76,10 @@ public class Market {
     }
 
     public Integer getNumOfFundamentalists()
-    { return config.numberOfFundamentalists;}
+    { return numberOfFundamentalists;}
 
     public Integer getNumOfChartists()
-    { return config.numberOfChartists;}
+    { return numberOfChartists;}
 
     public void pushTraderInList(Trader trader) {
         traders.add(trader);

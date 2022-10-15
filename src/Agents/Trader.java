@@ -1,24 +1,26 @@
 package Agents;
 
 import Configurations.Order;
-import Configurations.TraderConfiguration;
 import Enums.Decision;
+import Market.Market;
 
 import java.util.LinkedList;
 import java.util.Random;
 
 abstract public class Trader {
-    private final TraderConfiguration config;
-    private final Integer Id ;
-    private static Integer IdTracker = 1 ;
-    private Double currentCash = 1000.0 ;
-    private Integer stocksOwned = 20 ;
+    private final Integer Id;
+    private static Integer IdTracker = 1;
+    private Double currentCash = 1000.0;
+    private Integer stocksOwned = 20;
     private final LinkedList<Double> cashOwnedOverTime = new LinkedList<Double>();
     private final LinkedList<Integer> stocksOwnedOverTime = new LinkedList<Integer>();
     private static Integer lastEvaluationTime = 0;
+    protected final Double ReactionCoefficient = 1.0;
+    protected final Double Aggressiveness = 0.001;
+    protected final Market market;
 
-    public Trader(TraderConfiguration config) {
-        this.config = config;
+    public Trader(Market market) {
+        this.market = market;
         this.Id = IdTracker;
         IdTracker++;
     }
@@ -54,7 +56,7 @@ abstract public class Trader {
 
     public void requestOrder() {
         Order order = this.constructOrder();
-        this.config.market.executeOrder(order);
+        this.market.executeOrder(order);
     }
 
     public void pushToOwnedAssets() {
@@ -64,12 +66,12 @@ abstract public class Trader {
 
     public Double getLimitPrice() {
         if (this.decideBuyOrSell() == Decision.Buy) {
-           return this.config.market.getCurrentPrice() * (
-                    1 + new Random().nextGaussian() * this.config.Aggressiveness
+           return this.market.getCurrentPrice() * (
+                    1 + new Random().nextGaussian() * this.Aggressiveness
             );
         } else {
-            return this.config.market.getCurrentPrice() * (
-                    1 + new Random().nextGaussian() * this.config.Aggressiveness * -1
+            return this.market.getCurrentPrice() * (
+                    1 + new Random().nextGaussian() * this.Aggressiveness * -1
             );
         }
     }
@@ -93,7 +95,7 @@ abstract public class Trader {
         +
         ((this.stocksOwnedOverTime.get(currentTime) -
         this.stocksOwnedOverTime.get(lastEvaluationTime)) *
-                this.config.market.getCurrentPrice());
+                this.market.getCurrentPrice());
     }
 
     public static void setLastEvaluationTime(Integer time) {
