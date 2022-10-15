@@ -1,21 +1,20 @@
 package Agents.Fundamentalists;
 
 import Agents.Trader;
-import Configurations.FundamentalAgentConfiguration;
 import Enums.Decision;
+import Market.Market;
+
 import static java.lang.Math.*;
 
 public class Fundamentalist extends Trader {
-    FundamentalAgentConfiguration config;
 
-    public Fundamentalist(FundamentalAgentConfiguration config) {
-        super(config);
-        this.config = config;
+    public Fundamentalist(Market market) {
+        super(market);
     }
 
     @Override
     public Decision decideBuyOrSell() {
-        double value =  config.market.stockFundamentalValue - config.market.getCurrentPrice();
+        double value =  market.stockFundamentalValue - market.getCurrentPrice();
         // apply sign (sgn) function to determine the direction of order
         if(value > 0)
         {return Decision.Buy;}
@@ -26,8 +25,8 @@ public class Fundamentalist extends Trader {
 
     @Override
     public Integer getDesiredOrderVolume() {
-        double orderVolume = abs(config.ReactionCoefficient *
-                (config.market.stockFundamentalValue - config.market.getCurrentPrice()));
+        double orderVolume = abs(ReactionCoefficient *
+                (market.stockFundamentalValue - market.getCurrentPrice()));
         return (int)orderVolume;
     }
 }
