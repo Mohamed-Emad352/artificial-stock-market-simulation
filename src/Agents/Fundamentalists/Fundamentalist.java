@@ -14,7 +14,7 @@ public class Fundamentalist extends Trader {
 
     @Override
     public Decision decideBuyOrSell() {
-        double value =  market.stockFundamentalValue - market.getCurrentPrice();
+        float value =  market.stockFundamentalValue - market.getCurrentPrice();
         // apply sign (sgn) function to determine the direction of order
         if(value > 0)
         {return Decision.Buy;}
@@ -25,7 +25,7 @@ public class Fundamentalist extends Trader {
 
     @Override
     public Integer getDesiredOrderVolume() {
-        double orderVolume = abs(ReactionCoefficient *
+        float orderVolume = abs(ReactionCoefficient *
                 (market.stockFundamentalValue - market.getCurrentPrice()));
         return (int)orderVolume;
     }
