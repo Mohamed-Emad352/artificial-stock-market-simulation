@@ -10,13 +10,13 @@ import java.util.Random;
 abstract public class Trader {
     private final Integer Id;
     private static Integer IdTracker = 1;
-    private Double currentCash = 1000.0;
+    private Float currentCash = (float) 1000.0;
     private Integer stocksOwned = 20;
-    private final LinkedList<Double> cashOwnedOverTime = new LinkedList<Double>();
+    private final LinkedList<Float> cashOwnedOverTime = new LinkedList<Float>();
     private final LinkedList<Integer> stocksOwnedOverTime = new LinkedList<Integer>();
     private static Integer lastEvaluationTime = 0;
-    protected final Double ReactionCoefficient = 1.0;
-    protected final Double Aggressiveness = 0.001;
+    protected final Float ReactionCoefficient = (float) 1.0;
+    protected final Float Aggressiveness = (float) 0.001;
     protected final Market market;
 
     public Trader(Market market) {
@@ -33,9 +33,9 @@ abstract public class Trader {
         this.stocksOwned = stocksOwned;
     }
 
-    public Double getCurrentCash() { return currentCash; }
+    public Float getCurrentCash() { return currentCash; }
 
-    public void updateCash(Double newCash) {
+    public void updateCash(Float newCash) {
         this.currentCash += newCash;
     }
 
@@ -43,7 +43,7 @@ abstract public class Trader {
         this.stocksOwned += newStocks;
     }
 
-    public void setCurrentCash(Double currentCash) {
+    public void setCurrentCash(Float currentCash) {
         this.currentCash = currentCash;
     }
 
@@ -64,15 +64,15 @@ abstract public class Trader {
         this.stocksOwnedOverTime.push(this.stocksOwned);
     }
 
-    public Double getLimitPrice() {
+    public Float getLimitPrice() {
         if (this.decideBuyOrSell() == Decision.Buy) {
-           return this.market.getCurrentPrice() * (
-                    1 + new Random().nextGaussian() * this.Aggressiveness
-            );
+           float value = (float) (this.market.getCurrentPrice() * (
+                   1 + new Random().nextGaussian() * this.Aggressiveness ));
+           return  value;
         } else {
-            return this.market.getCurrentPrice() * (
-                    1 + new Random().nextGaussian() * this.Aggressiveness * -1
-            );
+            float value = (float) (this.market.getCurrentPrice() * (
+                    1 + new Random().nextGaussian() * this.Aggressiveness * -1 ));
+            return  value;
         }
     }
 
@@ -89,7 +89,7 @@ abstract public class Trader {
         }
     }
 
-    public Double evaluateProfit(Integer currentTime) {
+    public Float evaluateProfit(Integer currentTime) {
         return (this.currentCash -
         this.cashOwnedOverTime.get(lastEvaluationTime))
         +

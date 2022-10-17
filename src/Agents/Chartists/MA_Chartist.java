@@ -4,17 +4,18 @@ import Enums.Decision;
 import Market.Market;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.floor;
 
-public class Chartist extends Trader {
+public class MA_Chartist extends Trader {
     private final Integer movingAverageWindowSize = 240;
 
-    public Chartist(Market market) {
+    public MA_Chartist(Market market) {
         super(market);
     }
 
     @Override
     public Decision decideBuyOrSell() {
-        double value;
+        float value;
         value = market.getCurrentPrice() - getMovingAverage();
         // apply sign (sgn) function to the value to determine the direction H
         if(value > 0) {
@@ -34,9 +35,9 @@ public class Chartist extends Trader {
                 (market.getCurrentPrice() - getMovingAverage()));
     }
 
-    Double getMovingAverage(){
-        double MA ;
-        Double summationOfPrices = 0.0;
+    Float getMovingAverage(){
+        float MA ;
+        Float summationOfPrices = (float) 0.0;
         int Day = market.getCurrentDay();
         int practicalMovingAverageWindowSize;
         if (Day < movingAverageWindowSize) {

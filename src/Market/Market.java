@@ -9,18 +9,20 @@ import java.util.Random;
 import static java.lang.Math.exp;
 
 public class Market {
-    private final LinkedList<Double> stockPricesOverTime = new LinkedList<>();
+    private final LinkedList<Float> stockPricesOverTime = new LinkedList<>();
     private Integer netOrders = 0;
-    public Double stockFundamentalValue = 990.0;
+    public Float stockFundamentalValue = (float) 990.0;
     private Integer currentDay;
-    private Double currentPrice = 1000.0;
+    private Float currentPrice = (float) 1000.0;
     public final Integer tradingDays = 240;
-    private final Double noiseVariance = 0.0058;
+    private final Float noiseVariance = (float) 0.0058;
     private final Integer noiseMean = 0;
-    private final Double liquidity =  0.4308;
+    private final Float liquidity = (float) 0.4308;
     private final Integer numberOfFundamentalists = 70;
-    private final Integer numberOfChartists = 30;
-    private final Double FundamentalValueVolatility = 0.001;
+    private final Integer numberOfMAChartists = 30;
+    private final Integer numberOfTLChartists = 30;
+    private final Integer numberOfLSChartists = 30;
+    private final Float FundamentalValueVolatility = (float) 0.001;
 
     private final LinkedList<Trader> traders = new LinkedList<>();
 
@@ -30,7 +32,7 @@ public class Market {
 
     public void updateFundamentalValue() {
         Random r = new Random();
-        stockFundamentalValue *= exp(FundamentalValueVolatility * r.nextGaussian());
+        stockFundamentalValue *= (float) exp(FundamentalValueVolatility * r.nextGaussian());
     }
 
     public void setCurrentDay(int day) {
@@ -41,19 +43,19 @@ public class Market {
         return currentDay;
     }
 
-    public Double getCurrentPrice() {
+    public Float getCurrentPrice() {
         return this.currentPrice;
     }
 
     public void updatePrice()
     {
         Random r = new Random();
-        double noiseStandardDeviation = Math.sqrt(noiseVariance);
-        double noise =  r.nextGaussian() * noiseStandardDeviation + noiseMean;
+        float noiseStandardDeviation = (float) Math.sqrt(noiseVariance);
+        float noise = (float) (r.nextGaussian() * noiseStandardDeviation + noiseMean);
         currentPrice += (1 / liquidity) * netOrders + noise;
     }
 
-    public void pushNewPriceToStockPrices(double price) {
+    public void pushNewPriceToStockPrices(float price) {
         stockPricesOverTime.add(price);
     }
 
@@ -66,7 +68,7 @@ public class Market {
         }
         else { orderDirection = -1;}
 
-        Double NewCash = -1 * orderDirection * order.quantity * currentPrice ;
+        Float NewCash = -1 * orderDirection * order.quantity * currentPrice ;
         order.trader.updateCash(NewCash);
         Integer NewNumbersOfStocks = orderDirection * order.quantity;
         order.trader.updateStocksOwned(NewNumbersOfStocks) ;
@@ -78,8 +80,13 @@ public class Market {
     public Integer getNumOfFundamentalists()
     { return numberOfFundamentalists;}
 
-    public Integer getNumOfChartists()
-    { return numberOfChartists;}
+    public Integer getNumOfMAChartists()
+    { return numberOfMAChartists;}
+
+    public Integer getNumOfTLChartists()
+    { return numberOfTLChartists;}
+    public Integer getNumOfLSChartists()
+    { return numberOfLSChartists;}
 
     public void pushTraderInList(Trader trader) {
         traders.add(trader);
@@ -89,12 +96,12 @@ public class Market {
         return traders;
     }
 
-    public Double getPriceFromList(int index) {
+    public Float getPriceFromList(int index) {
         return stockPricesOverTime.get(index);
     }
 
     public void printAllPrices(){
-        for (Double aDouble : stockPricesOverTime) {
+        for (Float aDouble : stockPricesOverTime) {
             System.out.print(aDouble + " ");
         }
     }
