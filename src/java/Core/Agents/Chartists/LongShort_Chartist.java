@@ -1,9 +1,10 @@
-package Agents.Chartists;
+package Core.Agents.Chartists;
 
-import Agents.Trader;
-import Market.Market;
-import Enums.Decision;
+import Core.Agents.Trader;
+import Core.Enums.Decision;
+import Core.Market.Market;
 import java.util.Random;
+
 import static java.lang.Math.abs;
 
 public class LongShort_Chartist extends Trader {

@@ -1,7 +1,7 @@
-package Configurations;
+package Core.Configurations;
 
-import Enums.Decision;
-import Agents.Trader;
+import Core.Agents.Trader;
+import Core.Enums.Decision;
 
 public class Order {
     public Decision decision = null;

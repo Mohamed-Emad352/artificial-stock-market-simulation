@@ -1,8 +1,8 @@
-package Agents;
+package Core.Agents;
 
-import Configurations.Order;
-import Enums.Decision;
-import Market.Market;
+import Core.Configurations.Order;
+import Core.Enums.Decision;
+import Core.Market.Market;
 
 import java.util.LinkedList;
 import java.util.Random;

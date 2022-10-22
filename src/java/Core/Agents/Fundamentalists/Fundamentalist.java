@@ -1,10 +1,10 @@
-package Agents.Fundamentalists;
+package Core.Agents.Fundamentalists;
 
-import Agents.Trader;
-import Enums.Decision;
-import Market.Market;
+import Core.Agents.Trader;
+import Core.Enums.Decision;
+import Core.Market.Market;
 
-import static java.lang.Math.*;
+import static java.lang.Math.abs;
 
 public class Fundamentalist extends Trader {
 
@@ -14,7 +14,7 @@ public class Fundamentalist extends Trader {
 
     @Override
     public Decision decideBuyOrSell() {
-        float value =  market.stockFundamentalValue - market.getCurrentPrice();
+        float value =  market.getStockFundamentalValue() - market.getCurrentPrice();
         // apply sign (sgn) function to determine the direction of order
         if(value > 0)
         {return Decision.Buy;}
@@ -26,7 +26,7 @@ public class Fundamentalist extends Trader {
     @Override
     public Integer getDesiredOrderVolume() {
         float orderVolume = abs(ReactionCoefficient *
-                (market.stockFundamentalValue - market.getCurrentPrice()));
+                (market.getStockFundamentalValue() - market.getCurrentPrice()));
         return (int)orderVolume;
     }
 }

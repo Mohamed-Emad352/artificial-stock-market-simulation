@@ -1,10 +1,10 @@
-package Agents.Chartists;
-import Agents.Trader;
-import Enums.Decision;
-import Market.Market;
+package Core.Agents.Chartists;
+
+import Core.Agents.Trader;
+import Core.Enums.Decision;
+import Core.Market.Market;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.floor;
 
 public class MA_Chartist extends Trader {
     private final Integer movingAverageWindowSize = 240;
