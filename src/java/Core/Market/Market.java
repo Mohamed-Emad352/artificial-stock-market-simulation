@@ -1,8 +1,9 @@
-package Market;
-import Agents.Trader;
-import Configurations.Order;
-import Enums.Decision;
-import java.lang.Math;
+package Core.Market;
+
+import Core.Agents.Trader;
+import Core.Configurations.Order;
+import Core.Enums.Decision;
+
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -11,10 +12,12 @@ import static java.lang.Math.exp;
 public class Market {
     private final LinkedList<Float> stockPricesOverTime = new LinkedList<>();
     private Integer netOrders = 0;
-    public Float stockFundamentalValue = (float) 990.0;
+    private Float stockFundamentalValue = (float) 990.0;
+    private LinkedList<Float> stockFundamentalValueOverTime = new LinkedList<>();
     private Integer currentDay;
     private Float currentPrice = (float) 1000.0;
-    public final Integer tradingDays = 240;
+
+    private final Integer tradingDays = 240;
     private final Float noiseVariance = (float) 0.0058;
     private final Integer noiseMean = 0;
     private final Float liquidity = (float) 0.4308;
@@ -28,11 +31,13 @@ public class Market {
 
     public Market() {
         stockPricesOverTime.push(currentPrice);
+        stockFundamentalValueOverTime.push(stockFundamentalValue);
     }
 
     public void updateFundamentalValue() {
         Random r = new Random();
         stockFundamentalValue *= (float) exp(FundamentalValueVolatility * r.nextGaussian());
+        stockFundamentalValueOverTime.push(stockFundamentalValue);
     }
 
     public void setCurrentDay(int day) {
@@ -45,6 +50,14 @@ public class Market {
 
     public Float getCurrentPrice() {
         return this.currentPrice;
+    }
+
+    public Integer getTradingDays() {
+        return tradingDays;
+    }
+
+    public LinkedList<Float> getStockPricesOverTime() {
+        return stockPricesOverTime;
     }
 
     public void updatePrice()
@@ -104,5 +117,12 @@ public class Market {
         for (Float aDouble : stockPricesOverTime) {
             System.out.print(aDouble + " ");
         }
+    }
+
+    public Float getStockFundamentalValue() {
+        return stockFundamentalValue;
+    }
+    public LinkedList<Float> getStockFundamentalValueOverTime() {
+        return stockFundamentalValueOverTime;
     }
 }
