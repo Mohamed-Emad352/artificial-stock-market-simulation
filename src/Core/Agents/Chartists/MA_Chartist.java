@@ -8,6 +8,8 @@ import static java.lang.Math.abs;
 
 public class MA_Chartist extends Trader {
     private final Integer movingAverageWindowSize = 240;
+    public static int numOfBuyOrders = 0;
+    public static int numOfSellOrders = 0;
 
     public MA_Chartist(Market market) {
         super(market);
@@ -31,6 +33,7 @@ public class MA_Chartist extends Trader {
 
     @Override
     public Integer getDesiredOrderVolume() {
+        System.out.println("--------------------" + "in getDesiredOrderVolume of MA_Chartist"+"------");
         return (int)abs(ReactionCoefficient *
                 (market.getCurrentPrice() - getMovingAverage()));
     }

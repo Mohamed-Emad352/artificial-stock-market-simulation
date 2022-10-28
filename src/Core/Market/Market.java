@@ -1,5 +1,9 @@
 package Core.Market;
 
+import Core.Agents.Chartists.LongShort_Chartist;
+import Core.Agents.Chartists.MA_Chartist;
+import Core.Agents.Chartists.TimeLag_Chartist;
+import Core.Agents.Fundamentalists.Fundamentalist;
 import Core.Agents.Trader;
 import Core.Configurations.Order;
 import Core.Enums.Decision;
@@ -17,7 +21,7 @@ public class Market {
     private Integer currentDay;
     private Float currentPrice = (float) 1000.0;
 
-    private final Integer tradingDays = 240;
+    private final Integer tradingDays = 5;
     private final Float noiseVariance = (float) 0.0058;
     private final Integer noiseMean = 0;
     private final Float liquidity = (float) 0.4308;
@@ -28,6 +32,15 @@ public class Market {
     private final Float FundamentalValueVolatility = (float) 0.001;
 
     private final LinkedList<Trader> traders = new LinkedList<>();
+    public final LinkedList<Float> averageTotalCashForFundamentalists = new LinkedList<Float>();
+    public final LinkedList<Float> averageTotalCashForLongShortChartist = new LinkedList<Float>();
+    public final LinkedList<Float> averageTotalCashForMAChartist = new LinkedList<Float>();
+    public final LinkedList<Float> averageTotalCashForTimeLagChartist = new LinkedList<Float>();
+    public final LinkedList<Float> totalProfitForFundamentalists = new LinkedList<Float>();
+    public final LinkedList<Float> totalProfitForLongShortChartist = new LinkedList<Float>();
+    public final LinkedList<Float> totalProfitForMAChartist = new LinkedList<Float>();
+    public final LinkedList<Float> totalProfitForTimeLagChartist = new LinkedList<Float>();
+
 
     public Market() {
         stockPricesOverTime.push(currentPrice);
@@ -38,6 +51,7 @@ public class Market {
         Random r = new Random();
         stockFundamentalValue *= (float) exp(FundamentalValueVolatility * r.nextGaussian());
         stockFundamentalValueOverTime.push(stockFundamentalValue);
+        System.out.println("in updateFundamentalValue , stockFundamentalValue = "+stockFundamentalValue);
     }
 
     public void setCurrentDay(int day) {
@@ -66,6 +80,8 @@ public class Market {
         float noiseStandardDeviation = (float) Math.sqrt(noiseVariance);
         float noise = (float) (r.nextGaussian() * noiseStandardDeviation + noiseMean);
         currentPrice += (1 / liquidity) * netOrders + noise;
+        //System.out.println("currentPrice += (1 / liquidity) * netOrders + noise;");
+        //System.out.println("in updatePrice -> "+" currentPrice = "+currentPrice+" liquidity = "+liquidity+" netOrders = "+netOrders +"noise= " + noise);
     }
 
     public void pushNewPriceToStockPrices(float price) {
@@ -86,8 +102,40 @@ public class Market {
         Integer NewNumbersOfStocks = orderDirection * order.quantity;
         order.trader.updateStocksOwned(NewNumbersOfStocks) ;
         order.trader.pushToOwnedAssets();
-
         netOrders += order.quantity * orderDirection;
+       // System.out.println("order.quantity ="+order.quantity+" orderDirection = "+orderDirection + " netOrders ="+netOrders);
+        String className= order.trader.getClass().getName();
+        String [] classNameL = className.split("[.]");
+        String classNameOfTrader = classNameL[classNameL.length-1];
+
+        if(classNameOfTrader.equals("Fundamentalist"))
+        {
+            if(orderDirection == 1)
+            Fundamentalist.numOfBuyOrders+=order.quantity;
+            else
+                Fundamentalist.numOfSellOrders+=order.quantity;
+        }
+        else if(classNameOfTrader.equals("LongShort_Chartist"))
+        {
+            if(orderDirection == 1)
+                LongShort_Chartist.numOfBuyOrders+=order.quantity;
+            else
+                LongShort_Chartist.numOfSellOrders+=order.quantity;
+        }
+        else if(classNameOfTrader.equals("MA_Chartist"))
+        {
+            if(orderDirection == 1)
+                MA_Chartist.numOfBuyOrders+=order.quantity;
+            else
+                MA_Chartist.numOfSellOrders+=order.quantity;
+        }
+        else //classNameOfTrader == "TimeLag_Chartist"
+        {
+            if(orderDirection == 1)
+                TimeLag_Chartist.numOfBuyOrders+=order.quantity;
+            else
+                TimeLag_Chartist.numOfSellOrders+=order.quantity;
+        }
     }
 
     public Integer getNumOfFundamentalists()
@@ -125,4 +173,6 @@ public class Market {
     public LinkedList<Float> getStockFundamentalValueOverTime() {
         return stockFundamentalValueOverTime;
     }
+
+
 }
