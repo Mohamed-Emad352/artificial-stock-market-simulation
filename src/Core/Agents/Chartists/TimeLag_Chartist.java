@@ -33,7 +33,6 @@ public class TimeLag_Chartist extends Trader{
 
     @Override
     public Integer getDesiredOrderVolume() {
-        System.out.println("--------------------" + "in getDesiredOrderVolume of MA_Chartist"+"------");
         return (int)abs(ReactionCoefficient * (market.getCurrentPrice() - getTimeLagPrice()));
     }
 

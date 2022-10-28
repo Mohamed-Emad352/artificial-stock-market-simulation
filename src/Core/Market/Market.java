@@ -11,17 +11,20 @@ import Core.Enums.Decision;
 import java.util.LinkedList;
 import java.util.Random;
 
+import static java.lang.Math.PI;
 import static java.lang.Math.exp;
 
 public class Market {
     private final LinkedList<Float> stockPricesOverTime = new LinkedList<>();
+
+
     private Integer netOrders = 0;
     private Float stockFundamentalValue = (float) 990.0;
     private LinkedList<Float> stockFundamentalValueOverTime = new LinkedList<>();
     private Integer currentDay;
     private Float currentPrice = (float) 1000.0;
 
-    private final Integer tradingDays = 5;
+    private final Integer tradingDays = 240;
     private final Float noiseVariance = (float) 0.0058;
     private final Integer noiseMean = 0;
     private final Float liquidity = (float) 0.4308;
@@ -80,8 +83,7 @@ public class Market {
         float noiseStandardDeviation = (float) Math.sqrt(noiseVariance);
         float noise = (float) (r.nextGaussian() * noiseStandardDeviation + noiseMean);
         currentPrice += (1 / liquidity) * netOrders + noise;
-        //System.out.println("currentPrice += (1 / liquidity) * netOrders + noise;");
-        //System.out.println("in updatePrice -> "+" currentPrice = "+currentPrice+" liquidity = "+liquidity+" netOrders = "+netOrders +"noise= " + noise);
+        System.out.println("in updatePrice -> "+" currentPrice = "+currentPrice+" liquidity = "+liquidity+" netOrders = "+netOrders +"noise= " + noise);
     }
 
     public void pushNewPriceToStockPrices(float price) {
@@ -95,46 +97,52 @@ public class Market {
         {
             orderDirection = 1;
         }
-        else { orderDirection = -1;}
+        else if (order.decision == Decision.Sell)
+        {
+            orderDirection = -1;
+        }
+        else {
+            orderDirection = 0;
+        }
 
         Float NewCash = -1 * orderDirection * order.quantity * currentPrice ;
         order.trader.updateCash(NewCash);
         Integer NewNumbersOfStocks = orderDirection * order.quantity;
         order.trader.updateStocksOwned(NewNumbersOfStocks) ;
         order.trader.pushToOwnedAssets();
-        netOrders += order.quantity * orderDirection;
+        System.out.println("direction: " + orderDirection + " | type: " + order.trader.getClass().getName());
+        netOrders += orderDirection;
        // System.out.println("order.quantity ="+order.quantity+" orderDirection = "+orderDirection + " netOrders ="+netOrders);
         String className= order.trader.getClass().getName();
         String [] classNameL = className.split("[.]");
         String classNameOfTrader = classNameL[classNameL.length-1];
 
-        if(classNameOfTrader.equals("Fundamentalist"))
-        {
-            if(orderDirection == 1)
-            Fundamentalist.numOfBuyOrders+=order.quantity;
-            else
-                Fundamentalist.numOfSellOrders+=order.quantity;
-        }
-        else if(classNameOfTrader.equals("LongShort_Chartist"))
-        {
-            if(orderDirection == 1)
-                LongShort_Chartist.numOfBuyOrders+=order.quantity;
-            else
-                LongShort_Chartist.numOfSellOrders+=order.quantity;
-        }
-        else if(classNameOfTrader.equals("MA_Chartist"))
-        {
-            if(orderDirection == 1)
-                MA_Chartist.numOfBuyOrders+=order.quantity;
-            else
-                MA_Chartist.numOfSellOrders+=order.quantity;
-        }
-        else //classNameOfTrader == "TimeLag_Chartist"
-        {
-            if(orderDirection == 1)
-                TimeLag_Chartist.numOfBuyOrders+=order.quantity;
-            else
-                TimeLag_Chartist.numOfSellOrders+=order.quantity;
+        switch (classNameOfTrader) {
+            case "Fundamentalist":
+                if (orderDirection == 1) {
+                    Fundamentalist.numOfBuyOrders += 1;
+                } else if (orderDirection == -1) {
+                    Fundamentalist.numOfSellOrders += 1;
+                }
+                break;
+            case "LongShort_Chartist":
+                if (orderDirection == 1)
+                    LongShort_Chartist.numOfBuyOrders += 1;
+                else if (orderDirection == -1)
+                    LongShort_Chartist.numOfSellOrders += 1;
+                break;
+            case "MA_Chartist":
+                if (orderDirection == 1)
+                    MA_Chartist.numOfBuyOrders += 1;
+                else if (orderDirection == -1)
+                    MA_Chartist.numOfSellOrders += 1;
+                break;
+            default:
+                if (orderDirection == 1)
+                    TimeLag_Chartist.numOfBuyOrders += 1;
+                else if (orderDirection == -1)
+                    TimeLag_Chartist.numOfSellOrders += 1;
+                break;
         }
     }
 
@@ -174,5 +182,11 @@ public class Market {
         return stockFundamentalValueOverTime;
     }
 
+    public void setNetOrders(Integer netOrders) {
+        this.netOrders = netOrders;
+    }
+    public Integer getNetOrders() {
+        return netOrders;
+    }
 
 }

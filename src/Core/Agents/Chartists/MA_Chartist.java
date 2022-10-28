@@ -4,15 +4,18 @@ import Core.Agents.Trader;
 import Core.Enums.Decision;
 import Core.Market.Market;
 
+import java.util.Random;
+
 import static java.lang.Math.abs;
 
 public class MA_Chartist extends Trader {
-    private final Integer movingAverageWindowSize = 240;
+    private final Integer movingAverageWindowSize;
     public static int numOfBuyOrders = 0;
     public static int numOfSellOrders = 0;
 
     public MA_Chartist(Market market) {
         super(market);
+        movingAverageWindowSize = new Random().nextInt(240) + 1;
     }
 
     @Override
@@ -33,13 +36,12 @@ public class MA_Chartist extends Trader {
 
     @Override
     public Integer getDesiredOrderVolume() {
-        System.out.println("--------------------" + "in getDesiredOrderVolume of MA_Chartist"+"------");
         return (int)abs(ReactionCoefficient *
                 (market.getCurrentPrice() - getMovingAverage()));
     }
 
     Float getMovingAverage(){
-        float MA ;
+        float MA;
         Float summationOfPrices = (float) 0.0;
         int Day = market.getCurrentDay();
         int practicalMovingAverageWindowSize;

@@ -26,10 +26,8 @@ public class Fundamentalist extends Trader {
 
     @Override
     public Integer getDesiredOrderVolume() {
-        System.out.println("----" + "in getDesiredOrderVolume of fundamentalist"+"----");
         float orderVolume = abs(ReactionCoefficient *
                 (market.getStockFundamentalValue() - market.getCurrentPrice()));
-        System.out.println("orderVolume "+orderVolume);
         return (int)orderVolume;
     }
 }

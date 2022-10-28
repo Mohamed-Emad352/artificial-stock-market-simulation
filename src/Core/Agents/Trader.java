@@ -53,13 +53,19 @@ abstract public class Trader {
         Order order = new Order();
         order.trader = this;
         order.decision = this.decideBuyOrSell();
-        order.quantity = this.getPracticalOrderVolume() ;
+        if (order.decision != null)
+        {
+            order.quantity = this.getPracticalOrderVolume();
+        }
         return order;
     }
 
     public void requestOrder() {
         Order order = this.constructOrder();
-        this.market.executeOrder(order);
+        if (order.decision != null)
+        {
+            this.market.executeOrder(order);
+        }
     }
 
     public void pushToOwnedAssets() {
@@ -72,10 +78,12 @@ abstract public class Trader {
            float value = (float) (this.market.getCurrentPrice() * (
                    1 + new Random().nextGaussian() * this.Aggressiveness ));
            return  value;
-        } else {
+        } else if (this.decideBuyOrSell() == Decision.Sell) {
             float value = (float) (this.market.getCurrentPrice() * (
                     1 + new Random().nextGaussian() * this.Aggressiveness * -1 ));
             return  value;
+        } else {
+            return 0f;
         }
     }
 
@@ -85,14 +93,13 @@ abstract public class Trader {
 
     public Integer getPracticalOrderVolume() {
         if (this.decideBuyOrSell() == Decision.Buy) {
-            System.out.println("in getPracticalOrderVolume in trader ->>>");
-            System.out.println("this.getDesiredOrderVolume() = "+this.getDesiredOrderVolume());
-            System.out.println("this.currentCash / this.getLimitPrice())" + this.currentCash / this.getLimitPrice());
             return Math.min(this.getDesiredOrderVolume(), (int)(this.currentCash / this.getLimitPrice()));
-
+        }
+        else if (this.decideBuyOrSell() == Decision.Sell) {
+            return Math.min(this.getDesiredOrderVolume(), this.stocksOwned);
         }
         else {
-            return Math.min(this.getDesiredOrderVolume(), this.stocksOwned);
+            return 0;
         }
     }
 

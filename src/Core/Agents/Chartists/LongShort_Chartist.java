@@ -32,7 +32,6 @@ public class LongShort_Chartist extends Trader {
 
     @Override
     public Integer getDesiredOrderVolume() {
-        System.out.println("--------------------" + "in getDesiredOrderVolume of LongShort_Chartist"+"------");
         return (int)abs(ReactionCoefficient * (getShortTermMA() - getLongTermMA()));
     }
 
