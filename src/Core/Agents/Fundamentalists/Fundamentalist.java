@@ -8,10 +8,11 @@ import static java.lang.Math.abs;
 
 public class Fundamentalist extends Trader {
 
+    public static int numOfBuyOrders = 0;
+    public static int numOfSellOrders = 0;
     public Fundamentalist(Market market) {
         super(market);
     }
-
     @Override
     public Decision decideBuyOrSell() {
         float value =  market.getStockFundamentalValue() - market.getCurrentPrice();

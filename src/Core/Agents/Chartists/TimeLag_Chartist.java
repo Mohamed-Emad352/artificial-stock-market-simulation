@@ -9,6 +9,8 @@ import java.util.Random;
 import static java.lang.Math.abs;
 
 public class TimeLag_Chartist extends Trader{
+    public static int numOfBuyOrders = 0;
+    public static int numOfSellOrders = 0;
     public TimeLag_Chartist(Market market) {
         super(market);
     }

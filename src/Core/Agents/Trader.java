@@ -10,6 +10,7 @@ import java.util.Random;
 abstract public class Trader {
     private final Integer Id;
     private static Integer IdTracker = 1;
+    private Float initialCash = (float) 1000.0;
     private Float currentCash = (float) 1000.0;
     private Integer stocksOwned = 20;
     private final LinkedList<Float> cashOwnedOverTime = new LinkedList<Float>();
@@ -37,6 +38,7 @@ abstract public class Trader {
 
     public void updateCash(Float newCash) {
         this.currentCash += newCash;
+        //System.out.println("cash is updated >> new cash variable = "+ newCash);
     }
 
     public void updateStocksOwned(Integer newStocks) {
@@ -51,12 +53,19 @@ abstract public class Trader {
         Order order = new Order();
         order.trader = this;
         order.decision = this.decideBuyOrSell();
+        if (order.decision != null)
+        {
+            order.quantity = this.getPracticalOrderVolume();
+        }
         return order;
     }
 
     public void requestOrder() {
         Order order = this.constructOrder();
-        this.market.executeOrder(order);
+        if (order.decision != null)
+        {
+            this.market.executeOrder(order);
+        }
     }
 
     public void pushToOwnedAssets() {
@@ -69,10 +78,12 @@ abstract public class Trader {
            float value = (float) (this.market.getCurrentPrice() * (
                    1 + new Random().nextGaussian() * this.Aggressiveness ));
            return  value;
-        } else {
+        } else if (this.decideBuyOrSell() == Decision.Sell) {
             float value = (float) (this.market.getCurrentPrice() * (
                     1 + new Random().nextGaussian() * this.Aggressiveness * -1 ));
             return  value;
+        } else {
+            return 0f;
         }
     }
 
@@ -84,8 +95,11 @@ abstract public class Trader {
         if (this.decideBuyOrSell() == Decision.Buy) {
             return Math.min(this.getDesiredOrderVolume(), (int)(this.currentCash / this.getLimitPrice()));
         }
-        else {
+        else if (this.decideBuyOrSell() == Decision.Sell) {
             return Math.min(this.getDesiredOrderVolume(), this.stocksOwned);
+        }
+        else {
+            return 0;
         }
     }
 
@@ -101,4 +115,17 @@ abstract public class Trader {
     public static void setLastEvaluationTime(Integer time) {
         lastEvaluationTime = time;
     }
+
+    public Float getTotalMoney()
+    {
+        float valueOfStocks = this.stocksOwned * market.getPriceFromList(market.getCurrentDay()-1);
+        return this.currentCash + valueOfStocks;
+    }
+
+    public float getTotalProfit(){
+        //System.out.println("currentCash: "+this.getCurrentCash());
+        //System.out.println("initialCash: "+initialCash);
+        return currentCash-initialCash;
+    }
+
 }

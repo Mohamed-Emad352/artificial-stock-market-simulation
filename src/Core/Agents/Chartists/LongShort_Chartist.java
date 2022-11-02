@@ -8,6 +8,8 @@ import java.util.Random;
 import static java.lang.Math.abs;
 
 public class LongShort_Chartist extends Trader {
+    public static int numOfBuyOrders = 0;
+    public static int numOfSellOrders = 0;
     public LongShort_Chartist(Market market) {
         super(market);
     }
