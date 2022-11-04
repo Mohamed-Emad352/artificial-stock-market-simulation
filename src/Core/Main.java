@@ -31,10 +31,10 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-//        for (int f = 0; f < market.getNumOfFundamentalists(); f++) {
-//            Fundamentalist fundamentalTrader = new Fundamentalist(market);
-//            market.pushTraderInList(fundamentalTrader);
-//        }
+        for (int f = 0; f < market.getNumOfFundamentalists(); f++) {
+            Fundamentalist fundamentalTrader = new Fundamentalist(market);
+            market.pushTraderInList(fundamentalTrader);
+        }
 
         for (int ch = 0; ch < market.getNumOfMAChartists(); ch++) {
             MA_Chartist chartist = new MA_Chartist(market);
@@ -60,8 +60,9 @@ public class Main extends Application {
 
         for (int day = 1; day <= market.getTradingDays(); day++) {
             market.setCurrentDay(day);
-            for (Trader trader : market.getTraders()) {
-                trader.requestOrder();
+            System.out.println("num of traders: "+market.getTraders().size());
+           for (Trader trader : market.getTraders())
+            {   trader.requestOrder();
                 String className= trader.getClass().getName();
                 String [] classNameL = className.split("[.]");
                 classNameOfTrader = classNameL[classNameL.length-1];

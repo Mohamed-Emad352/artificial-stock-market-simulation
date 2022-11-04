@@ -24,7 +24,7 @@ public class Market {
     private Integer currentDay;
     private Float currentPrice = (float) 1000.0;
 
-    private final Integer tradingDays = 240;
+    private final Integer tradingDays = 50;
     private final Float noiseVariance = (float) 0.0058;
     private final Integer noiseMean = 0;
     private final Float liquidity = (float) 0.4308;
@@ -54,7 +54,6 @@ public class Market {
         Random r = new Random();
         stockFundamentalValue *= (float) exp(FundamentalValueVolatility * r.nextGaussian());
         stockFundamentalValueOverTime.push(stockFundamentalValue);
-        System.out.println("in updateFundamentalValue , stockFundamentalValue = "+stockFundamentalValue);
     }
 
     public void setCurrentDay(int day) {
@@ -111,6 +110,7 @@ public class Market {
         order.trader.updateStocksOwned(NewNumbersOfStocks) ;
         order.trader.pushToOwnedAssets();
         System.out.println("direction: " + orderDirection + " | type: " + order.trader.getClass().getName());
+        System.out.println("net orders: "+netOrders);
         netOrders += orderDirection;
        // System.out.println("order.quantity ="+order.quantity+" orderDirection = "+orderDirection + " netOrders ="+netOrders);
         String className= order.trader.getClass().getName();
