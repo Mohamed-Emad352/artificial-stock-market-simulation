@@ -16,7 +16,6 @@ public class Fundamentalist extends Trader {
     @Override
     public Decision decideBuyOrSell() {
         float value =  market.getStockFundamentalValue() - market.getCurrentPrice();
-        // apply sign (sgn) function to determine the direction of order
         if(value > 0)
         {return Decision.Buy;}
         else if(value < 0)

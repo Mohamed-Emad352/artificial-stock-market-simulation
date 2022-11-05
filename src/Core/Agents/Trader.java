@@ -10,9 +10,9 @@ import java.util.Random;
 abstract public class Trader {
     private final Integer Id;
     private static Integer IdTracker = 1;
-    private Float initialCash = (float) 1000.0;
-    private Float currentCash = (float) 1000.0;
-    private Integer stocksOwned = 20;
+    private final Float initialCash;
+    private Float currentCash;
+    private Integer stocksOwned = new Random().nextInt(11) + 20;
     private final LinkedList<Float> cashOwnedOverTime = new LinkedList<Float>();
     private final LinkedList<Integer> stocksOwnedOverTime = new LinkedList<Integer>();
     private static Integer lastEvaluationTime = 0;
@@ -21,6 +21,8 @@ abstract public class Trader {
     protected final Market market;
 
     public Trader(Market market) {
+        this.initialCash = this.stocksOwned * market.getCurrentPrice();
+        this.currentCash = initialCash;
         this.market = market;
         this.Id = IdTracker;
         IdTracker++;
@@ -38,7 +40,6 @@ abstract public class Trader {
 
     public void updateCash(Float newCash) {
         this.currentCash += newCash;
-        //System.out.println("cash is updated >> new cash variable = "+ newCash);
     }
 
     public void updateStocksOwned(Integer newStocks) {
@@ -123,8 +124,6 @@ abstract public class Trader {
     }
 
     public float getTotalProfit(){
-        //System.out.println("currentCash: "+this.getCurrentCash());
-        //System.out.println("initialCash: "+initialCash);
         return currentCash-initialCash;
     }
 

@@ -33,7 +33,6 @@ public class Market {
     private final Integer numberOfTLChartists = 30;
     private final Integer numberOfLSChartists = 30;
     private final Float FundamentalValueVolatility = (float) 0.001;
-
     private final LinkedList<Trader> traders = new LinkedList<>();
     public final LinkedList<Float> averageTotalCashForFundamentalists = new LinkedList<Float>();
     public final LinkedList<Float> averageTotalCashForLongShortChartist = new LinkedList<Float>();
@@ -54,7 +53,6 @@ public class Market {
         Random r = new Random();
         stockFundamentalValue *= (float) exp(FundamentalValueVolatility * r.nextGaussian());
         stockFundamentalValueOverTime.push(stockFundamentalValue);
-        System.out.println("in updateFundamentalValue , stockFundamentalValue = "+stockFundamentalValue);
     }
 
     public void setCurrentDay(int day) {
@@ -83,7 +81,6 @@ public class Market {
         float noiseStandardDeviation = (float) Math.sqrt(noiseVariance);
         float noise = (float) (r.nextGaussian() * noiseStandardDeviation + noiseMean);
         currentPrice += (1 / liquidity) * netOrders + noise;
-        System.out.println("in updatePrice -> "+" currentPrice = "+currentPrice+" liquidity = "+liquidity+" netOrders = "+netOrders +"noise= " + noise);
     }
 
     public void pushNewPriceToStockPrices(float price) {
@@ -91,8 +88,7 @@ public class Market {
     }
 
     public void executeOrder(Order order){
-        // update trader stocks & cash
-        Integer orderDirection ;
+        Integer orderDirection;
         if (order.decision == Decision.Buy)
         {
             orderDirection = 1;
@@ -110,9 +106,7 @@ public class Market {
         Integer NewNumbersOfStocks = orderDirection * order.quantity;
         order.trader.updateStocksOwned(NewNumbersOfStocks) ;
         order.trader.pushToOwnedAssets();
-        System.out.println("direction: " + orderDirection + " | type: " + order.trader.getClass().getName());
-        netOrders += orderDirection;
-       // System.out.println("order.quantity ="+order.quantity+" orderDirection = "+orderDirection + " netOrders ="+netOrders);
+        netOrders += orderDirection * order.quantity;
         String className= order.trader.getClass().getName();
         String [] classNameL = className.split("[.]");
         String classNameOfTrader = classNameL[classNameL.length-1];

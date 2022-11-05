@@ -18,7 +18,6 @@ public class LongShort_Chartist extends Trader {
     public Decision decideBuyOrSell() {
         float value;
         value = getShortTermMA() - getLongTermMA();
-        // apply sign (sgn) function to the value to determine the direction H
         if(value > 0) {
             return Decision.Buy;
         }
@@ -42,7 +41,7 @@ public class LongShort_Chartist extends Trader {
         int shortTerm = Day/2;
 
         Random rand = new Random();
-        int choice = rand.nextInt(Day - shortTerm);
+        int choice = rand.nextInt(Day - shortTerm) + 1;
 
         for (int i = 1; i <= choice; i++) {
             summationOfPrices += market.getPriceFromList(Day - i);
@@ -64,8 +63,9 @@ public class LongShort_Chartist extends Trader {
         for (int i = 1; i <= longTerm; i++) {
             summationOfPrices += market.getPriceFromList(Day - i);
         }
-
+        if (longTerm != 0)
         LMA = summationOfPrices / longTerm;
+        else LMA = summationOfPrices;
         return LMA;
     }
 }

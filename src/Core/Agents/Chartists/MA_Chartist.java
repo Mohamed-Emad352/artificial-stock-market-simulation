@@ -22,7 +22,6 @@ public class MA_Chartist extends Trader {
     public Decision decideBuyOrSell() {
         float value;
         value = market.getCurrentPrice() - getMovingAverage();
-        // apply sign (sgn) function to the value to determine the direction H
         if(value > 0) {
             return Decision.Buy;
         }
