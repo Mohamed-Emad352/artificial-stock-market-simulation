@@ -19,8 +19,7 @@ public class TimeLag_Chartist extends Trader{
     public Decision decideBuyOrSell() {
         float value;
         value = market.getCurrentPrice() - getTimeLagPrice();
-        // apply sign (sgn) function to the value to determine the direction H
-        if(value > 0) {
+        if (value > 0) {
             return Decision.Buy;
         }
         else if(value < 0) {
@@ -39,12 +38,9 @@ public class TimeLag_Chartist extends Trader{
     Float getTimeLagPrice() {
         float TLPrice;
         int Day = market.getCurrentDay();
-
         Random rand = new Random();
         int choice = rand.nextInt(Day) + 1;
-
         TLPrice = market.getPriceFromList(Day - choice);
-
         return TLPrice;
     }
 }
