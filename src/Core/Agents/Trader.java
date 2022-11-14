@@ -36,6 +36,7 @@ abstract public class Trader {
         this.stocksOwned = stocksOwned;
     }
 
+    public int getId () {return Id;}
     public Float getCurrentCash() { return currentCash; }
 
     public void updateCash(Float newCash) {
@@ -77,11 +78,11 @@ abstract public class Trader {
     public Float getLimitPrice() {
         if (this.decideBuyOrSell() == Decision.Buy) {
            float value = (float) (this.market.getCurrentPrice() * (
-                   1 + new Random().nextGaussian() * this.Aggressiveness ));
+                   1 + Math.abs(new Random().nextGaussian()) * this.Aggressiveness ));
            return  value;
         } else if (this.decideBuyOrSell() == Decision.Sell) {
             float value = (float) (this.market.getCurrentPrice() * (
-                    1 + new Random().nextGaussian() * this.Aggressiveness * -1 ));
+                    1 + Math.abs(new Random().nextGaussian()) * this.Aggressiveness * -1 ));
             return  value;
         } else {
             return 0f;
@@ -100,8 +101,10 @@ abstract public class Trader {
             return Math.min(this.getDesiredOrderVolume(), this.stocksOwned);
         }
         else {
+            System.out.println("practical order volume: 0 ");
             return 0;
         }
+
     }
 
     public Float evaluateProfit(Integer currentTime) {

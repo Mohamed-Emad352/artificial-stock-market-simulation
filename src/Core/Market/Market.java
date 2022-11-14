@@ -7,6 +7,7 @@ import Core.Agents.Fundamentalists.Fundamentalist;
 import Core.Agents.Trader;
 import Core.Configurations.Order;
 import Core.Enums.Decision;
+import Core.Main;
 
 import java.util.LinkedList;
 import java.util.Random;
@@ -16,11 +17,7 @@ import static java.lang.Math.exp;
 
 public class Market {
     private final LinkedList<Float> stockPricesOverTime = new LinkedList<>();
-
-
     private Integer netOrders = 0;
-    private Float stockFundamentalValue = (float) 990.0;
-    private LinkedList<Float> stockFundamentalValueOverTime = new LinkedList<>();
     private Integer currentDay;
     private Float currentPrice = (float) 1000.0;
 
@@ -28,11 +25,11 @@ public class Market {
     private final Float noiseVariance = (float) 0.0058;
     private final Integer noiseMean = 0;
     private final Float liquidity = (float) 0.4308;
-    private final Integer numberOfFundamentalists = 70;
+    private final Integer numberOfFundamentalists = 100;
     private final Integer numberOfMAChartists = 30;
     private final Integer numberOfTLChartists = 30;
     private final Integer numberOfLSChartists = 30;
-    private final Float FundamentalValueVolatility = (float) 0.001;
+
     private final LinkedList<Trader> traders = new LinkedList<>();
     public final LinkedList<Float> averageTotalCashForFundamentalists = new LinkedList<Float>();
     public final LinkedList<Float> averageTotalCashForLongShortChartist = new LinkedList<Float>();
@@ -46,13 +43,6 @@ public class Market {
 
     public Market() {
         stockPricesOverTime.push(currentPrice);
-        stockFundamentalValueOverTime.push(stockFundamentalValue);
-    }
-
-    public void updateFundamentalValue() {
-        Random r = new Random();
-        stockFundamentalValue *= (float) exp(FundamentalValueVolatility * r.nextGaussian());
-        stockFundamentalValueOverTime.push(stockFundamentalValue);
     }
 
     public void setCurrentDay(int day) {
@@ -115,27 +105,41 @@ public class Market {
             case "Fundamentalist":
                 if (orderDirection == 1) {
                     Fundamentalist.numOfBuyOrders += 1;
+                    Fundamentalist.quantityOfBuyOrders += order.quantity;
                 } else if (orderDirection == -1) {
                     Fundamentalist.numOfSellOrders += 1;
+                    Fundamentalist.quantityOfSellOrders += order.quantity;
                 }
                 break;
             case "LongShort_Chartist":
-                if (orderDirection == 1)
+                if (orderDirection == 1) {
                     LongShort_Chartist.numOfBuyOrders += 1;
-                else if (orderDirection == -1)
+                    LongShort_Chartist.quantityOfBuyOrders +=order.quantity;
+                }
+                else if (orderDirection == -1) {
                     LongShort_Chartist.numOfSellOrders += 1;
+                    LongShort_Chartist.quantityOfSellOrders += order.quantity;
+                }
                 break;
             case "MA_Chartist":
-                if (orderDirection == 1)
+                if (orderDirection == 1) {
                     MA_Chartist.numOfBuyOrders += 1;
-                else if (orderDirection == -1)
+                    MA_Chartist.quantityOfBuyOrders += order.quantity;
+                }
+                else if (orderDirection == -1) {
                     MA_Chartist.numOfSellOrders += 1;
+                    MA_Chartist.quantityOfSellOrders += order.quantity;
+                }
                 break;
             default:
-                if (orderDirection == 1)
+                if (orderDirection == 1) {
                     TimeLag_Chartist.numOfBuyOrders += 1;
-                else if (orderDirection == -1)
+                    TimeLag_Chartist.quantityOfBuyOrders += order.quantity;
+                }
+                else if (orderDirection == -1) {
                     TimeLag_Chartist.numOfSellOrders += 1;
+                    TimeLag_Chartist.quantityOfSellOrders += order.quantity;
+                }
                 break;
         }
     }
@@ -168,14 +172,6 @@ public class Market {
             System.out.print(aDouble + " ");
         }
     }
-
-    public Float getStockFundamentalValue() {
-        return stockFundamentalValue;
-    }
-    public LinkedList<Float> getStockFundamentalValueOverTime() {
-        return stockFundamentalValueOverTime;
-    }
-
     public void setNetOrders(Integer netOrders) {
         this.netOrders = netOrders;
     }

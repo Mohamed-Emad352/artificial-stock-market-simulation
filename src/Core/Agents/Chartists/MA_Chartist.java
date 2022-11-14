@@ -12,6 +12,8 @@ public class MA_Chartist extends Trader {
     private final Integer movingAverageWindowSize;
     public static int numOfBuyOrders = 0;
     public static int numOfSellOrders = 0;
+    public static int quantityOfBuyOrders = 0;
+    public static int quantityOfSellOrders = 0;
 
     public MA_Chartist(Market market) {
         super(market);

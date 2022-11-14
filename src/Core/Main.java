@@ -36,6 +36,7 @@ public class Main extends Application {
             market.pushTraderInList(fundamentalTrader);
         }
 
+
         for (int ch = 0; ch < market.getNumOfMAChartists(); ch++) {
             MA_Chartist chartist = new MA_Chartist(market);
             market.pushTraderInList(chartist);
@@ -60,15 +61,16 @@ public class Main extends Application {
 
         for (int day = 1; day <= market.getTradingDays(); day++) {
             market.setCurrentDay(day);
-            System.out.println("num of traders: "+market.getTraders().size());
-           for (Trader trader : market.getTraders())
-            {   trader.requestOrder();
+            System.out.println("the current price for this day : " + market.getCurrentPrice());
+            for (Trader trader : market.getTraders())
+            {
+                trader.requestOrder();
                 String className= trader.getClass().getName();
                 String [] classNameL = className.split("[.]");
                 classNameOfTrader = classNameL[classNameL.length-1];
 
                 if(classNameOfTrader.equals("Fundamentalist"))
-                {
+                {   ((Fundamentalist)trader).updateFundamentalValue(market.getCurrentDay());
                     fundamentalTradersDailyProfit.add(trader.getTotalMoney());
                 }
                 else if(classNameOfTrader.equals("LongShort_Chartist"))
@@ -83,6 +85,7 @@ public class Main extends Application {
                 {
                     TimeLag_ChartistTradersDailyProfit.add(trader.getTotalMoney());
                 }
+
             }
             market.averageTotalCashForFundamentalists.add(getAverageOfLinkedList(fundamentalTradersDailyProfit));
             market.averageTotalCashForLongShortChartist.add(getAverageOfLinkedList(LongShort_ChartistTradersDailyProfit));
@@ -94,7 +97,6 @@ public class Main extends Application {
             TimeLag_ChartistTradersDailyProfit.clear();
 
             market.updatePrice();
-            market.updateFundamentalValue();
             market.pushNewPriceToStockPrices(market.getCurrentPrice());
             market.setNetOrders(0);
         }
@@ -127,6 +129,8 @@ public class Main extends Application {
             }
         }
         launch();
+
+
     }
 
     @Override
@@ -143,11 +147,9 @@ public class Main extends Application {
         DataSet[] datasets = new DataSet[3];
         LinkedList<LinkedList<Float>> priceData = new LinkedList<>();
         priceData.push(market.getStockPricesOverTime());
-        priceData.push(market.getStockFundamentalValueOverTime());
         LinkedList<String> seriesNames = new LinkedList<>();
         seriesNames.push("Stock Price");
-        seriesNames.push("Stock Fundamental Value");
-        datasets[0] = new DataSet(ChartType.LineChart, "Stock Prices and fundamental values", "Stock Prices and fundamental values over time",
+        datasets[0] = new DataSet(ChartType.LineChart, "Stock Prices ", "Stock Prices over time",
                 "Days", "Price", seriesNames, priceData);
 
         LinkedList<LinkedList<Float>> profits = new LinkedList<>();
