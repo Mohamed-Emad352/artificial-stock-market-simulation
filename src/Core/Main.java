@@ -3,6 +3,7 @@ package Core;
 import Core.Agents.Chartists.LongShort_Chartist;
 import Core.Agents.Chartists.MA_Chartist;
 import Core.Agents.Chartists.TimeLag_Chartist;
+import Core.Agents.Chartists.Chartists;
 import Core.Agents.Fundamentalists.Fundamentalist;
 import Core.Agents.Trader;
 import Core.Configurations.DataSet;
@@ -31,24 +32,25 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
+        Chartists chartist;
         for (int f = 0; f < market.getNumOfFundamentalists(); f++) {
             Fundamentalist fundamentalTrader = new Fundamentalist(market);
             market.pushTraderInList(fundamentalTrader);
         }
 
         for (int ch = 0; ch < market.getNumOfMAChartists(); ch++) {
-            MA_Chartist chartist = new MA_Chartist(market);
+             chartist = new Chartists(market,1);
             market.pushTraderInList(chartist);
         }
 
         for (int ch = 0; ch < market.getNumOfTLChartists(); ch++) {
-            TimeLag_Chartist chartist2 = new TimeLag_Chartist(market);
-            market.pushTraderInList(chartist2);
+            chartist = new Chartists(market,2);
+            market.pushTraderInList(chartist);
         }
 
         for (int ch = 0; ch < market.getNumOfLSChartists(); ch++) {
-            LongShort_Chartist chartist3 = new LongShort_Chartist(market);
-            market.pushTraderInList(chartist3);
+            chartist = new Chartists(market,3);
+            market.pushTraderInList(chartist);
         }
 
         LinkedList <Float> fundamentalTradersDailyProfit = new LinkedList<Float>();
@@ -60,7 +62,7 @@ public class Main extends Application {
 
         for (int day = 1; day <= market.getTradingDays(); day++) {
             market.setCurrentDay(day);
-            System.out.println("num of traders: "+market.getTraders().size());
+            //System.out.println("num of traders: "+market.getTraders().size());
            for (Trader trader : market.getTraders())
             {   trader.requestOrder();
                 String className= trader.getClass().getName();
@@ -73,17 +75,26 @@ public class Main extends Application {
                 }
                 else if(classNameOfTrader.equals("LongShort_Chartist"))
                 {
-                    LongShort_ChartistTradersDailyProfit.add(trader.getTotalMoney());
+                    //LongShort_ChartistTradersDailyProfit.add(trader.getTotalMoney());
                 }
-                else if(classNameOfTrader.equals("MA_Chartist"))
+                else if(classNameOfTrader.equals("Chartists"))
                 {
-                    MA_ChartistTradersDailyProfit.add(trader.getTotalMoney());
+                    if (Chartists.getID() == 1)
+                    {
+                        MA_ChartistTradersDailyProfit.add(trader.getTotalMoney());
+                    } else if (Chartists.getID() == 2) {
+                        TimeLag_ChartistTradersDailyProfit.add(trader.getTotalMoney());
+                    }else {
+                        LongShort_ChartistTradersDailyProfit.add(trader.getTotalMoney());
+                    }
+                    //MA_ChartistTradersDailyProfit.add(trader.getTotalMoney());
                 }
                 else
                 {
-                    TimeLag_ChartistTradersDailyProfit.add(trader.getTotalMoney());
+                    //TimeLag_ChartistTradersDailyProfit.add(trader.getTotalMoney());
                 }
             }
+
             market.averageTotalCashForFundamentalists.add(getAverageOfLinkedList(fundamentalTradersDailyProfit));
             market.averageTotalCashForLongShortChartist.add(getAverageOfLinkedList(LongShort_ChartistTradersDailyProfit));
             market.averageTotalCashForMAChartist.add( getAverageOfLinkedList(MA_ChartistTradersDailyProfit));
@@ -98,6 +109,14 @@ public class Main extends Application {
             market.pushNewPriceToStockPrices(market.getCurrentPrice());
             market.setNetOrders(0);
         }
+        System.out.println("Fund Buy orders = " + Fundamentalist.numOfBuyOrders);
+        System.out.println("Fund Sell orders = " + Fundamentalist.numOfSellOrders);
+        System.out.println("MA Buy orders = " + Chartists.numOfBuyOrders);
+        System.out.println("MA Sell orders = " + Chartists.numOfSellOrders);
+        System.out.println("TL Buy orders = " + Chartists.numOfBuyOrders);
+        System.out.println("TL Sell orders = " + Chartists.numOfSellOrders);
+        System.out.println("LS Buy orders = " + Chartists.numOfBuyOrders);
+        System.out.println("LS sell orders = " + Chartists.numOfSellOrders);
 
 
         Trader trader;
@@ -117,17 +136,25 @@ public class Main extends Application {
             {
                 market.totalProfitForLongShortChartist.add(trader.getTotalProfit());
             }
-            else if(classNameOfTrader.equals("MA_Chartist"))
+            else if(classNameOfTrader.equals("Chartists"))
             {
-                market.totalProfitForMAChartist.add(trader.getTotalProfit());
+                if(Chartists.getID() == 1){
+                    market.totalProfitForMAChartist.add(trader.getTotalProfit());
+                } else if (Chartists.getID() == 2) {
+                    market.totalProfitForTimeLagChartist.add(trader.getTotalProfit());
+                }else{
+                    market.totalProfitForLongShortChartist.add(trader.getTotalProfit());
+                }
+                //market.totalProfitForMAChartist.add(trader.getTotalProfit());
             }
             else
             {
-                market.totalProfitForTimeLagChartist.add(trader.getTotalProfit());
+                //market.totalProfitForTimeLagChartist.add(trader.getTotalProfit());
             }
         }
         launch();
     }
+
 
     @Override
     public void start(Stage primaryStage) throws IOException {

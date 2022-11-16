@@ -1,5 +1,6 @@
 package Core.Market;
 
+import Core.Agents.Chartists.Chartists;
 import Core.Agents.Chartists.LongShort_Chartist;
 import Core.Agents.Chartists.MA_Chartist;
 import Core.Agents.Chartists.TimeLag_Chartist;
@@ -131,14 +132,23 @@ public class Market {
                 else if (orderDirection == -1)
                     MA_Chartist.numOfSellOrders += 1;
                 break;
+           // default:
+             //   if (orderDirection == 1)
+               //     TimeLag_Chartist.numOfBuyOrders += 1;
+               // else if (orderDirection == -1)
+                 //   TimeLag_Chartist.numOfSellOrders += 1;
+                //break;
+
             default:
                 if (orderDirection == 1)
-                    TimeLag_Chartist.numOfBuyOrders += 1;
+                    Chartists.numOfBuyOrders += 1;
                 else if (orderDirection == -1)
-                    TimeLag_Chartist.numOfSellOrders += 1;
+                    Chartists.numOfSellOrders += 1;
                 break;
+
         }
     }
+
 
     public Integer getNumOfFundamentalists()
     { return numberOfFundamentalists;}
