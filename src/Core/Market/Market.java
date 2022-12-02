@@ -112,6 +112,7 @@ public class Market {
         String [] classNameL = className.split("[.]");
         String classNameOfTrader = classNameL[classNameL.length-1];
 
+
         switch (classNameOfTrader) {
             case "Fundamentalist":
                 if (orderDirection == 1) {
@@ -120,7 +121,8 @@ public class Market {
                     Fundamentalist.numOfSellOrders += 1;
                 }
                 break;
-            case "LongShort_Chartist":
+
+/*            case "LongShort_Chartist":
                 if (orderDirection == 1)
                     LongShort_Chartist.numOfBuyOrders += 1;
                 else if (orderDirection == -1)
@@ -132,20 +134,36 @@ public class Market {
                 else if (orderDirection == -1)
                     MA_Chartist.numOfSellOrders += 1;
                 break;
-           // default:
-             //   if (orderDirection == 1)
-               //     TimeLag_Chartist.numOfBuyOrders += 1;
-               // else if (orderDirection == -1)
-                 //   TimeLag_Chartist.numOfSellOrders += 1;
-                //break;
+            default:
+                if (orderDirection == 1)
+                    TimeLag_Chartist.numOfBuyOrders += 1;
+                else if (orderDirection == -1)
+                    TimeLag_Chartist.numOfSellOrders += 1;
+                break;*/
 
             default:
                 if (orderDirection == 1)
-                    Chartists.numOfBuyOrders += 1;
-                else if (orderDirection == -1)
-                    Chartists.numOfSellOrders += 1;
-                break;
+                {
+                    if(Chartists.ID == 1)
+                        Chartists.numOfMABuyOrders += 1;
 
+                    if(Chartists.ID == 2)
+                        Chartists.numOfTLBuyOrders += 1;
+
+                    if(Chartists.ID == 3)
+                        Chartists.numOfLSBuyOrders += 1;
+
+                }
+                else if (orderDirection == -1)
+                {
+                    if(Chartists.ID == 1)
+                        Chartists.numOfMASellOrders += 1;
+                    if(Chartists.ID == 2)
+                        Chartists.numOfTLSellOrders += 1;
+                    if(Chartists.ID == 3)
+                        Chartists.numOfLSSellOrders += 1;
+                }
+                break;
         }
     }
 

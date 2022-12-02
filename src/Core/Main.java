@@ -32,25 +32,24 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        Chartists chartist;
         for (int f = 0; f < market.getNumOfFundamentalists(); f++) {
             Fundamentalist fundamentalTrader = new Fundamentalist(market);
             market.pushTraderInList(fundamentalTrader);
         }
 
         for (int ch = 0; ch < market.getNumOfMAChartists(); ch++) {
-             chartist = new Chartists(market,1);
-            market.pushTraderInList(chartist);
+             Chartists chartist1 = new Chartists(market,1);
+            market.pushTraderInList(chartist1);
         }
 
         for (int ch = 0; ch < market.getNumOfTLChartists(); ch++) {
-            chartist = new Chartists(market,2);
-            market.pushTraderInList(chartist);
+            Chartists chartist2 = new Chartists(market,2);
+            market.pushTraderInList(chartist2);
         }
 
         for (int ch = 0; ch < market.getNumOfLSChartists(); ch++) {
-            chartist = new Chartists(market,3);
-            market.pushTraderInList(chartist);
+            Chartists chartist3 = new Chartists(market,3);
+            market.pushTraderInList(chartist3);
         }
 
         LinkedList <Float> fundamentalTradersDailyProfit = new LinkedList<Float>();
@@ -79,10 +78,10 @@ public class Main extends Application {
                 }
                 else if(classNameOfTrader.equals("Chartists"))
                 {
-                    if (Chartists.getID() == 1)
+                    if (Chartists.ID == 1)
                     {
                         MA_ChartistTradersDailyProfit.add(trader.getTotalMoney());
-                    } else if (Chartists.getID() == 2) {
+                    } else if (Chartists.ID == 2) {
                         TimeLag_ChartistTradersDailyProfit.add(trader.getTotalMoney());
                     }else {
                         LongShort_ChartistTradersDailyProfit.add(trader.getTotalMoney());
@@ -111,12 +110,14 @@ public class Main extends Application {
         }
         System.out.println("Fund Buy orders = " + Fundamentalist.numOfBuyOrders);
         System.out.println("Fund Sell orders = " + Fundamentalist.numOfSellOrders);
-        System.out.println("MA Buy orders = " + Chartists.numOfBuyOrders);
-        System.out.println("MA Sell orders = " + Chartists.numOfSellOrders);
-        System.out.println("TL Buy orders = " + Chartists.numOfBuyOrders);
-        System.out.println("TL Sell orders = " + Chartists.numOfSellOrders);
-        System.out.println("LS Buy orders = " + Chartists.numOfBuyOrders);
-        System.out.println("LS sell orders = " + Chartists.numOfSellOrders);
+        System.out.println("Chartists Buy orders = " + Chartists.numOfBuyOrders);
+        System.out.println("Chartists Sell orders = " + Chartists.numOfSellOrders);
+        System.out.println("MA Buy orders = " + Chartists.numOfMABuyOrders);
+        System.out.println("MA Sell orders = " + Chartists.numOfMASellOrders);
+        System.out.println("TL Buy orders = " + Chartists.numOfTLBuyOrders);
+        System.out.println("TL Sell orders = " + Chartists.numOfTLSellOrders);
+        System.out.println("LS Buy orders = " + Chartists.numOfLSBuyOrders);
+        System.out.println("LS sell orders = " + Chartists.numOfLSSellOrders);
 
 
         Trader trader;
@@ -132,15 +133,15 @@ public class Main extends Application {
             {
                 market.totalProfitForFundamentalists.add(trader.getTotalProfit());
             }
-            else if(classNameOfTrader.equals("LongShort_Chartist"))
+           /* else if(classNameOfTrader.equals("LongShort_Chartist"))
             {
                 market.totalProfitForLongShortChartist.add(trader.getTotalProfit());
-            }
+            }*/
             else if(classNameOfTrader.equals("Chartists"))
             {
-                if(Chartists.getID() == 1){
+                if(Chartists.ID == 1){
                     market.totalProfitForMAChartist.add(trader.getTotalProfit());
-                } else if (Chartists.getID() == 2) {
+                } else if (Chartists.ID == 2) {
                     market.totalProfitForTimeLagChartist.add(trader.getTotalProfit());
                 }else{
                     market.totalProfitForLongShortChartist.add(trader.getTotalProfit());

@@ -9,7 +9,13 @@ import static java.lang.Math.abs;
 public class Chartists extends Trader {
     public static int numOfBuyOrders = 0;
     public static int numOfSellOrders = 0;
-    private static int ID;
+    public static int numOfMABuyOrders = 0;
+    public static int numOfMASellOrders = 0;
+    public static int numOfTLBuyOrders = 0;
+    public static int numOfTLSellOrders = 0;
+    public static int numOfLSBuyOrders = 0;
+    public static int numOfLSSellOrders = 0;
+    public static int ID;
     int movingAverageWindowSize = new Random().nextInt(240) + 1;
     private Float SummationOfPrices = (float)0.0;
 
@@ -22,6 +28,7 @@ public class Chartists extends Trader {
 
     public Float MovingAverage()
     {
+
         float MA;
         int Day = market.getCurrentDay();
         int practicalMovingAverageWindowSize;
@@ -75,7 +82,6 @@ public class Chartists extends Trader {
         if (longTerm != 0)
             LMA = SummationOfPrices / longTerm;
         else LMA = SummationOfPrices;
-
         return SMA - LMA;
     }
 
@@ -95,9 +101,8 @@ public class Chartists extends Trader {
         return Price;
     }
 
-
-    @Override
-    public Decision decideBuyOrSell() {
+    public Float CalculateValue()
+    {
         float value;
         if(ID == 3){
             value = ChooseMethod();
@@ -106,10 +111,14 @@ public class Chartists extends Trader {
             value = market.getCurrentPrice() - ChooseMethod();
         }
         //System.out.println("no = " + value);
-        if(value > 0) {
+        return value;
+    }
+    @Override
+    public Decision decideBuyOrSell() {
+        if(CalculateValue() > 0) {
             return Decision.Buy;
         }
-        else if(value < 0) {
+        else if(CalculateValue() < 0) {
             return Decision.Sell;
         }
         else {
@@ -128,7 +137,7 @@ public class Chartists extends Trader {
         }
     }
 
-    public static int getID() {
+ /*   public static int getID() {
         return ID;
-    }
+    }*/
 }
