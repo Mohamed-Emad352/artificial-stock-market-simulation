@@ -1,52 +1,38 @@
 package Core.Agents.Chartists;
 
 import Core.Agents.Trader;
+import Core.Enums.ChartistType;
 import Core.Enums.Decision;
 import Core.Market.Market;
+import java.util.HashMap;
 import java.util.Random;
 import static java.lang.Math.abs;
 
 public class Chartists extends Trader {
-    public static int numOfBuyOrders = 0;
-    public static int numOfSellOrders = 0;
-    public static int numOfMABuyOrders = 0;
-    public static int numOfMASellOrders = 0;
-    public static int numOfTLBuyOrders = 0;
-    public static int numOfTLSellOrders = 0;
-    public static int numOfLSBuyOrders = 0;
-    public static int numOfLSSellOrders = 0;
-    public static int ID;
+    public ChartistType type;
     int movingAverageWindowSize = new Random().nextInt(240) + 1;
-    private Float SummationOfPrices = (float)0.0;
 
-    private Float CurrentPrice = market.getCurrentPrice();
-
-    public Chartists(Market market,int id) {
+    public Chartists(Market market, ChartistType type) {
         super(market);
-        ID = id;
+        this.type = type;
     }
 
-    public Float MovingAverage()
+    public Float getMovingAverageValue()
     {
 
         float MA;
         int Day = market.getCurrentDay();
         int practicalMovingAverageWindowSize;
-        if (Day < movingAverageWindowSize) {
-            practicalMovingAverageWindowSize = Day;
-        }
-        else {
-            practicalMovingAverageWindowSize = movingAverageWindowSize;
-        }
+        Float SummationOfPrices = 0f;
+        practicalMovingAverageWindowSize = Math.min(Day, movingAverageWindowSize);
         for (int i = 1; i <= practicalMovingAverageWindowSize; i++) {
             SummationOfPrices += market.getPriceFromList(Day-i);
         }
         MA = SummationOfPrices / practicalMovingAverageWindowSize;
-       // System.out.println("MA = " + MA);
-        return MA;
+        return market.getCurrentPrice() - MA;
     }
 
-    public Float TimeLag()
+    public Float getTimeLagValue()
     {
         float TLPrice;
         int Day = market.getCurrentDay();
@@ -54,10 +40,10 @@ public class Chartists extends Trader {
         int choice = rand.nextInt(Day) + 1;
         TLPrice = market.getPriceFromList(Day - choice);
        // System.out.println("TL = " + TLPrice);
-        return TLPrice;
+        return market.getCurrentPrice() -  TLPrice;
     }
 
-    public Float LongShortTerms()
+    public Float getLongShortTermsValue()
     {
         float SMA;
         int Day = market.getCurrentDay();
@@ -66,11 +52,14 @@ public class Chartists extends Trader {
         Random rand = new Random();
         int choice = rand.nextInt(Day - shortTerm) + 1;
 
+        Float SummationOfPrices = 0f;
+
         for (int i = 1; i <= choice; i++) {
             SummationOfPrices += market.getPriceFromList(Day - i);
         }
 
         SMA = SummationOfPrices / choice;
+        SummationOfPrices = 0f;
 
         float LMA;
 
@@ -85,40 +74,24 @@ public class Chartists extends Trader {
         return SMA - LMA;
     }
 
-    public Float ChooseMethod()
+    public Float getValue()
     {
-        float Price = (float) 0.0;
-        if(ID == 1)
-        {
-            Price = MovingAverage();
+        float value = (float) 0.0;
+        switch(type) {
+            case MovingAverage -> value = getMovingAverageValue();
+            case LongShort -> value = getLongShortTermsValue();
+            case TimeLag -> value = getTimeLagValue();
         }
-        else if(ID == 2)
-        {
-            Price = TimeLag();
-        } else if (ID == 3) {
-            Price = LongShortTerms();
-        }
-        return Price;
-    }
-
-    public Float CalculateValue()
-    {
-        float value;
-        if(ID == 3){
-            value = ChooseMethod();
-        }
-        else {
-            value = market.getCurrentPrice() - ChooseMethod();
-        }
-        //System.out.println("no = " + value);
         return value;
     }
+
     @Override
     public Decision decideBuyOrSell() {
-        if(CalculateValue() > 0) {
+        Float value = getValue();
+        if(value > 0) {
             return Decision.Buy;
         }
-        else if(CalculateValue() < 0) {
+        else if(value < 0) {
             return Decision.Sell;
         }
         else {
@@ -128,16 +101,6 @@ public class Chartists extends Trader {
 
     @Override
     public Integer getDesiredOrderVolume() {
-        if(ID == 3){
-            return (int)abs(ReactionCoefficient *
-                    (ChooseMethod()));
-        }else {
-            return (int)abs(ReactionCoefficient *
-                    (market.getCurrentPrice() - ChooseMethod()));
-        }
+        return (int)abs(ReactionCoefficient * getValue());
     }
-
- /*   public static int getID() {
-        return ID;
-    }*/
 }

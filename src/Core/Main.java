@@ -1,13 +1,11 @@
 package Core;
 
-import Core.Agents.Chartists.LongShort_Chartist;
-import Core.Agents.Chartists.MA_Chartist;
-import Core.Agents.Chartists.TimeLag_Chartist;
 import Core.Agents.Chartists.Chartists;
 import Core.Agents.Fundamentalists.Fundamentalist;
 import Core.Agents.Trader;
 import Core.Configurations.DataSet;
 import Core.Enums.ChartType;
+import Core.Enums.ChartistType;
 import Core.Market.Market;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -15,89 +13,63 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Objects;
 
 public class Main extends Application {
     static Market market = new Market();
-
-    public static float getAverageOfLinkedList(LinkedList<Float> list)
-    {
-        float summation = 0;
-        for (int i=0; i< list.size();i++)
-        {
-            summation+=list.get(i);
-        }
-        return summation/list.size();
-    }
+    static LinkedList<Float> averageTotalCashForFundamentalists = new LinkedList<>();
+    static HashMap<ChartistType, LinkedList<Float>> chartistsAverageTotalCash = new HashMap<>();
 
     public static void main(String[] args) {
+
         for (int f = 0; f < market.getNumOfFundamentalists(); f++) {
             Fundamentalist fundamentalTrader = new Fundamentalist(market);
             market.pushTraderInList(fundamentalTrader);
         }
 
-        for (int ch = 0; ch < market.getNumOfMAChartists(); ch++) {
-             Chartists chartist1 = new Chartists(market,1);
-            market.pushTraderInList(chartist1);
+        for (ChartistType chartistType: ChartistType.values()) {
+            for (int i = 0; i < market.getNumberOfChartistTrader(chartistType); i++) {
+                Chartists chartist = new Chartists(market, chartistType);
+                market.pushTraderInList(chartist);
+            }
         }
 
-        for (int ch = 0; ch < market.getNumOfTLChartists(); ch++) {
-            Chartists chartist2 = new Chartists(market,2);
-            market.pushTraderInList(chartist2);
-        }
+        LinkedList<Float> fundamentalistsDailyProfit = new LinkedList<Float>();
+        HashMap<ChartistType, LinkedList<Float>> chartistsDailyProfit = new HashMap<>();
 
-        for (int ch = 0; ch < market.getNumOfLSChartists(); ch++) {
-            Chartists chartist3 = new Chartists(market,3);
-            market.pushTraderInList(chartist3);
+        for (ChartistType type: ChartistType.values()) {
+            LinkedList<Float> emptyList = new LinkedList<>();
+            chartistsDailyProfit.put(type, emptyList);
+            chartistsAverageTotalCash.put(type, emptyList);
         }
-
-        LinkedList <Float> fundamentalTradersDailyProfit = new LinkedList<Float>();
-        LinkedList <Float> LongShort_ChartistTradersDailyProfit = new LinkedList<Float>();
-        LinkedList <Float> MA_ChartistTradersDailyProfit = new LinkedList<Float>();
-        LinkedList <Float> TimeLag_ChartistTradersDailyProfit = new LinkedList<Float>();
         String classNameOfTrader;
 
 
         for (int day = 1; day <= market.getTradingDays(); day++) {
             market.setCurrentDay(day);
-            //System.out.println("num of traders: "+market.getTraders().size());
            for (Trader trader : market.getTraders())
             {   trader.requestOrder();
                 String className= trader.getClass().getName();
                 String [] classNameL = className.split("[.]");
                 classNameOfTrader = classNameL[classNameL.length-1];
 
-                if(classNameOfTrader.equals("Fundamentalist"))
-                {
-                    fundamentalTradersDailyProfit.add(trader.getTotalMoney());
+                if(classNameOfTrader.equals("Fundamentalist")) {
+                    fundamentalistsDailyProfit.add(trader.getTotalMoney());
                 }
-                else if(classNameOfTrader.equals("LongShort_Chartist"))
-                {
-                    //LongShort_ChartistTradersDailyProfit.add(trader.getTotalMoney());
-                }
-                else if(classNameOfTrader.equals("Chartists"))
-                {
-                    if (Chartists.ID == 1)
-                    {
-                        MA_ChartistTradersDailyProfit.add(trader.getTotalMoney());
-                    } else if (Chartists.ID == 2) {
-                        TimeLag_ChartistTradersDailyProfit.add(trader.getTotalMoney());
-                    }else {
-                        LongShort_ChartistTradersDailyProfit.add(trader.getTotalMoney());
-                    }
-                    //MA_ChartistTradersDailyProfit.add(trader.getTotalMoney());
-                }
-                else
-                {
-                    //TimeLag_ChartistTradersDailyProfit.add(trader.getTotalMoney());
+                else {
+                    LinkedList<Float> profitList = chartistsDailyProfit.get(((Chartists)trader).type);
+                    profitList.add(trader.getTotalMoney());
+                    chartistsDailyProfit.put(((Chartists)trader).type, profitList);
                 }
             }
 
-            market.averageTotalCashForFundamentalists.add(getAverageOfLinkedList(fundamentalTradersDailyProfit));
-            market.averageTotalCashForLongShortChartist.add(getAverageOfLinkedList(LongShort_ChartistTradersDailyProfit));
-            market.averageTotalCashForMAChartist.add( getAverageOfLinkedList(MA_ChartistTradersDailyProfit));
-            market.averageTotalCashForTimeLagChartist.add( getAverageOfLinkedList(TimeLag_ChartistTradersDailyProfit));
+            averageTotalCashForFundamentalists.add(getAverageOfLinkedList(fundamentalTradersDailyProfit));
+//            market.averageTotalCashForLongShortChartist.add(getAverageOfLinkedList(LongShort_ChartistTradersDailyProfit));
+//            market.averageTotalCashForMAChartist.add(getAverageOfLinkedList(MA_ChartistTradersDailyProfit));
+//            market.averageTotalCashForTimeLagChartist.add( getAverageOfLinkedList(TimeLag_ChartistTradersDailyProfit));
+
             fundamentalTradersDailyProfit.clear();
             LongShort_ChartistTradersDailyProfit.clear();
             MA_ChartistTradersDailyProfit.clear();
@@ -156,6 +128,16 @@ public class Main extends Application {
         launch();
     }
 
+    public static float getAverageOfLinkedList(LinkedList<Float> list)
+    {
+        float summation = 0;
+        for (int i=0; i< list.size();i++)
+        {
+            summation+=list.get(i);
+        }
+        return summation/list.size();
+    }
+
 
     @Override
     public void start(Stage primaryStage) throws IOException {
@@ -181,7 +163,7 @@ public class Main extends Application {
         LinkedList<LinkedList<Float>> profits = new LinkedList<>();
         profits.push(market.totalProfitForFundamentalists);
         profits.push(market.totalProfitForLongShortChartist);
-        profits.push(market.totalProfitForMAChartist);
+        profits.push(market.totalProfitForFundamentalists);
         profits.push(market.totalProfitForTimeLagChartist);
         LinkedList<String> agentsSeriesNames = new LinkedList<>();
         agentsSeriesNames.push("profit for Fundamentalists");
@@ -193,7 +175,7 @@ public class Main extends Application {
 
 
         LinkedList<LinkedList<Float>> averagesTotalMoney = new LinkedList<>();
-        averagesTotalMoney.push(market.averageTotalCashForFundamentalists);
+        averagesTotalMoney.push(averageTotalCashForFundamentalists);
         averagesTotalMoney.push(market.averageTotalCashForLongShortChartist);
         averagesTotalMoney.push(market.averageTotalCashForMAChartist);
         averagesTotalMoney.push(market.averageTotalCashForTimeLagChartist);
