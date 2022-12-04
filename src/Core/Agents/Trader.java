@@ -101,7 +101,6 @@ abstract public class Trader {
             return Math.min(this.getDesiredOrderVolume(), this.stocksOwned);
         }
         else {
-            System.out.println("practical order volume: 0 ");
             return 0;
         }
 

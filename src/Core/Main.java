@@ -31,26 +31,28 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        for (int f = 0; f < market.getNumOfFundamentalists(); f++) {
+         for (int f = 0; f < market.getNumOfFundamentalists(); f++) {
             Fundamentalist fundamentalTrader = new Fundamentalist(market);
             market.pushTraderInList(fundamentalTrader);
         }
 
 
-        for (int ch = 0; ch < market.getNumOfMAChartists(); ch++) {
-            MA_Chartist chartist = new MA_Chartist(market);
-            market.pushTraderInList(chartist);
-        }
+//        for (int ch = 0; ch < market.getNumOfMAChartists(); ch++) {
+//            MA_Chartist chartist = new MA_Chartist(market);
+//            market.pushTraderInList(chartist);
+//        }
+//
+//        for (int ch = 0; ch < market.getNumOfTLChartists(); ch++) {
+//            TimeLag_Chartist chartist2 = new TimeLag_Chartist(market);
+//            market.pushTraderInList(chartist2);
+//        }
+//
+//        for (int ch = 0; ch < market.getNumOfLSChartists(); ch++) {
+//            LongShort_Chartist chartist3 = new LongShort_Chartist(market);
+//            market.pushTraderInList(chartist3);
+//        }
 
-        for (int ch = 0; ch < market.getNumOfTLChartists(); ch++) {
-            TimeLag_Chartist chartist2 = new TimeLag_Chartist(market);
-            market.pushTraderInList(chartist2);
-        }
-
-        for (int ch = 0; ch < market.getNumOfLSChartists(); ch++) {
-            LongShort_Chartist chartist3 = new LongShort_Chartist(market);
-            market.pushTraderInList(chartist3);
-        }
+        market.subtractInitialStocksOwned(market.getTraders());
 
         LinkedList <Float> fundamentalTradersDailyProfit = new LinkedList<Float>();
         LinkedList <Float> LongShort_ChartistTradersDailyProfit = new LinkedList<Float>();
@@ -58,12 +60,16 @@ public class Main extends Application {
         LinkedList <Float> TimeLag_ChartistTradersDailyProfit = new LinkedList<Float>();
         String classNameOfTrader;
 
-
+        System.out.println("the maximum no. of stocks in market = " + market.getMaximumNumberOfStocks());
+        System.out.println("the stocks in market " + market.getNumberOfStocks());
+        int i=0;
         for (int day = 1; day <= market.getTradingDays(); day++) {
             market.setCurrentDay(day);
-            System.out.println("the current price for this day : " + market.getCurrentPrice());
+            System.out.println("============Day=======" + day );
             for (Trader trader : market.getTraders())
-            {
+            {   System.out.println("Trader id = " + i);
+                i++;
+                System.out.println("the stocks in market before this transaction = " + market.getNumberOfStocks());
                 trader.requestOrder();
                 String className= trader.getClass().getName();
                 String [] classNameL = className.split("[.]");
@@ -85,6 +91,7 @@ public class Main extends Application {
                 {
                     TimeLag_ChartistTradersDailyProfit.add(trader.getTotalMoney());
                 }
+                System.out.println("the stocks in market after this transaction = " + market.getNumberOfStocks());
 
             }
             market.averageTotalCashForFundamentalists.add(getAverageOfLinkedList(fundamentalTradersDailyProfit));
@@ -95,10 +102,12 @@ public class Main extends Application {
             LongShort_ChartistTradersDailyProfit.clear();
             MA_ChartistTradersDailyProfit.clear();
             TimeLag_ChartistTradersDailyProfit.clear();
-
+            System.out.println("the price = " + market.getCurrentPrice());
+            System.out.println("net orders = " + market.getNetOrders());
             market.updatePrice();
             market.pushNewPriceToStockPrices(market.getCurrentPrice());
             market.setNetOrders(0);
+
         }
 
 
@@ -128,6 +137,15 @@ public class Main extends Application {
                 market.totalProfitForTimeLagChartist.add(trader.getTotalProfit());
             }
         }
+        System.out.println("fundamentalists buy: "+Fundamentalist.numOfBuyOrders+" sell : "+Fundamentalist.numOfSellOrders );
+        System.out.println("MA_Chartist buy: "+MA_Chartist.numOfBuyOrders+" sell : "+MA_Chartist.numOfSellOrders );
+        System.out.println("LongShort_Chartist buy: "+LongShort_Chartist.numOfBuyOrders+" sell : "+LongShort_Chartist.numOfSellOrders );
+        System.out.println("TimeLag_Chartist buy: "+TimeLag_Chartist.numOfBuyOrders+" sell : "+TimeLag_Chartist.numOfSellOrders );
+
+        System.out.println("fundamentalists quantity of buy orders: "+Fundamentalist.quantityOfBuyOrders+" sell orders : "+Fundamentalist.quantityOfSellOrders );
+        System.out.println("MA_Chartist quantity of buy orders: "+MA_Chartist.quantityOfBuyOrders+" sell orders : "+MA_Chartist.quantityOfSellOrders );
+        System.out.println("LongShort_Chartist quantity of buy orders: "+LongShort_Chartist.quantityOfBuyOrders+" sell orders : "+LongShort_Chartist.quantityOfSellOrders );
+        System.out.println("TimeLag_Chartist quantity of buy orders: "+TimeLag_Chartist.quantityOfBuyOrders+" sell orders : "+TimeLag_Chartist.quantityOfSellOrders );
         launch();
 
 
