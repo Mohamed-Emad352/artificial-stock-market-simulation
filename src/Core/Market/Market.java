@@ -34,14 +34,6 @@ public class Market {
     private final Integer numberOfFundamentalists = 70;
     private final Float FundamentalValueVolatility = (float) 0.001;
     private final LinkedList<Trader> traders = new LinkedList<>();
-    public final LinkedList<Float> averageTotalCashForFundamentalists = new LinkedList<Float>();
-    public final LinkedList<Float> averageTotalCashForLongShortChartist = new LinkedList<Float>();
-    public final LinkedList<Float> averageTotalCashForMAChartist = new LinkedList<Float>();
-    public final LinkedList<Float> averageTotalCashForTimeLagChartist = new LinkedList<Float>();
-    public final LinkedList<Float> totalProfitForFundamentalists = new LinkedList<Float>();
-    public final LinkedList<Float> totalProfitForLongShortChartist = new LinkedList<Float>();
-    public final LinkedList<Float> totalProfitForMAChartist = new LinkedList<Float>();
-    public final LinkedList<Float> totalProfitForTimeLagChartist = new LinkedList<Float>();
 
 
     public Market() {
