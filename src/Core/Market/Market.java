@@ -42,14 +42,14 @@ public class Market {
         numberOfChartistTraders.put(ChartistType.MovingAverage, 30);
         numberOfChartistTraders.put(ChartistType.LongShort, 30);
         numberOfChartistTraders.put(ChartistType.TimeLag, 30);
-        stockPricesOverTime.push(currentPrice);
-        stockFundamentalValueOverTime.push(stockFundamentalValue);
+        stockPricesOverTime.add(currentPrice);
+        stockFundamentalValueOverTime.add(stockFundamentalValue);
     }
 
     public void updateFundamentalValue() {
         Random r = new Random();
         stockFundamentalValue *= (float) exp(FundamentalValueVolatility * r.nextGaussian());
-        stockFundamentalValueOverTime.push(stockFundamentalValue);
+        stockFundamentalValueOverTime.add(stockFundamentalValue);
     }
 
     public void setCurrentDay(int day) {

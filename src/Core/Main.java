@@ -3,9 +3,10 @@ package Core;
 import Core.Agents.Chartists.Chartists;
 import Core.Agents.Fundamentalists.Fundamentalist;
 import Core.Agents.Trader;
-import Core.Configurations.DataSet;
-import Core.Enums.ChartType;
+import Core.Configurations.LineChartDataSet;
+import Core.Configurations.PieChartDataSets;
 import Core.Enums.ChartistType;
+import Core.Enums.Decision;
 import Core.Market.Market;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -20,7 +21,7 @@ import java.util.Objects;
 public class Main extends Application {
     static Market market = new Market();
     static LinkedList<Float> averageTotalCashForFundamentalists = new LinkedList<>();
-    static HashMap<ChartistType, LinkedList<Float>> AverageTotalCashForChartists = new HashMap<>();
+    static HashMap<ChartistType, LinkedList<Float>> averageTotalCashForChartists = new HashMap<>();
     static LinkedList<Float> totalProfitForFundamentalists = new LinkedList<>();
     static HashMap<ChartistType, LinkedList<Float>> totalProfitForChartists = new HashMap<>();
     public static void main(String[] args) {
@@ -38,14 +39,15 @@ public class Main extends Application {
         }
 
 
-        LinkedList<Float> fundamentalistsDailyCash = new LinkedList<Float>(); //Temp list
-        HashMap<ChartistType, LinkedList<Float>> chartistsDailyCash = new HashMap<>(); //Temp hashMap
+        LinkedList<Float> fundamentalistsDailyCash = new LinkedList<Float>();
+        HashMap<ChartistType, LinkedList<Float>> chartistsDailyCash = new HashMap<>();
 
         for (ChartistType type: ChartistType.values()) {
             LinkedList<Float> emptyList = new LinkedList<>();
+            LinkedList<Float> emptyList2 = new LinkedList<>();
             chartistsDailyCash.put(type, emptyList);
-            AverageTotalCashForChartists.put(type, emptyList);
-            totalProfitForChartists.put(type, emptyList);
+            averageTotalCashForChartists.put(type, emptyList);
+            totalProfitForChartists.put(type, emptyList2);
         }
 
         String classNameOfTrader;
@@ -53,8 +55,9 @@ public class Main extends Application {
 
         for (int day = 1; day <= market.getTradingDays(); day++) {
             market.setCurrentDay(day);
-           for (Trader trader : market.getTraders())
-            {   trader.requestOrder();
+            for (Trader trader: market.getTraders())
+            {
+                trader.requestOrder();
                 String className= trader.getClass().getName();
                 String [] classNameL = className.split("[.]");
                 classNameOfTrader = classNameL[classNameL.length-1];
@@ -63,23 +66,17 @@ public class Main extends Application {
                     fundamentalistsDailyCash.add(trader.getTotalMoney());
                 }
                 else {
-                    LinkedList<Float> cashList = chartistsDailyCash.get(((Chartists)trader).type);
-                    cashList.add(trader.getTotalMoney());
-                    chartistsDailyCash.put(((Chartists)trader).type, cashList);
+                    chartistsDailyCash.get(((Chartists)trader).type).add(trader.getTotalMoney());
                 }
             }
 
             averageTotalCashForFundamentalists.add(getAverageOfLinkedList(fundamentalistsDailyCash));
             fundamentalistsDailyCash.clear();
-           for (ChartistType type: ChartistType.values())
+            for (ChartistType type: ChartistType.values())
             {
                 getAverageOfLinkedList(chartistsDailyCash.get(type));
-                LinkedList<Float> averages = AverageTotalCashForChartists.get(type);
-                averages.add(getAverageOfLinkedList( chartistsDailyCash.get(type)));
-                AverageTotalCashForChartists.put(type,averages);
-
-                LinkedList<Float> emptyList = new LinkedList<>();
-                chartistsDailyCash.put(type,emptyList);
+                averageTotalCashForChartists.get(type).add(getAverageOfLinkedList(chartistsDailyCash.get(type)));
+                chartistsDailyCash.put(type, new LinkedList<>());
             }
 
             market.updatePrice();
@@ -92,6 +89,7 @@ public class Main extends Application {
         System.out.println("Fund Sell orders = " + Fundamentalist.numOfSellOrders);
         System.out.println(market.numOfBuyAndSell);
 
+
         Trader trader;
 
         for(int x=0; x<market.getTraders().size(); x++)
@@ -102,18 +100,14 @@ public class Main extends Application {
             String [] classNameL = className.split("[.]");
             classNameOfTrader = classNameL[classNameL.length-1];
 
-            if(classNameOfTrader.equals("Fundamentalist"))
+            if (classNameOfTrader.equals("Fundamentalist"))
             {
                 totalProfitForFundamentalists.add(trader.getTotalProfit());
             }
             else if(classNameOfTrader.equals("Chartists"))
             {
-                LinkedList<Float> profitList = new LinkedList();
-                profitList = totalProfitForChartists.get(((Chartists)trader).type);
-                profitList.add(trader.getTotalProfit());
-                totalProfitForChartists.put(((Chartists)trader).type,profitList);
+                totalProfitForChartists.get(((Chartists)trader).type).add(trader.getTotalProfit());
             }
-
         }
         launch();
     }
@@ -139,50 +133,76 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    public static DataSet[] getDataSets() {
-        DataSet[] datasets = new DataSet[3];
+    public static LineChartDataSet[] getDataSets() {
+        LineChartDataSet[] datasets = new LineChartDataSet[3];
         LinkedList<LinkedList<Float>> priceData = new LinkedList<>();
-        priceData.push(market.getStockPricesOverTime());
-        priceData.push(market.getStockFundamentalValueOverTime());
+        priceData.add(market.getStockPricesOverTime());
+        priceData.add(market.getStockFundamentalValueOverTime());
         LinkedList<String> seriesNames = new LinkedList<>();
-        seriesNames.push("Stock Price");
-        seriesNames.push("Stock Fundamental Value");
-        datasets[0] = new DataSet(ChartType.LineChart, "Stock Prices and fundamental values", "Stock Prices and fundamental values over time",
+        seriesNames.add("Stock Price");
+        seriesNames.add("Stock Fundamental Value");
+        datasets[0] = new LineChartDataSet("Stock Prices and fundamental values", "Stock Prices and fundamental values over time",
                 "Days", "Price", seriesNames, priceData);
 
         LinkedList<LinkedList<Float>> profits = new LinkedList<>();
-        profits.push(totalProfitForFundamentalists);
+        profits.add(totalProfitForFundamentalists);
         for (ChartistType type: ChartistType.values()) {
-            LinkedList<Float> totalProfit = new LinkedList<Float>();
-            totalProfit = totalProfitForChartists.get(type);
-            profits.push(totalProfit);
+            LinkedList<Float> totalProfit = totalProfitForChartists.get(type);
+            profits.add(totalProfit);
         }
-
         LinkedList<String> agentsSeriesNames = new LinkedList<>();
-        agentsSeriesNames.push("profit for Fundamentalists");
+        agentsSeriesNames.add("profit for Fundamentalists");
         for (ChartistType type: ChartistType.values()){
-            //String typeS = (String)type;
-            agentsSeriesNames.push("profit for " );
+            agentsSeriesNames.add("profit for " + type.toString());
         }
-        datasets[1] = new DataSet(ChartType.LineChart, "profits for all traders", "profits for 4 types of trader",
+        datasets[1] = new LineChartDataSet("profits for all traders", "profits for 4 types of trader",
                 "Days", "profit", agentsSeriesNames, profits);
 
 
         LinkedList<LinkedList<Float>> averagesTotalMoney = new LinkedList<>();
-        averagesTotalMoney.push(averageTotalCashForFundamentalists);
+        averagesTotalMoney.add(averageTotalCashForFundamentalists);
         for (ChartistType type: ChartistType.values()) {
-            LinkedList<Float> averageTotalCash = new LinkedList<>();
-            averageTotalCash = AverageTotalCashForChartists.get(type);
-            averagesTotalMoney.push(averageTotalCash);
+            LinkedList<Float> averageTotalCash = averageTotalCashForChartists.get(type);
+            averagesTotalMoney.add(averageTotalCash);
         }
 
         LinkedList<String> SeriesNamesForAverages = new LinkedList<>();
-        SeriesNamesForAverages.push("Averages of total money for Fundamentalists");
+        SeriesNamesForAverages.add("Averages of total money for Fundamentalists");
         for (ChartistType type: ChartistType.values()){
-            SeriesNamesForAverages.push("Averages of total money for ");
-        }        datasets[2] = new DataSet(ChartType.LineChart, "Averages of Total money", "Averages of Total money for 4 types of trader",
+            SeriesNamesForAverages.add("Averages of total money for " + type.toString());
+        }
+        datasets[2] = new LineChartDataSet("Averages of Total money", "Averages of Total money for 4 types of trader",
                 "Days", "cash", SeriesNamesForAverages, averagesTotalMoney);
 
         return datasets;
+    }
+
+    public static PieChartDataSets[] getPieChartDataSets() {
+        PieChartDataSets[] dataSets = new PieChartDataSets[1];
+        LinkedList<String> chartTitles = new LinkedList<>();
+        chartTitles.add("Fundamentalists");
+        for (ChartistType type: ChartistType.values()) {
+            chartTitles.add(type.toString());
+        }
+        LinkedList<LinkedList<String>> seriesNames = new LinkedList<>();
+        LinkedList<String> standardBuySellSeriesNames = new LinkedList<>();
+        LinkedList<LinkedList<Float>> data = new LinkedList<>();
+        standardBuySellSeriesNames.add("Buy");
+        standardBuySellSeriesNames.add("Sell");
+        for (int i = 0; i < ChartistType.values().length + 1; i++) {
+            seriesNames.add(standardBuySellSeriesNames);
+            data.add(new LinkedList<>());
+        }
+        data.get(0).add((float)Fundamentalist.numOfBuyOrders);
+        data.get(0).add((float)Fundamentalist.numOfSellOrders);
+        for (int i = 0; i < ChartistType.values().length; i++) {
+            for (Decision decision: Decision.values()) {
+                data.get(i+1).add((float)market.numOfBuyAndSell
+                        .get(ChartistType.values()[i]).get(decision));
+            }
+        }
+
+        dataSets[0] = new PieChartDataSets("Buy / Sell", chartTitles, seriesNames, data);
+        return dataSets;
     }
 }
