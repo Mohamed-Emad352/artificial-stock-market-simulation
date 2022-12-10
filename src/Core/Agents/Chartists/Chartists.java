@@ -4,7 +4,6 @@ import Core.Agents.Trader;
 import Core.Enums.ChartistType;
 import Core.Enums.Decision;
 import Core.Market.Market;
-import java.util.HashMap;
 import java.util.Random;
 import static java.lang.Math.abs;
 
@@ -39,7 +38,6 @@ public class Chartists extends Trader {
         Random rand = new Random();
         int choice = rand.nextInt(Day) + 1;
         TLPrice = market.getPriceFromList(Day - choice);
-       // System.out.println("TL = " + TLPrice);
         return market.getCurrentPrice() -  TLPrice;
     }
 

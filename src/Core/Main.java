@@ -45,6 +45,7 @@ public class Main extends Application {
             LinkedList<Float> emptyList = new LinkedList<>();
             chartistsDailyCash.put(type, emptyList);
             AverageTotalCashForChartists.put(type, emptyList);
+            totalProfitForChartists.put(type, emptyList);
         }
 
         String classNameOfTrader;
@@ -72,15 +73,13 @@ public class Main extends Application {
             fundamentalistsDailyCash.clear();
            for (ChartistType type: ChartistType.values())
             {
-                getAverageOfLinkedList( chartistsDailyCash.get(type));
+                getAverageOfLinkedList(chartistsDailyCash.get(type));
                 LinkedList<Float> averages = AverageTotalCashForChartists.get(type);
                 averages.add(getAverageOfLinkedList( chartistsDailyCash.get(type)));
                 AverageTotalCashForChartists.put(type,averages);
 
                 LinkedList<Float> emptyList = new LinkedList<>();
                 chartistsDailyCash.put(type,emptyList);
-
-                //chartistsDailyCash.get(type).clear();
             }
 
             market.updatePrice();
