@@ -2,7 +2,6 @@ package GUI;
 
 import Core.Configurations.LineChartDataSet;
 import Core.Configurations.PieChartDataSets;
-import Core.Enums.ChartType;
 import Core.Main;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
