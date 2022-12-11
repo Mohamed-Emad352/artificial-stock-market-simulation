@@ -49,6 +49,7 @@ public class Main extends Application {
             averageTotalCashForChartists.put(type, emptyList);
             totalProfitForChartists.put(type, emptyList2);
         }
+        market.subtractInitialStocksOwned(market.getTraders());
 
         String classNameOfTrader;
 
@@ -62,7 +63,8 @@ public class Main extends Application {
                 String [] classNameL = className.split("[.]");
                 classNameOfTrader = classNameL[classNameL.length-1];
 
-                if(classNameOfTrader.equals("Fundamentalist")) {
+                if(classNameOfTrader.equals("Fundamentalist"))
+                {   ((Fundamentalist)trader).updateFundamentalValue(market.getCurrentDay());
                     fundamentalistsDailyCash.add(trader.getTotalMoney());
                 }
                 else {
@@ -80,9 +82,9 @@ public class Main extends Application {
             }
 
             market.updatePrice();
-            market.updateFundamentalValue();
             market.pushNewPriceToStockPrices(market.getCurrentPrice());
             market.setNetOrders(0);
+
         }
 
         System.out.println("Fund Buy orders = " + Fundamentalist.numOfBuyOrders);
@@ -137,11 +139,9 @@ public class Main extends Application {
         LineChartDataSet[] datasets = new LineChartDataSet[3];
         LinkedList<LinkedList<Float>> priceData = new LinkedList<>();
         priceData.add(market.getStockPricesOverTime());
-        priceData.add(market.getStockFundamentalValueOverTime());
         LinkedList<String> seriesNames = new LinkedList<>();
         seriesNames.add("Stock Price");
-        seriesNames.add("Stock Fundamental Value");
-        datasets[0] = new LineChartDataSet("Stock Prices and fundamental values", "Stock Prices and fundamental values over time",
+        datasets[0] = new LineChartDataSet("Stock Prices", "Stock Price",
                 "Days", "Price", seriesNames, priceData);
 
         LinkedList<LinkedList<Float>> profits = new LinkedList<>();

@@ -11,15 +11,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
 
-import static java.lang.Math.exp;
 
 public class Market {
     private HashMap<ChartistType, Integer> numberOfChartistTraders = new HashMap<>();
     public HashMap<ChartistType, HashMap<Decision, Integer>> numOfBuyAndSell = new HashMap<>();
     private final LinkedList<Float> stockPricesOverTime = new LinkedList<>();
     private Integer netOrders = 0;
-    private Float stockFundamentalValue = (float) 990.0;
-    private LinkedList<Float> stockFundamentalValueOverTime = new LinkedList<>();
     private Integer currentDay;
     private Float currentPrice = (float) 1000.0;
 
@@ -27,8 +24,10 @@ public class Market {
     private final Float noiseVariance = (float) 0.0058;
     private final Integer noiseMean = 0;
     private final Float liquidity = (float) 0.4308;
+    private Integer numberOfStocks;
+    private final Integer numberOfTraders = 160;
+    private final Integer MaximumNUmberOfStocks = 30 * numberOfTraders;
     private final Integer numberOfFundamentalists = 70;
-    private final Float FundamentalValueVolatility = (float) 0.001;
     private final LinkedList<Trader> traders = new LinkedList<>();
 
 
@@ -46,15 +45,10 @@ public class Market {
         numberOfChartistTraders.put(ChartistType.LongShort, 30);
         numberOfChartistTraders.put(ChartistType.TimeLag, 30);
         stockPricesOverTime.add(currentPrice);
-        stockFundamentalValueOverTime.add(stockFundamentalValue);
+        stockPricesOverTime.push(currentPrice);
+        numberOfStocks = MaximumNUmberOfStocks;
     }
 
-
-    public void updateFundamentalValue() {
-        Random r = new Random();
-        stockFundamentalValue *= (float) exp(FundamentalValueVolatility * r.nextGaussian());
-        stockFundamentalValueOverTime.add(stockFundamentalValue);
-    }
 
     public void setCurrentDay(int day) {
         currentDay = day;
@@ -75,6 +69,13 @@ public class Market {
     public LinkedList<Float> getStockPricesOverTime() {
         return stockPricesOverTime;
     }
+    public Integer getNumberOfStocks() { return numberOfStocks;}
+
+    public void subtractInitialStocksOwned(LinkedList<Trader> traderList){
+        for(int index=0 ; index<traderList.size() ; index++){
+            numberOfStocks -= traderList.get(index).getStocksOwned();
+        }
+    }
 
     public void updatePrice()
     {
@@ -93,10 +94,16 @@ public class Market {
         if (order.decision == Decision.Buy)
         {
             orderDirection = 1;
+            if(numberOfStocks < order.quantity) {
+                order.quantity = numberOfStocks;
+            }
         }
         else if (order.decision == Decision.Sell)
         {
             orderDirection = -1;
+            if(MaximumNUmberOfStocks-numberOfStocks < order.quantity) {
+                order.quantity = MaximumNUmberOfStocks-numberOfStocks;
+            }
         }
         else {
             orderDirection = 0;
@@ -105,12 +112,13 @@ public class Market {
         Float NewCash = -1 * orderDirection * order.quantity * currentPrice ;
         order.trader.updateCash(NewCash);
         Integer NewNumbersOfStocks = orderDirection * order.quantity;
-        order.trader.updateStocksOwned(NewNumbersOfStocks) ;
+        order.trader.updateStocksOwned(NewNumbersOfStocks);
         order.trader.pushToOwnedAssets();
         netOrders += orderDirection * order.quantity;
-        String className= order.trader.getClass().getName();
-        String [] classNameL = className.split("[.]");
-        String classNameOfTrader = classNameL[classNameL.length-1];
+        numberOfStocks += -1 * orderDirection * order.quantity;
+        String className = order.trader.getClass().getName();
+        String[] classNameL = className.split("[.]");
+        String classNameOfTrader = classNameL[classNameL.length - 1];
 
 
         if ("Fundamentalist".equals(classNameOfTrader)) {
@@ -132,7 +140,6 @@ public class Market {
 
             }
         }
-
     }
 
     public Integer getNumOfFundamentalists()
@@ -141,6 +148,9 @@ public class Market {
     public Integer getNumberOfChartistTrader(ChartistType type) {
         return numberOfChartistTraders.get(type);
     }
+
+    public int getMaximumNumberOfStocks()
+    {  return MaximumNUmberOfStocks;}
 
     public void pushTraderInList(Trader trader) {
         traders.add(trader);
@@ -158,13 +168,6 @@ public class Market {
         for (Float aDouble : stockPricesOverTime) {
             System.out.print(aDouble + " ");
         }
-    }
-
-    public Float getStockFundamentalValue() {
-        return stockFundamentalValue;
-    }
-    public LinkedList<Float> getStockFundamentalValueOverTime() {
-        return stockFundamentalValueOverTime;
     }
 
     public void setNetOrders(Integer netOrders) {
