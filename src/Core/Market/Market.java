@@ -7,13 +7,10 @@ import Core.Agents.Fundamentalists.Fundamentalist;
 import Core.Agents.Trader;
 import Core.Configurations.Order;
 import Core.Enums.Decision;
-import Core.Main;
 
 import java.util.LinkedList;
 import java.util.Random;
 
-import static java.lang.Math.PI;
-import static java.lang.Math.exp;
 
 public class Market {
     private final LinkedList<Float> stockPricesOverTime = new LinkedList<>();
@@ -21,16 +18,16 @@ public class Market {
     private Integer currentDay;
     private Float currentPrice = (float) 1000.0;
 
-    private final Integer tradingDays = 10;
+    private final Integer tradingDays = 240;
     private final Float noiseVariance = (float) 0.0058;
     private final Integer noiseMean = 0;
     private final Float liquidity = (float) 0.4308;
-    private final Integer numberOfTraders = 50; //15
-    private final Integer numberOfFundamentalists = 50; //10
-    private final Integer numberOfMAChartists = 30;
-    private final Integer numberOfTLChartists = 30;
-    private final Integer numberOfLSChartists = 30;
-    private final Integer MaximumNUmberOfStocks = 25 * numberOfTraders  ;
+    private final Integer numberOfTraders = 50;
+    private final Integer numberOfFundamentalists = 50;
+    private final Integer numberOfMAChartists = 0; // 30
+    private final Integer numberOfTLChartists = 0; // 30
+    private final Integer numberOfLSChartists = 0; // 30
+    private final Integer MaximumNUmberOfStocks = 30 * numberOfTraders;
     private Integer numberOfStocks ;
     private final LinkedList<Trader> traders = new LinkedList<>();
     public final LinkedList<Float> averageTotalCashForFundamentalists = new LinkedList<Float>();
