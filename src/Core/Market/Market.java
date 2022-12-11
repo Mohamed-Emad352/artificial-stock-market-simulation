@@ -1,9 +1,6 @@
 package Core.Market;
 
 import Core.Agents.Chartists.Chartists;
-import Core.Agents.Chartists.LongShort_Chartist;
-import Core.Agents.Chartists.MA_Chartist;
-import Core.Agents.Chartists.TimeLag_Chartist;
 import Core.Agents.Fundamentalists.Fundamentalist;
 import Core.Agents.Trader;
 import Core.Configurations.Order;
@@ -14,7 +11,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
 
-import static java.lang.Math.PI;
 import static java.lang.Math.exp;
 
 public class Market {
