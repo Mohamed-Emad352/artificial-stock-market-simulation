@@ -13,8 +13,6 @@ public class Fundamentalist extends Trader {
 
     public static int numOfBuyOrders = 0;
     public static int numOfSellOrders = 0;
-    public static int quantityOfBuyOrders = 0;
-    public static int quantityOfSellOrders = 0;
     private Float stockFundamentalValue = new Random().nextFloat(1020-980) + 980;
     private final double fundamentalValueVolatility = new Random().nextFloat((float) (0.01 - 0.001))+ 0.001;
 
@@ -22,15 +20,7 @@ public class Fundamentalist extends Trader {
     public Fundamentalist(Market market) {
         super(market);
     }
-    public Float getStockFundamentalValue(){
-        return this.stockFundamentalValue;
-    }
-    public double getFundamentalValueVolatility(){
-        return this.fundamentalValueVolatility;
-    }
-    public int getTimeStepForUpdatingFundamentalValue(){
-        return this.timeStepForUpdatingFundamentalValue;
-    }
+
     public void updateFundamentalValue(int currentDay) {
         if (currentDay % this.timeStepForUpdatingFundamentalValue  == 0) {
             Random r = new Random();

@@ -1,18 +1,20 @@
 package Core.Market;
 
-import Core.Agents.Chartists.LongShort_Chartist;
-import Core.Agents.Chartists.MA_Chartist;
-import Core.Agents.Chartists.TimeLag_Chartist;
+import Core.Agents.Chartists.Chartists;
 import Core.Agents.Fundamentalists.Fundamentalist;
 import Core.Agents.Trader;
 import Core.Configurations.Order;
+import Core.Enums.ChartistType;
 import Core.Enums.Decision;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
 
 
 public class Market {
+    private HashMap<ChartistType, Integer> numberOfChartistTraders = new HashMap<>();
+    public HashMap<ChartistType, HashMap<Decision, Integer>> numOfBuyAndSell = new HashMap<>();
     private final LinkedList<Float> stockPricesOverTime = new LinkedList<>();
     private Integer netOrders = 0;
     private Integer currentDay;
@@ -22,28 +24,31 @@ public class Market {
     private final Float noiseVariance = (float) 0.0058;
     private final Integer noiseMean = 0;
     private final Float liquidity = (float) 0.4308;
-    private final Integer numberOfTraders = 50;
-    private final Integer numberOfFundamentalists = 50;
-    private final Integer numberOfMAChartists = 0; // 30
-    private final Integer numberOfTLChartists = 0; // 30
-    private final Integer numberOfLSChartists = 0; // 30
+    private Integer numberOfStocks;
+    private final Integer numberOfTraders = 160;
     private final Integer MaximumNUmberOfStocks = 30 * numberOfTraders;
-    private Integer numberOfStocks ;
+    private final Integer numberOfFundamentalists = 70;
     private final LinkedList<Trader> traders = new LinkedList<>();
-    public final LinkedList<Float> averageTotalCashForFundamentalists = new LinkedList<Float>();
-    public final LinkedList<Float> averageTotalCashForLongShortChartist = new LinkedList<Float>();
-    public final LinkedList<Float> averageTotalCashForMAChartist = new LinkedList<Float>();
-    public final LinkedList<Float> averageTotalCashForTimeLagChartist = new LinkedList<Float>();
-    public final LinkedList<Float> totalProfitForFundamentalists = new LinkedList<Float>();
-    public final LinkedList<Float> totalProfitForLongShortChartist = new LinkedList<Float>();
-    public final LinkedList<Float> totalProfitForMAChartist = new LinkedList<Float>();
-    public final LinkedList<Float> totalProfitForTimeLagChartist = new LinkedList<Float>();
 
 
     public Market() {
+        for (ChartistType type : ChartistType.values()) {
+            numOfBuyAndSell.put(type, new HashMap<Decision, Integer>() {
+                {
+                    put(Decision.Sell, 0);
+                }
+            });
+            numOfBuyAndSell.get(type).put(Decision.Buy, 0);
+           }
+
+        numberOfChartistTraders.put(ChartistType.MovingAverage, 30);
+        numberOfChartistTraders.put(ChartistType.LongShort, 30);
+        numberOfChartistTraders.put(ChartistType.TimeLag, 30);
+        stockPricesOverTime.add(currentPrice);
         stockPricesOverTime.push(currentPrice);
-        numberOfStocks = MaximumNUmberOfStocks ;
+        numberOfStocks = MaximumNUmberOfStocks;
     }
+
 
     public void setCurrentDay(int day) {
         currentDay = day;
@@ -65,6 +70,7 @@ public class Market {
         return stockPricesOverTime;
     }
     public Integer getNumberOfStocks() { return numberOfStocks;}
+
     public void subtractInitialStocksOwned(LinkedList<Trader> traderList){
         for(int index=0 ; index<traderList.size() ; index++){
             numberOfStocks -= traderList.get(index).getStocksOwned();
@@ -85,21 +91,17 @@ public class Market {
 
     public void executeOrder(Order order){
         Integer orderDirection;
-        System.out.println("quantity = " + order.quantity);
         if (order.decision == Decision.Buy)
         {
             orderDirection = 1;
             if(numberOfStocks < order.quantity) {
                 order.quantity = numberOfStocks;
-                System.out.println("quantity buy = " + order.quantity);
-
             }
         }
         else if (order.decision == Decision.Sell)
         {
             orderDirection = -1;
             if(MaximumNUmberOfStocks-numberOfStocks < order.quantity) {
-                System.out.println("quantity sell = " + order.quantity);
                 order.quantity = MaximumNUmberOfStocks-numberOfStocks;
             }
         }
@@ -107,8 +109,7 @@ public class Market {
             orderDirection = 0;
         }
 
-
-        Float NewCash = -1 * orderDirection * order.quantity * currentPrice;
+        Float NewCash = -1 * orderDirection * order.quantity * currentPrice ;
         order.trader.updateCash(NewCash);
         Integer NewNumbersOfStocks = orderDirection * order.quantity;
         order.trader.updateStocksOwned(NewNumbersOfStocks);
@@ -119,62 +120,38 @@ public class Market {
         String[] classNameL = className.split("[.]");
         String classNameOfTrader = classNameL[classNameL.length - 1];
 
-        switch (classNameOfTrader) {
-            case "Fundamentalist":
-                if (orderDirection == 1) {
-                    Fundamentalist.numOfBuyOrders += 1;
-                    Fundamentalist.quantityOfBuyOrders += order.quantity;
-                } else if (orderDirection == -1) {
-                    Fundamentalist.numOfSellOrders += 1;
-                    Fundamentalist.quantityOfSellOrders += order.quantity;
-                }
-                break;
-            case "LongShort_Chartist":
-                if (orderDirection == 1) {
-                    LongShort_Chartist.numOfBuyOrders += 1;
-                    LongShort_Chartist.quantityOfBuyOrders += order.quantity;
-                } else if (orderDirection == -1) {
-                    LongShort_Chartist.numOfSellOrders += 1;
-                    LongShort_Chartist.quantityOfSellOrders += order.quantity;
-                }
-                break;
-            case "MA_Chartist":
-                if (orderDirection == 1) {
-                    MA_Chartist.numOfBuyOrders += 1;
-                    MA_Chartist.quantityOfBuyOrders += order.quantity;
-                } else if (orderDirection == -1) {
-                    MA_Chartist.numOfSellOrders += 1;
-                    MA_Chartist.quantityOfSellOrders += order.quantity;
-                }
-                break;
-            default:
-                if (orderDirection == 1) {
-                    TimeLag_Chartist.numOfBuyOrders += 1;
-                    TimeLag_Chartist.quantityOfBuyOrders += order.quantity;
-                } else if (orderDirection == -1) {
-                    TimeLag_Chartist.numOfSellOrders += 1;
-                    TimeLag_Chartist.quantityOfSellOrders += order.quantity;
-                }
-                break;
-        }
-        System.out.println("order direction = " + orderDirection);
-        System.out.println("order quantity = " + order.quantity);
 
+        if ("Fundamentalist".equals(classNameOfTrader)) {
+            if (orderDirection == 1) {
+                Fundamentalist.numOfBuyOrders += 1;
+            } else if (orderDirection == -1) {
+                Fundamentalist.numOfSellOrders += 1;
+            }
+
+        }
+        else {
+            Integer Value = numOfBuyAndSell.get(((Chartists)(order.trader)).type).get(Decision.Buy);
+            if (orderDirection == 1) {
+                numOfBuyAndSell.get(((Chartists) (order.trader)).type).put(Decision.Buy, Value + 1);
+            }
+            else if (orderDirection == -1)
+            {
+                numOfBuyAndSell.get(((Chartists) (order.trader)).type).put(Decision.Sell, Value + 1);
+
+            }
+        }
     }
 
     public Integer getNumOfFundamentalists()
     { return numberOfFundamentalists;}
 
-    public Integer getNumOfMAChartists()
-    { return numberOfMAChartists;}
-
-    public Integer getNumOfTLChartists()
-    { return numberOfTLChartists;}
-    public Integer getNumOfLSChartists()
-    { return numberOfLSChartists;}
+    public Integer getNumberOfChartistTrader(ChartistType type) {
+        return numberOfChartistTraders.get(type);
+    }
 
     public int getMaximumNumberOfStocks()
     {  return MaximumNUmberOfStocks;}
+
     public void pushTraderInList(Trader trader) {
         traders.add(trader);
     }
@@ -192,6 +169,7 @@ public class Market {
             System.out.print(aDouble + " ");
         }
     }
+
     public void setNetOrders(Integer netOrders) {
         this.netOrders = netOrders;
     }
