@@ -33,18 +33,22 @@ public class Market {
 
 
     public Market() {
-        HashMap<Decision, Integer> buySellDefault = new HashMap<>();
-        buySellDefault.put(Decision.Buy, 0);
-        buySellDefault.put(Decision.Sell, 0);
-        for (ChartistType chartistType: ChartistType.values()) {
-            numOfBuyAndSell.put(chartistType, buySellDefault);
-        }
+        for (ChartistType type : ChartistType.values()) {
+            numOfBuyAndSell.put(type, new HashMap<Decision, Integer>() {
+                {
+                    put(Decision.Sell, 0);
+                }
+            });
+            numOfBuyAndSell.get(type).put(Decision.Buy, 0);
+           }
+
         numberOfChartistTraders.put(ChartistType.MovingAverage, 30);
         numberOfChartistTraders.put(ChartistType.LongShort, 30);
         numberOfChartistTraders.put(ChartistType.TimeLag, 30);
         stockPricesOverTime.add(currentPrice);
         stockFundamentalValueOverTime.add(stockFundamentalValue);
     }
+
 
     public void updateFundamentalValue() {
         Random r = new Random();
@@ -115,19 +119,21 @@ public class Market {
             } else if (orderDirection == -1) {
                 Fundamentalist.numOfSellOrders += 1;
             }
-        } else {
-            HashMap<Decision, Integer> numOfBuyAndSellForTrader =
-                    numOfBuyAndSell.get(((Chartists)(order.trader)).type);
+
+        }
+        else {
+            Integer Value = numOfBuyAndSell.get(((Chartists)(order.trader)).type).get(Decision.Buy);
             if (orderDirection == 1) {
-                numOfBuyAndSellForTrader.put(Decision.Buy,
-                        numOfBuyAndSellForTrader.get(Decision.Buy) + 1);
-            } else if (orderDirection == -1) {
-                numOfBuyAndSellForTrader.put(Decision.Sell,
-                        numOfBuyAndSellForTrader.get(Decision.Sell) + 1);
+                numOfBuyAndSell.get(((Chartists) (order.trader)).type).put(Decision.Buy, Value + 1);
+            }
+            else if (orderDirection == -1)
+            {
+                numOfBuyAndSell.get(((Chartists) (order.trader)).type).put(Decision.Sell, Value + 1);
+
             }
         }
-    }
 
+    }
 
     public Integer getNumOfFundamentalists()
     { return numberOfFundamentalists;}
