@@ -26,9 +26,10 @@ public class Market {
     private final Float liquidity = (float) 0.4308;
     private Integer numberOfStocks;
     private final Integer numberOfTraders = 160;
-    private final Integer MaximumNUmberOfStocks = 30 * numberOfTraders;
-    private final Integer numberOfFundamentalists = 70;
+    private final Integer MaximumNumberOfStocks = 35 * numberOfTraders;
+    private final Integer numberOfFundamentalists = 160;
     private final LinkedList<Trader> traders = new LinkedList<>();
+    private Float budget = 20000f;
 
 
     public Market() {
@@ -41,12 +42,12 @@ public class Market {
             numOfBuyAndSell.get(type).put(Decision.Buy, 0);
            }
 
-        numberOfChartistTraders.put(ChartistType.MovingAverage, 30);
-        numberOfChartistTraders.put(ChartistType.LongShort, 30);
-        numberOfChartistTraders.put(ChartistType.TimeLag, 30);
+        numberOfChartistTraders.put(ChartistType.MovingAverage, 0);
+        numberOfChartistTraders.put(ChartistType.LongShort, 0);
+        numberOfChartistTraders.put(ChartistType.TimeLag, 0);
         stockPricesOverTime.add(currentPrice);
         stockPricesOverTime.push(currentPrice);
-        numberOfStocks = MaximumNUmberOfStocks;
+        numberOfStocks = MaximumNumberOfStocks;
     }
 
 
@@ -88,7 +89,6 @@ public class Market {
     public void pushNewPriceToStockPrices(float price) {
         stockPricesOverTime.add(price);
     }
-
     public void executeOrder(Order order){
         Integer orderDirection;
         if (order.decision == Decision.Buy)
@@ -101,15 +101,22 @@ public class Market {
         else if (order.decision == Decision.Sell)
         {
             orderDirection = -1;
-            if(MaximumNUmberOfStocks-numberOfStocks < order.quantity) {
-                order.quantity = MaximumNUmberOfStocks-numberOfStocks;
+            if(MaximumNumberOfStocks-numberOfStocks < order.quantity) {
+                order.quantity = MaximumNumberOfStocks-numberOfStocks;
             }
         }
         else {
             orderDirection = 0;
         }
 
-        Float NewCash = -1 * orderDirection * order.quantity * currentPrice ;
+        Float NewCash = -1 * orderDirection * order.quantity * currentPrice;
+        if (orderDirection == -1 && this.budget < NewCash) {
+            order.quantity = (int)Math.floor(this.budget / this.getCurrentPrice());
+            NewCash = -1 * orderDirection * order.quantity * currentPrice;
+        }
+        if (order.quantity == 0) {
+            orderDirection = 0;
+        }
         order.trader.updateCash(NewCash);
         Integer NewNumbersOfStocks = orderDirection * order.quantity;
         order.trader.updateStocksOwned(NewNumbersOfStocks);
@@ -119,7 +126,13 @@ public class Market {
         String className = order.trader.getClass().getName();
         String[] classNameL = className.split("[.]");
         String classNameOfTrader = classNameL[classNameL.length - 1];
-
+        this.budget += -NewCash;
+        System.out.println("Price: " + getCurrentPrice());
+        System.out.println("Quantity: "+ order.quantity);
+        System.out.println("Direction: "+ orderDirection);
+        System.out.println("Budget: " + this.budget);
+        System.out.println("Market Stocks: " + this.numberOfStocks);
+        System.out.println("Max Market Stocks: " + this.MaximumNumberOfStocks + "\n");
 
         if ("Fundamentalist".equals(classNameOfTrader)) {
             if (orderDirection == 1) {
@@ -137,7 +150,6 @@ public class Market {
             else if (orderDirection == -1)
             {
                 numOfBuyAndSell.get(((Chartists) (order.trader)).type).put(Decision.Sell, Value + 1);
-
             }
         }
     }
@@ -148,9 +160,6 @@ public class Market {
     public Integer getNumberOfChartistTrader(ChartistType type) {
         return numberOfChartistTraders.get(type);
     }
-
-    public int getMaximumNumberOfStocks()
-    {  return MaximumNUmberOfStocks;}
 
     public void pushTraderInList(Trader trader) {
         traders.add(trader);
@@ -164,17 +173,7 @@ public class Market {
         return stockPricesOverTime.get(index);
     }
 
-    public void printAllPrices(){
-        for (Float aDouble : stockPricesOverTime) {
-            System.out.print(aDouble + " ");
-        }
-    }
-
     public void setNetOrders(Integer netOrders) {
         this.netOrders = netOrders;
     }
-    public Integer getNetOrders() {
-        return netOrders;
-    }
-
 }

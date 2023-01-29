@@ -31,14 +31,6 @@ public class Main extends Application {
             market.pushTraderInList(fundamentalTrader);
         }
 
-        for (ChartistType chartistType: ChartistType.values()) {
-            for (int i = 0; i < market.getNumberOfChartistTrader(chartistType); i++) {
-                Chartists chartist = new Chartists(market, chartistType);
-                market.pushTraderInList(chartist);
-            }
-        }
-
-
         LinkedList<Float> fundamentalistsDailyCash = new LinkedList<Float>();
         HashMap<ChartistType, LinkedList<Float>> chartistsDailyCash = new HashMap<>();
 
@@ -56,6 +48,7 @@ public class Main extends Application {
 
         for (int day = 1; day <= market.getTradingDays(); day++) {
             market.setCurrentDay(day);
+            LinkedList<Float> pricesDuringDay = new LinkedList<>();
             for (Trader trader: market.getTraders())
             {
                 trader.requestOrder();
@@ -70,6 +63,8 @@ public class Main extends Application {
                 else {
                     chartistsDailyCash.get(((Chartists)trader).type).add(trader.getTotalMoney());
                 }
+                pricesDuringDay.add(market.getCurrentPrice());
+                market.updatePrice();
             }
 
             averageTotalCashForFundamentalists.add(getAverageOfLinkedList(fundamentalistsDailyCash));
@@ -81,10 +76,13 @@ public class Main extends Application {
                 chartistsDailyCash.put(type, new LinkedList<>());
             }
 
-            market.updatePrice();
-            market.pushNewPriceToStockPrices(market.getCurrentPrice());
+            Float pricesSum = 0f;
+            for (int i = 0; i < pricesDuringDay.size(); i++) {
+                pricesSum += pricesDuringDay.get(i);
+            }
+            Float averagePrice = pricesSum / pricesDuringDay.size();
+            market.pushNewPriceToStockPrices(averagePrice);
             market.setNetOrders(0);
-
         }
 
         System.out.println("Fund Buy orders = " + Fundamentalist.numOfBuyOrders);

@@ -16,7 +16,7 @@ public class Fundamentalist extends Trader {
     private Float stockFundamentalValue = new Random().nextFloat(1020-980) + 980;
     private final double fundamentalValueVolatility = new Random().nextFloat((float) (0.01 - 0.001))+ 0.001;
 
-    private final int timeStepForUpdatingFundamentalValue = new Random().nextInt( (5 - 1 + 1 )) + 1;
+    private final int timeStepForUpdatingFundamentalValue = new Random().nextInt((5 - 1 + 1 )) + 1;
     public Fundamentalist(Market market) {
         super(market);
     }
