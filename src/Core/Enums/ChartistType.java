@@ -1,7 +1,30 @@
 package Core.Enums;
 
 public enum ChartistType {
-    MovingAverage,
+    SimpleMovingAverage,
+    ExpMovingAverage,
+    DoubleExpMovingAverage,
+    TripleExpMovingAverage,
+    KAMA,
+    MACD,
+    RAVI,
+    ROC,
+    WMA,
+    ZLEMA,
+    DMI,
+    ADMI,
+    HMA,
+    CoppCurve,
+    RSI,
+    WilliamR,
+    AD,
+    Chaikin,
+    VWAP,
+    MVWAP,
+    NVI,
+    PVI,
+    PPO,
+    StochasticOscillatorK,
     TimeLag,
     LongShort
 }

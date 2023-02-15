@@ -2,11 +2,13 @@ package Core.Market;
 
 import Core.Agents.Chartists.Chartists;
 import Core.Agents.Fundamentalists.Fundamentalist;
+import Core.Main;
 import Core.Agents.Trader;
 import Core.Configurations.Order;
 import Core.Enums.ChartistType;
 import Core.Enums.Decision;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
@@ -14,24 +16,43 @@ import java.util.Random;
 
 public class Market {
     private HashMap<ChartistType, Integer> numberOfChartistTraders = new HashMap<>();
-    public HashMap<ChartistType, HashMap<Decision, Integer>> numOfBuyAndSell = new HashMap<>();
-    private final LinkedList<Float> stockPricesOverTime = new LinkedList<>();
-    private Integer netOrders = 0;
-    private Integer currentDay;
-    private Float currentPrice = (float) 1000.0;
+    public static HashMap<ChartistType, HashMap<Decision, Integer>> numOfBuyAndSell = new HashMap<>();
+    private final static LinkedList<Float> stockPricesOverTime = new LinkedList<>();
+    private static Integer netOrders = 0;
+    public static Integer currentOrderQuantity = 0;
+
+    private static Integer currentDay;
+    private static Float currentPrice = (float) 1000.0;
 
     private final Integer tradingDays = 240;
     private final Float noiseVariance = (float) 0.0058;
     private final Integer noiseMean = 0;
     private final Float liquidity = (float) 0.4308;
-    private Integer numberOfStocks;
-    private final Integer numberOfTraders = 160;
-    private final Integer MaximumNUmberOfStocks = 30 * numberOfTraders;
+    private static Integer numberOfStocks;
+    private final static Integer numberOfTraders = 160;
+    private final static Integer MaximumNUmberOfStocks = 30 * numberOfTraders;
     private final Integer numberOfFundamentalists = 70;
     private final LinkedList<Trader> traders = new LinkedList<>();
 
+    public static ArrayList<Float> closePrices;
+    public static ArrayList<Float> openPrices;
+    public static ArrayList<Float> highPrices;
+    public static ArrayList<Float> lowPrices;
+    public static ArrayList<Float> tradeVolume; // Should be Long if volumes are high
+    public static ArrayList<Integer> priceChangesPerDay;
+
+
 
     public Market() {
+
+        closePrices = new ArrayList<Float>();
+        openPrices = new ArrayList<Float>();
+        highPrices = new ArrayList<Float>();
+        lowPrices = new ArrayList<Float>();
+        tradeVolume = new ArrayList<Float>();
+        priceChangesPerDay = new ArrayList<Integer>();
+
+
         for (ChartistType type : ChartistType.values()) {
             numOfBuyAndSell.put(type, new HashMap<Decision, Integer>() {
                 {
@@ -39,9 +60,9 @@ public class Market {
                 }
             });
             numOfBuyAndSell.get(type).put(Decision.Buy, 0);
-           }
+        }
 
-        numberOfChartistTraders.put(ChartistType.MovingAverage, 30);
+        numberOfChartistTraders.put(ChartistType.SimpleMovingAverage, 30);
         numberOfChartistTraders.put(ChartistType.LongShort, 30);
         numberOfChartistTraders.put(ChartistType.TimeLag, 30);
         stockPricesOverTime.add(currentPrice);
@@ -54,12 +75,12 @@ public class Market {
         currentDay = day;
     }
 
-    public Integer getCurrentDay() {
+    public static Integer getCurrentDay() {
         return currentDay;
     }
 
-    public Float getCurrentPrice() {
-        return this.currentPrice;
+    public static Float getCurrentPrice() {
+        return currentPrice;
     }
 
     public Integer getTradingDays() {
@@ -77,19 +98,25 @@ public class Market {
         }
     }
 
+    public void updatePriceAfterOrder()
+    {
+        currentPrice += (1 / liquidity) * currentOrderQuantity;
+    }
+
     public void updatePrice()
     {
-        Random r = new Random();
+        //Random r = new Random();
         float noiseStandardDeviation = (float) Math.sqrt(noiseVariance);
-        float noise = (float) (r.nextGaussian() * noiseStandardDeviation + noiseMean);
-        currentPrice += (1 / liquidity) * netOrders + noise;
+        float noise = (float) (Main.randGenr.nextGaussian() * noiseStandardDeviation + noiseMean);
+        //currentPrice += (1 / liquidity) * netOrders + noise;
+        currentPrice += noise;
     }
 
     public void pushNewPriceToStockPrices(float price) {
         stockPricesOverTime.add(price);
     }
 
-    public void executeOrder(Order order){
+    public static void executeOrder(Order order){
         Integer orderDirection;
         if (order.decision == Decision.Buy)
         {
@@ -111,8 +138,9 @@ public class Market {
 
         Float NewCash = -1 * orderDirection * order.quantity * currentPrice ;
         order.trader.updateCash(NewCash);
-        Integer NewNumbersOfStocks = orderDirection * order.quantity;
-        order.trader.updateStocksOwned(NewNumbersOfStocks);
+        currentOrderQuantity = orderDirection * order.quantity;
+
+        order.trader.updateStocksOwned(currentOrderQuantity);
         order.trader.pushToOwnedAssets();
         netOrders += orderDirection * order.quantity;
         numberOfStocks += -1 * orderDirection * order.quantity;
@@ -160,7 +188,7 @@ public class Market {
         return traders;
     }
 
-    public Float getPriceFromList(int index) {
+    public static Float getPriceFromList(int index) {
         return stockPricesOverTime.get(index);
     }
 
