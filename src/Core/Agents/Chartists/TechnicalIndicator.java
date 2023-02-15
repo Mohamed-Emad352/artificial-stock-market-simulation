@@ -129,7 +129,6 @@ public class TechnicalIndicator {
      * <p>
      * @param timeFrame Number of data points considered before a specific time step.
      * @param timeSeries ArrayList holding the values for which SMA will be computed.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
     public float calculateSMAIndicator(int timeFrame, ArrayList<Float> timeSeries) {
@@ -138,8 +137,10 @@ public class TechnicalIndicator {
         int index = Market.getCurrentDay();
         int realTimeFrame;
 
-        for (int i = Math.max(0, index - timeFrame + 1); i <= index; i++) {
-            sum += timeSeries.get(i);
+        for (int i = Math.max(0, index - timeFrame + 1); i < index; i++) {
+            if (timeSeries.size() != 0) {
+                sum += timeSeries.get(i);
+            }
         }
 
         realTimeFrame = Math.min(timeFrame, index + 1);
@@ -154,7 +155,6 @@ public class TechnicalIndicator {
      * Using SMAIndicator
      * @param timeFrame Number of data points considered before a specific time step.
      * @param timeSeries ArrayList holding the values for which EMA will be computed.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
     public float calculateEMAIndicator(int timeFrame, ArrayList<Float> timeSeries) {
@@ -227,7 +227,6 @@ public class TechnicalIndicator {
      * @param highPrices ArrayList holding the security high prices.
      * @param lowPrices ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
     public float calculateADMIndicator(int timeFrame, ArrayList<Float> highPrices, ArrayList<Float> lowPrices, ArrayList<Float> closePrices) {
 
@@ -262,7 +261,6 @@ public class TechnicalIndicator {
      * @param highPrices ArrayList holding the security high prices.
      * @param lowPrices ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
     // @see http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:chandelier_exit
@@ -285,7 +283,6 @@ public class TechnicalIndicator {
      * @param highPrices ArrayList holding the security high prices.
      * @param lowPrices ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
     //@see http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:chandelier_exit
@@ -307,7 +304,6 @@ public class TechnicalIndicator {
      * @param longRoCTimeFrame the time frame for long term RoC
      * @param shortRoCTimeFrame the time frame for short term RoC
      * @param wmaTimeFrame: the time frame for WMA
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
 
@@ -348,7 +344,6 @@ public class TechnicalIndicator {
      * @param highPrices ArrayList holding the security high prices.
      * @param lowPrices ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
     public float calculateDMIndicator(int timeFrame, ArrayList<Float> highPrices, ArrayList<Float> lowPrices, ArrayList<Float> closePrices) {
 
@@ -368,7 +363,6 @@ public class TechnicalIndicator {
      * Using EMAIndicator
      * @param timeFrame Number of data points considered before a specific time step.
      * @param timeSeries ArrayList holding the values for which Double EMA will be computed.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
 
@@ -402,7 +396,6 @@ public class TechnicalIndicator {
      * Using WMAIndicator, DifferenceIndicator, MultiplierIndicator
      * @param timeFrame Number of data points considered before a specific time step.
      * @param closePrices ArrayList holding the security close prices.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
 
@@ -441,7 +434,6 @@ public class TechnicalIndicator {
      * @param timeFrameFast: Number of data points considered before a specific time step. (usually 2)
      * @param timeFrameSlow: Number of data points considered before a specific time step. (usually 30)
      * @param timeSeries ArrayList holding the values for which KAMA will be computed.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
     //http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:kaufman_s_adaptive_moving_average
@@ -505,7 +497,6 @@ public class TechnicalIndicator {
      * @param shortTimeFrame Number of data points considered before a specific time step. (short period)
      * @param longTimeFrame Number of data points considered before a specific time step. (long period)
      * @param timeSeries ArrayList holding the values for which MACD will be computed.
-     * @param forecastedValues ArrayList holding the forecasted values.
      *
      */
 
@@ -531,7 +522,6 @@ public class TechnicalIndicator {
      * @param shortSmaTimeFrame: Number of data points considered before a specific time step. (usually 7)
      * @param longSmaTimeFrame: Number of data points considered before a specific time step. (usually 65)
      * @param timeSeries  ArrayList holding the values for which RAVI will be computed.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
 
@@ -560,7 +550,6 @@ public class TechnicalIndicator {
      * Rate of change (ROCIndicator) indicator (Aka Momentum).
      * @param timeFrame Number of data points considered before a specific time step.
      * @param timeSeries ArrayList holding the values for which ROC will be computed.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
 
@@ -609,7 +598,6 @@ public class TechnicalIndicator {
      * Using AverageGainIndicator, AverageLossIndicator
      * @param timeFrame Number of data points considered before a specific time step.
      * @param closePrices ArrayList holding the security close prices.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
     public float calculateRSIIndicator(int timeFrame, ArrayList<Float> closePrices){
@@ -637,7 +625,6 @@ public class TechnicalIndicator {
      * Using EMA
      * @param timeFrame Number of data points considered before a specific time step.
      * @param timeSeries ArrayList holding the values for which TRIX will be computed.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
     public float calculateTripleEMAIndicator(int timeFrame, ArrayList<Float> timeSeries) {
@@ -676,7 +663,6 @@ public class TechnicalIndicator {
      * @param highPrices ArrayList holding the security high prices.
      * @param lowPrices ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
 
@@ -699,7 +685,6 @@ public class TechnicalIndicator {
      * WMA indicator.
      * @param timeFrame Number of data points considered before a specific time step.
      * @param timeSeries ArrayList holding the values for which WMA will be computed.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
     public float calculateWMAIndicator(int timeFrame, ArrayList<Float> timeSeries) {
@@ -770,7 +755,6 @@ public class TechnicalIndicator {
      * Using SMA
      * @param timeFrame Number of data points considered before a specific time step.
      * @param timeSeries ArrayList holding the values for which ZLEMA will be computed.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
     //@see http://www.fmlabs.com/reference/default.htm?url=ZeroLagExpMA.htm
@@ -812,7 +796,6 @@ public class TechnicalIndicator {
      * @param highPrices ArrayList holding the security high prices.
      * @param lowPrices ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
     //@see http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:mass_index
@@ -860,7 +843,6 @@ public class TechnicalIndicator {
      * Ulcer index indicator.
      * @param timeFrame Number of data points considered before a specific time step.
      * @param closePrices ArrayList holding the security close prices.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
     //@see http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:ulcer_index
@@ -908,8 +890,6 @@ public class TechnicalIndicator {
      * @param highPrices ArrayList holding the security high prices.
      * @param lowPrices ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
-     * @param tradeVolume ArrayList holding the security trading volumes.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
 
@@ -945,8 +925,6 @@ public class TechnicalIndicator {
      * @param highPrices ArrayList holding the security high prices.
      * @param lowPrices ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
-     * @param tradeVolume ArrayList holding the security trading volumes.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
 
@@ -987,8 +965,6 @@ public class TechnicalIndicator {
      * @param highPrices ArrayList holding the security high prices.
      * @param lowPrices ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
-     * @param tradeVolume ArrayList holding the security trading volumes.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
 
@@ -1056,8 +1032,6 @@ public class TechnicalIndicator {
      * @param highPrices ArrayList holding the security high prices.
      * @param lowPrices ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
-     * @param tradeVolume ArrayList holding the security trading volumes.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
 
@@ -1090,7 +1064,6 @@ public class TechnicalIndicator {
      * Negative Volume Index (NVI) indicator.
      * @param closePrices ArrayList holding the security close prices.
      * @param tradingVolume ArrayList holding the security trading volumes.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
     //@see http://www.investopedia.com/terms/n/nvi.asp
@@ -1128,7 +1101,6 @@ public class TechnicalIndicator {
      * On-balance volume indicator.
      * @param closePrices ArrayList holding the security close prices.
      * @param tradingVolume ArrayList holding the security trading volumes.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
 
@@ -1161,7 +1133,6 @@ public class TechnicalIndicator {
      * Positive Volume Index (PVI) indicator.
      * @param closePrices ArrayList holding the security close prices.
      * @param tradingVolume ArrayList holding the security trading volumes.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
     //@see http://www.metastock.com/Customer/Resources/TAAZ/Default.aspx?p=92
@@ -1199,7 +1170,6 @@ public class TechnicalIndicator {
      * @param shortTimeFrame Number of data points considered before a specific time step. (short period)
      * @param longTimeFrame Number of data points considered before a specific time step. (long period)
      * @param closePrices ArrayList holding the security close prices.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
     public float calculatePPOIndicator(int shortTimeFrame, int longTimeFrame, ArrayList<Float> closePrices) {
@@ -1227,7 +1197,6 @@ public class TechnicalIndicator {
      * @param timeFrame Number of data points considered before a specific time step.
      * @param lowPrices ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
     // Receives timeSeries and timeFrame and calculates the StochasticOscillatorKIndicator
@@ -1271,7 +1240,6 @@ public class TechnicalIndicator {
      * @param highPrices ArrayList holding the security high prices.
      * @param lowPrices ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
 
@@ -1322,7 +1290,6 @@ public class TechnicalIndicator {
      * @param highPrices ArrayList holding the security high prices.
      * @param lowPrices ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
 
@@ -1366,7 +1333,6 @@ public class TechnicalIndicator {
      * @param highPrices ArrayList holding the security high prices.
      * @param lowPrices ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
     public float calculateAverageTrueRangeIndicator(int timeFrame, ArrayList<Float> highPrices, ArrayList<Float> lowPrices, ArrayList<Float> closePrices) {
 
@@ -1396,7 +1362,6 @@ public class TechnicalIndicator {
      * Highest value in a given timeframe starting from an index.
      * @param timeFrame Number of data points considered before a specific time step.
      * @param timeSeries ArrayList holding the values for which higest value will be computed.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
     public float calculateHighestValue(int timeFrame, ArrayList<Float> timeSeries) {
@@ -1420,7 +1385,6 @@ public class TechnicalIndicator {
      * Lowest value in a given timeframe starting from an index.
      * @param timeFrame Number of data points considered before a specific time step.
      * @param timeSeries ArrayList holding the values for which lowest value will be computed.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
     public float calculateLowestValue(int timeFrame, ArrayList<Float> timeSeries) {
@@ -1445,7 +1409,6 @@ public class TechnicalIndicator {
      * Cumulated gains indicator.
      * @param timeFrame Number of data points considered before a specific time step.
      * @param timeSeries ArrayList holding the values for which cumulated gains will be computed.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
     public float calculateCumulatedGainsIndicator(int timeFrame, ArrayList<Float> timeSeries) {
 
@@ -1470,7 +1433,6 @@ public class TechnicalIndicator {
      * Average gain indicator.
      * @param timeFrame Number of data points considered before a specific time step.
      * @param timeSeries ArrayList holding the values for which average gains will be computed.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
     public float calculateAverageGainIndicator(int timeFrame, ArrayList<Float> timeSeries) {
 
@@ -1492,7 +1454,6 @@ public class TechnicalIndicator {
      * Cumulated losses indicator.
      * @param timeFrame Number of data points considered before a specific time step.
      * @param timeSeries ArrayList holding the values for which cumulated losses will be computed.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
     public float calculateCumulatedLossesIndicator(int timeFrame, ArrayList<Float> timeSeries) {
 
@@ -1515,7 +1476,6 @@ public class TechnicalIndicator {
      * Average loss indicator.
      * @param timeFrame Number of data points considered before a specific time step.
      * @param timeSeries ArrayList holding the values for which average losses will be computed.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
     public float calculateAverageLossIndicator(int timeFrame, ArrayList<Float> timeSeries) {
 
@@ -1533,7 +1493,6 @@ public class TechnicalIndicator {
      * Directional movement down indicator.
      * @param highPrices ArrayList holding the security high prices.
      * @param lowPrices ArrayList holding the security low prices.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
     public float calculateDirectionalMovementDownIndicator(ArrayList<Float> highPrices, ArrayList<Float> lowPrices) {
 
@@ -1568,7 +1527,6 @@ public class TechnicalIndicator {
      * @param timeFrame Number of data points considered before a specific time step.
      * @param highPrices ArrayList holding the security high prices.
      * @param lowPrices ArrayList holding the security low prices.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
     public float calculateAverageDirectionalMovementDownIndicator(int timeFrame, ArrayList<Float> highPrices, ArrayList<Float> lowPrices) {
 
@@ -1598,7 +1556,6 @@ public class TechnicalIndicator {
      * Directional movement up indicator.
      * @param highPrices ArrayList holding the security high prices.
      * @param lowPrices ArrayList holding the security low prices.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
     public float calculateDirectionalMovementUpIndicator(ArrayList<Float> highPrices, ArrayList<Float> lowPrices) {
 
@@ -1636,7 +1593,6 @@ public class TechnicalIndicator {
      * @param timeFrame Number of data points considered before a specific time step.
      * @param highPrices ArrayList holding the security high prices.
      * @param lowPrices ArrayList holding the security low prices.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
     public float calculateAverageDirectionalMovementUpIndicator(int timeFrame, ArrayList<Float> highPrices, ArrayList<Float> lowPrices) {
 
@@ -1668,7 +1624,6 @@ public class TechnicalIndicator {
      * @param closePrices ArrayList holding the security close prices.
      * @param highPrices ArrayList holding the security high prices.
      * @param lowPrices ArrayList holding the security low prices.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
     //@see http://www.investopedia.com/terms/c/close_location_value.asp
@@ -1688,7 +1643,6 @@ public class TechnicalIndicator {
      * @param highPrices ArrayList holding the security high prices.
      * @param lowPrices ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
     public float calculateDirectionalUpIndicator(int timeFrame, ArrayList<Float> highPrices, ArrayList<Float> lowPrices, ArrayList<Float> closePrices) {
 
@@ -1707,7 +1661,6 @@ public class TechnicalIndicator {
      * @param highPrices ArrayList holding the security high prices.
      * @param lowPrices ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
 
 
@@ -1728,7 +1681,6 @@ public class TechnicalIndicator {
      * VolumeIndicator
      * @param timeFrame Number of data points considered before a specific time step.
      * @param tradingVolume ArrayList holding the security trading volumes.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
     public float calculateVolumeIndicator(int timeFrame, ArrayList<Float> tradingVolume) {
 
@@ -1756,7 +1708,6 @@ public class TechnicalIndicator {
      * @param closePrices ArrayList holding the security close prices.
      * @param highPrices ArrayList holding the security high prices.
      * @param lowPrices ArrayList holding the security low prices.
-     * @param forecastedValues ArrayList holding the forecasted values.
      */
     public float calculateTypicalPriceIndicator (ArrayList<Float> closePrices, ArrayList<Float> highPrices, ArrayList<Float> lowPrices){
 
@@ -1772,7 +1723,6 @@ public class TechnicalIndicator {
 
     /**
      * Eliminate the hold signals.
-     * @param forecastedSignal ArrayList holding the forecasted buy/sell Signals
      */
     public void eliminateHoldSignal(ArrayList<Integer> forecastedSignal){
 
@@ -1798,8 +1748,6 @@ public class TechnicalIndicator {
 
     /**
      * Calculate the actual buy/sell signals.
-     * @param forecastedValues ArrayList holding the forecasted values.
-     * @param forecastedSignal ArrayList holding the forecasted buy/sell Signals
      */
     public void calculateActualSignal(ArrayList<Float> forecastedValues, ArrayList<Integer> forecastedSignal){
 
@@ -1833,14 +1781,15 @@ public class TechnicalIndicator {
     // Used for SMA, EMA
     /**
      * Calculate the the forecasted signals based on the forecasted values for several indicators such as SMA and EMA
-     * @param forecastedValues ArrayList holding the forecasted values
-     * @param forecastedSignal ArrayList holding the forecasted buy/sell Signals
      */
     public int calculateSignal(float forecastValue, ArrayList<Float> timeSeries){
 
         // 2 Hold
         // 1 Buy
         // 0 Sell
+        if (timeSeries.size() == 0) {
+            return 2;
+        }
 
         int index = timeSeries.size() - 1;
 
@@ -1848,9 +1797,7 @@ public class TechnicalIndicator {
             return 1;
         }
         else if (timeSeries.get(index) == forecastValue){ // Hold
-
             return 2;
-
         }
         else{ // Sell
             return 0;
@@ -1861,8 +1808,6 @@ public class TechnicalIndicator {
     // Used for MACD
     /**
      * Calculate the the forecasted signals based on the forecasted values for MACD
-     * @param forecastedValues ArrayList holding the forecasted values.
-     * @param forecastedSignal ArrayList holding the forecasted buy/sell Signals
      * @param timeSeries ArrayList holding the security close prices.
      */
     public int calculateMACDSignal(float forecastValue, ArrayList<Float> timeSeries){
@@ -1892,8 +1837,6 @@ public class TechnicalIndicator {
     // Used for ROC
     /**
      * Calculate the the forecasted signals based on the forecasted values for ROC
-     * @param forecastedValues ArrayList holding the forecasted values
-     * @param forecastedSignal ArrayList holding the forecasted buy/sell Signals
      */
     public int calculateROCSignal(float forecastValue){
 
@@ -1919,8 +1862,6 @@ public class TechnicalIndicator {
     // Used for RAVI
     /**
      * Calculate the the forecasted signals based on the forecasted values for RAVI
-     * @param forecastedValues ArrayList holding the forecasted values.
-     * @param forecastedSignal ArrayList holding the forecasted buy/sell Signals
      * @param thershold
      */
     public int calculateRAVISignal(float forecastValue, float thershold){
@@ -1947,8 +1888,6 @@ public class TechnicalIndicator {
     // Used for DMI
     /**
      * Calculate the the forecasted signals based on the forecasted values for DMI
-     * @param forecastedValues ArrayList holding the forecasted values
-     * @param forecastedSignal ArrayList holding the forecasted buy/sell Signals
      * @param thershold
      */
     public int calculateDMISignal(float forecastValue ,float thershold){
@@ -1977,7 +1916,6 @@ public class TechnicalIndicator {
      * Calculate the the forecasted signals based on the forecasted values for Chandelier
      * @param forecastedValuesLong ArrayList holding the forecasted values by long Chandelier.
      * @param forecastedValuesShort ArrayList holding the forecasted values by short Cahndelier.
-     * @param forecastedSignal ArrayList holding the forecasted buy/sell Signals
      * @param closePrices
      */
     public void calculateChandelierExitSignal(ArrayList<Float> forecastedValuesLong, ArrayList<Float> forecastedValuesShort, ArrayList<Integer> forecastedSignal, ArrayList<Float> closePrices ){
@@ -2008,8 +1946,6 @@ public class TechnicalIndicator {
     // Used for RSI
     /**
      * Calculate the the forecasted signals based on the forecasted values for RSI
-     * @param forecastedValues ArrayList holding the forecasted values.
-     * @param forecastedSignal ArrayList holding the forecasted buy/sell Signals
      * @param thershold1
      * @param thershold2
      */
@@ -2038,9 +1974,6 @@ public class TechnicalIndicator {
     // Used for VWAPS
     /**
      * Calculate the the forecasted signals based on the forecasted values for VWAPS
-     * @param forecastedValues ArrayList holding the forecasted values.
-     * @param closePrices ArrayList holding the security close prices.
-     * @param forecastedSignal ArrayList holding the forecasted buy/sell Signals
      */
     public int calculateVWAPSignal(float forecastValue, float compareToValue){
 

@@ -87,8 +87,7 @@ public class Chartists extends Trader {
         return value;
     }
 
-    public void getValueNew() {
-
+    public float getValueNew() {
         switch (type) {
             case SimpleMovingAverage -> forecastValue = TI.calculateSMAIndicator(10, Market.closePrices);
             case ExpMovingAverage -> forecastValue = TI.calculateEMAIndicator(10, Market.closePrices);
@@ -123,13 +122,12 @@ public class Chartists extends Trader {
             case StochasticOscillatorK ->
                     forecastValue = TI.calculateStochasticOscillatorKIndicator(10, Market.closePrices, Market.highPrices, Market.lowPrices);
         }
-
+        return forecastValue;
     }
 
-    public Decision decideBuyOrSellSignal() {
-
+    @Override()
+    public Decision decideBuyOrSell() {
         getValueNew();
-
         int d = 2;
         float temp;
 
@@ -150,25 +148,9 @@ public class Chartists extends Trader {
                 d = TI.calculateVWAPSignal(forecastValue, temp);
             }
         }
-
-
         if (d == 1) {
             return Decision.Buy;
         } else if (d == 0) {
-            return Decision.Sell;
-        } else {
-            return null;
-        }
-
-
-    }
-
-    @Override
-    public Decision decideBuyOrSell() {
-        Float value = getValue();
-        if (value > 0) {
-            return Decision.Buy;
-        } else if (value < 0) {
             return Decision.Sell;
         } else {
             return null;
@@ -177,6 +159,6 @@ public class Chartists extends Trader {
 
     @Override
     public Integer getDesiredOrderVolume() {
-        return (int) abs(ReactionCoefficient * getValue());
+        return (int) abs(ReactionCoefficient * getValueNew());
     }
 }

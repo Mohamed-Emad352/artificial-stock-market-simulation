@@ -11,7 +11,6 @@ import Core.Enums.Decision;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Random;
 
 
 public class Market {
@@ -24,14 +23,14 @@ public class Market {
     private static Integer currentDay;
     private static Float currentPrice = (float) 1000.0;
 
-    private final Integer tradingDays = 240;
+    private final Integer tradingDays = 5;
     private final Float noiseVariance = (float) 0.0058;
     private final Integer noiseMean = 0;
     private final Float liquidity = (float) 0.4308;
     private static Integer numberOfStocks;
     private final static Integer numberOfTraders = 160;
     private final static Integer MaximumNumberOfStocks = 30 * numberOfTraders;
-    private final Integer numberOfFundamentalists = 70;
+    private final Integer numberOfFundamentalists = 0;
     private final LinkedList<Trader> traders = new LinkedList<>();
     private static Float budget = 20000f;
 
@@ -63,9 +62,9 @@ public class Market {
             numOfBuyAndSell.get(type).put(Decision.Buy, 0);
         }
 
-        numberOfChartistTraders.put(ChartistType.SimpleMovingAverage, 30);
-        numberOfChartistTraders.put(ChartistType.LongShort, 30);
-        numberOfChartistTraders.put(ChartistType.TimeLag, 30);
+        numberOfChartistTraders.put(ChartistType.SimpleMovingAverage, 160);
+        numberOfChartistTraders.put(ChartistType.LongShort, 0);
+        numberOfChartistTraders.put(ChartistType.TimeLag, 0);
         stockPricesOverTime.add(currentPrice);
         stockPricesOverTime.push(currentPrice);
         numberOfStocks = MaximumNumberOfStocks;
@@ -145,9 +144,9 @@ public class Market {
         if (order.quantity == 0) {
             orderDirection = 0;
         }
+
         order.trader.updateCash(NewCash);
         currentOrderQuantity = orderDirection * order.quantity;
-
         order.trader.updateStocksOwned(currentOrderQuantity);
         order.trader.pushToOwnedAssets();
         netOrders += orderDirection * order.quantity;

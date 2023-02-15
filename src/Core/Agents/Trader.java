@@ -122,7 +122,7 @@ abstract public class Trader {
 
     public Float getTotalMoney()
     {
-        float valueOfStocks = this.stocksOwned * Market.getPriceFromList(Market.getCurrentDay()-1);
+        float valueOfStocks = this.stocksOwned * Market.getPriceFromList(Market.getCurrentDay());
         return this.currentCash + valueOfStocks;
     }
 
