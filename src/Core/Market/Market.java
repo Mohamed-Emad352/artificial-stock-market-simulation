@@ -23,7 +23,7 @@ public class Market {
     private static Integer currentDay;
     private static Float currentPrice = (float) 1000.0;
 
-    private final Integer tradingDays = 5;
+    private final Integer tradingDays = 240;
     private final Float noiseVariance = (float) 0.0058;
     private final Integer noiseMean = 0;
     private final Float liquidity = (float) 0.4308;

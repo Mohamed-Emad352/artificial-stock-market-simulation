@@ -137,16 +137,16 @@ public class TechnicalIndicator {
         int index = Market.getCurrentDay();
         int realTimeFrame;
 
-        for (int i = Math.max(0, index - timeFrame + 1); i < index; i++) {
-            if (timeSeries.size() != 0) {
-                sum += timeSeries.get(i);
-            }
+        if (timeSeries.size() == 0) {
+            return Market.getCurrentPrice();
         }
 
-        realTimeFrame = Math.min(timeFrame, index + 1);
+        for (int i = Math.max(0, index - timeFrame + 1); i < index; i++) {
+            sum += timeSeries.get(i);
+        }
 
+        realTimeFrame = Math.min(timeFrame, index);
         return (sum / realTimeFrame);
-
     }
 
 
@@ -1802,7 +1802,6 @@ public class TechnicalIndicator {
         else{ // Sell
             return 0;
         }
-
     }
 
     // Used for MACD

@@ -159,6 +159,6 @@ public class Chartists extends Trader {
 
     @Override
     public Integer getDesiredOrderVolume() {
-        return (int) abs(ReactionCoefficient * getValueNew());
+        return (int) abs(ReactionCoefficient * forecastValue);
     }
 }
