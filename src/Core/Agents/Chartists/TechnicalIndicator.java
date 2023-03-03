@@ -176,10 +176,8 @@ public class TechnicalIndicator {
             return emaPrev;
         }
         else{
-
-            emaPrev = timeSeries.get(index)-(emaPrev)*(multiplier)+(emaPrev);
+            emaPrev = (timeSeries.get(index)-(emaPrev))*(multiplier)+(emaPrev);
             return emaPrev;
-
         }
 
 

@@ -116,16 +116,12 @@ public class Main extends Application {
 
             for (Trader trader : market.getTraders()) {
                 trader.requestOrder();
-                String className = trader.getClass().getName();
-                String[] classNameL = className.split("[.]");
-                classNameOfTrader = classNameL[classNameL.length - 1];
 
                 if (Market.currentOrderQuantity != 0) {
                     priceChanges++;
 
                     market.updatePriceAfterOrder();
 
-                    market.pushNewPriceToStockPrices(Market.getCurrentPrice());
 
                     tradingVolume += Market.currentOrderQuantity;
 
@@ -136,10 +132,13 @@ public class Main extends Application {
                     if (Market.getCurrentPrice() > highestPrice) {
                         highestPrice = Market.getCurrentPrice();
                     }
-
                 }
+            }
 
-
+            for (Trader trader: market.getTraders()) {
+                String className = trader.getClass().getName();
+                String[] classNameL = className.split("[.]");
+                classNameOfTrader = classNameL[classNameL.length - 1];
                 if (classNameOfTrader.equals("Fundamentalist")) {
                     ((Fundamentalist) trader).updateFundamentalValue(Market.getCurrentDay());
                     fundamentalistsDailyCash.add(trader.getTotalMoney());

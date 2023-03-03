@@ -16,15 +16,12 @@ abstract public class Trader {
     private Integer stocksOwned = Main.randGenr.nextInt(11) + 20;
     private final LinkedList<Float> cashOwnedOverTime = new LinkedList<Float>();
     private final LinkedList<Integer> stocksOwnedOverTime = new LinkedList<Integer>();
-    private static Integer lastEvaluationTime = 0;
-    protected final Float ReactionCoefficient = (float) 1.0;
+    protected final Float ReactionCoefficient = (float) 0.8;
     protected final Float Aggressiveness = (float) 0.001;
-    //protected final Market market;
 
     public Trader() { // Market market
         this.initialCash = this.stocksOwned * Market.getCurrentPrice();
         this.currentCash = initialCash;
-        //this.market = market;
         this.Id = IdTracker;
         IdTracker++;
     }
@@ -105,19 +102,6 @@ abstract public class Trader {
             return 0;
         }
 
-    }
-
-    public Float evaluateProfit(Integer currentTime) {
-        return (this.currentCash -
-                this.cashOwnedOverTime.get(lastEvaluationTime))
-                +
-                ((this.stocksOwnedOverTime.get(currentTime) -
-                        this.stocksOwnedOverTime.get(lastEvaluationTime)) *
-                        Market.getCurrentPrice());
-    }
-
-    public static void setLastEvaluationTime(Integer time) {
-        lastEvaluationTime = time;
     }
 
     public Float getTotalMoney()
