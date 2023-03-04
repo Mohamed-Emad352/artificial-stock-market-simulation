@@ -8,12 +8,11 @@ import Core.Market.Market;
 
 /**
  * This class conatins 57 methods for:
- *
+ * <p>
  * - computing the actual buy/sell/hold signals based on historical data.
  * - computing the forecasted values by technical indicators.
  * - computing the buy/sell forecasted signals based on the forecasted values by the technical indicators.
  * - eliminate the hold signals.
- *
  */
 
 public class TechnicalIndicator {
@@ -127,7 +126,8 @@ public class TechnicalIndicator {
     /**
      * Simple moving average (SMA) indicator.
      * <p>
-     * @param timeFrame Number of data points considered before a specific time step.
+     *
+     * @param timeFrame  Number of data points considered before a specific time step.
      * @param timeSeries ArrayList holding the values for which SMA will be computed.
      */
 
@@ -153,7 +153,8 @@ public class TechnicalIndicator {
     /**
      * Exponential moving average indicator.
      * Using SMAIndicator
-     * @param timeFrame Number of data points considered before a specific time step.
+     *
+     * @param timeFrame  Number of data points considered before a specific time step.
      * @param timeSeries ArrayList holding the values for which EMA will be computed.
      */
 
@@ -168,17 +169,13 @@ public class TechnicalIndicator {
         if (index == 0) {
             // If the timeframe is bigger than the indicator's value count
             emaPrev = Market.getCurrentPrice();
-            return emaPrev;
-        }
-        else if (index + 1 < timeFrame) {
+        } else if (index + 1 < timeFrame) {
             // Starting point of the EMA
             emaPrev = sma;
-            return emaPrev;
+        } else {
+            emaPrev = (timeSeries.get(index - 1) - (emaPrev)) * (multiplier) + (emaPrev);
         }
-        else{
-            emaPrev = (timeSeries.get(index - 1)-(emaPrev))*(multiplier)+(emaPrev);
-            return emaPrev;
-        }
+        return emaPrev;
     }
 
     // Can be more efficient by computing for the timeFrame only not the whole series
@@ -186,22 +183,18 @@ public class TechnicalIndicator {
     public void calculateEMAIndicator(int timeFrame, ArrayList<Float> timeSeries, ArrayList<Float> forecastedValues) {
 
 
-        float multiplier = 2 / (timeFrame + 1);
+        float multiplier = 2f / (timeFrame + 1);
 
-        for (int index = 0; index < timeSeries.size(); index++){
+        for (int index = 0; index < timeSeries.size(); index++) {
 
-            if (index + 1 < timeFrame) {
-                // Starting point of the EMA
-                forecastedValues.add(calculateSMAIndicator(timeFrame, timeSeries));
-            }
-            else if (index == 0) {
+            if (index == 0) {
                 // If the timeframe is bigger than the indicator's value count
                 forecastedValues.add(timeSeries.get(0));
-            }
-            else{
-
-                forecastedValues.add(timeSeries.get(index)-(forecastedValues.get(index - 1))*(multiplier)+(forecastedValues.get(index - 1)));
-
+            } else if (index + 1 < timeFrame) {
+                // Starting point of the EMA
+                forecastedValues.add(calculateSMAIndicator(timeFrame, timeSeries));
+            } else {
+                forecastedValues.add((timeSeries.get(index) - (forecastedValues.get(index - 1))) * (multiplier) + (forecastedValues.get(index - 1)));
             }
         }
 
@@ -219,9 +212,10 @@ public class TechnicalIndicator {
      * Average directional movement indicator.
      * <p>
      * Using DirectionalMovementIndicator.
-     * @param timeFrame Number of data points considered before a specific time step.
-     * @param highPrices ArrayList holding the security high prices.
-     * @param lowPrices ArrayList holding the security low prices.
+     *
+     * @param timeFrame   Number of data points considered before a specific time step.
+     * @param highPrices  ArrayList holding the security high prices.
+     * @param lowPrices   ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
      */
     public float calculateADMIndicator(int timeFrame, ArrayList<Float> highPrices, ArrayList<Float> lowPrices, ArrayList<Float> closePrices) {
@@ -237,10 +231,9 @@ public class TechnicalIndicator {
 
             ADMPrevious = 1;
             return ADMPrevious;
-        }
-        else{
+        } else {
 
-            ADMPrevious = ADMPrevious*(nbPeriodsMinusOne)/(nbPeriods) + (dm/(nbPeriods));
+            ADMPrevious = ADMPrevious * (nbPeriodsMinusOne) / (nbPeriods) + (dm / (nbPeriods));
 
             return ADMPrevious;
 
@@ -252,60 +245,60 @@ public class TechnicalIndicator {
     /**
      * The Chandelier Exit (long) Indicator.
      * Using HighestValueIndicator, MaxPriceIndicator, AverageTrueRangeIndicator
-     * @param timeFrame Number of data points considered before a specific time step. (usually 22)
-     * @param k multiplier  (usually 3.0)
-     * @param highPrices ArrayList holding the security high prices.
-     * @param lowPrices ArrayList holding the security low prices.
+     *
+     * @param timeFrame   Number of data points considered before a specific time step. (usually 22)
+     * @param k           multiplier  (usually 3.0)
+     * @param highPrices  ArrayList holding the security high prices.
+     * @param lowPrices   ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
      */
 
     // @see http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:chandelier_exit
-
-    public float calculateChandelierExitLongIndicator( int timeFrame, float k, ArrayList<Float> highPrices, ArrayList<Float> lowPrices, ArrayList<Float> closePrices) {
+    public float calculateChandelierExitLongIndicator(int timeFrame, float k, ArrayList<Float> highPrices, ArrayList<Float> lowPrices, ArrayList<Float> closePrices) {
 
         float high = calculateHighestValue(timeFrame, highPrices);
 
         float atr = calculateAverageTrueRangeIndicator(timeFrame, highPrices, lowPrices, closePrices);
 
-        return (high-(atr*(k)));
+        return (high - (atr * (k)));
 
     }
 
     /**
      * The Chandelier Exit (short) Indicator.
      * Using LowestValueIndicator, MinPriceIndicator, AverageTrueRangeIndicator
-     * @param timeFrame Number of data points considered before a specific time step. (usually 22)
-     * @param k multiplier (usually 3.0)
-     * @param highPrices ArrayList holding the security high prices.
-     * @param lowPrices ArrayList holding the security low prices.
+     *
+     * @param timeFrame   Number of data points considered before a specific time step. (usually 22)
+     * @param k           multiplier (usually 3.0)
+     * @param highPrices  ArrayList holding the security high prices.
+     * @param lowPrices   ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
      */
 
     //@see http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:chandelier_exit
-
     public float calculateChandelierExitShortIndicator(int timeFrame, float k, ArrayList<Float> highPrices, ArrayList<Float> lowPrices, ArrayList<Float> closePrices) {
 
         float low = calculateLowestValue(timeFrame, lowPrices);
 
         float atr = calculateAverageTrueRangeIndicator(timeFrame, highPrices, lowPrices, closePrices);
 
-        return (low-(atr*(k)));
+        return (low - (atr * (k)));
 
     }
 
     /**
      * Coppock Curve indicator.
      * Using SumIndicator, ROCIndicator, WMAIndicator
-     * @param closePrices ArrayList holding the security close prices.
-     * @param longRoCTimeFrame the time frame for long term RoC
+     *
+     * @param closePrices       ArrayList holding the security close prices.
+     * @param longRoCTimeFrame  the time frame for long term RoC
      * @param shortRoCTimeFrame the time frame for short term RoC
-     * @param wmaTimeFrame: the time frame for WMA
+     * @param wmaTimeFrame:     the time frame for WMA
      */
 
 
     //@see http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:coppock_curve
-
-    public float calculateCoppockCurveIndicator(int shortRoCTimeFrame, int longRoCTimeFrame, int wmaTimeFrame, ArrayList<Float> closePrices){
+    public float calculateCoppockCurveIndicator(int shortRoCTimeFrame, int longRoCTimeFrame, int wmaTimeFrame, ArrayList<Float> closePrices) {
 
         ArrayList<Float> lRoc = new ArrayList<Float>();
         ArrayList<Float> sRoc = new ArrayList<Float>();
@@ -314,8 +307,8 @@ public class TechnicalIndicator {
         calculateROCIndicator(longRoCTimeFrame, closePrices, lRoc);
         calculateROCIndicator(shortRoCTimeFrame, closePrices, sRoc);
 
-        for (int i = 0; i < lRoc.size(); i++){
-            sum.add(lRoc.get(i)+(sRoc.get(i)));
+        for (int i = 0; i < lRoc.size(); i++) {
+            sum.add(lRoc.get(i) + (sRoc.get(i)));
         }
 
         ArrayList<Float> forecastedValues = new ArrayList<Float>();
@@ -336,9 +329,10 @@ public class TechnicalIndicator {
     /**
      * Directional movement indicator.
      * Using DirectionalUpIndicator, DirectionalDownIndicator
-     * @param timeFrame Number of history data points considered.
-     * @param highPrices ArrayList holding the security high prices.
-     * @param lowPrices ArrayList holding the security low prices.
+     *
+     * @param timeFrame   Number of history data points considered.
+     * @param highPrices  ArrayList holding the security high prices.
+     * @param lowPrices   ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
      */
     public float calculateDMIndicator(int timeFrame, ArrayList<Float> highPrices, ArrayList<Float> lowPrices, ArrayList<Float> closePrices) {
@@ -350,20 +344,20 @@ public class TechnicalIndicator {
 
         //forecastedValues.add(dup.get(index).minus(ddown.get(index)).abs().dividedBy(dup.get(index).plus(ddown.get(index))).multipliedBy(float.HUNDRED));
 
-        return ((dup-ddown)/(dup)+ddown)*(100);
+        return ((dup - ddown) / (dup) + ddown) * (100);
 
     }
 
     /**
      * Double exponential moving average indicator.
      * Using EMAIndicator
-     * @param timeFrame Number of data points considered before a specific time step.
+     *
+     * @param timeFrame  Number of data points considered before a specific time step.
      * @param timeSeries ArrayList holding the values for which Double EMA will be computed.
      */
 
 
     //@see https://en.wikipedia.org/wiki/Double_exponential_moving_average
-
     public float calculateDoubleEMAIndicator(int timeFrame, ArrayList<Float> timeSeries) {
 
         ArrayList<Float> emaValues = new ArrayList<Float>();
@@ -376,29 +370,32 @@ public class TechnicalIndicator {
 
         int index = Market.getCurrentDay();
 
-        float forecatValue = (emaValues.get(index)*(2)
-                -(emaEmaValues.get(index)));
+        float forecastValue;
+        if (index != 0) {
+            forecastValue = (emaValues.get(index-1) * (2)
+                    - (emaEmaValues.get(index-1)));
+        } else {
+            forecastValue = Market.getCurrentPrice();
+        }
 
         emaValues.clear();
 
         emaEmaValues.clear();
-
-        return forecatValue;
+        return forecastValue;
 
     }
 
     /**
      * Hull moving average (HMA) indicator.
      * Using WMAIndicator, DifferenceIndicator, MultiplierIndicator
-     * @param timeFrame Number of data points considered before a specific time step.
+     *
+     * @param timeFrame   Number of data points considered before a specific time step.
      * @param closePrices ArrayList holding the security close prices.
      */
 
 
-
     //@see http://alanhull.com/hull-moving-average
-
-    public float calculateHMAIndicator(int timeFrame, ArrayList<Float> closePrices){
+    public float calculateHMAIndicator(int timeFrame, ArrayList<Float> closePrices) {
 
         ArrayList<Float> halfWma = new ArrayList<Float>();
         ArrayList<Float> origWma = new ArrayList<Float>();
@@ -407,8 +404,8 @@ public class TechnicalIndicator {
         calculateWMAIndicator(timeFrame / 2, closePrices, halfWma);
         calculateWMAIndicator(timeFrame, closePrices, origWma);
 
-        for (int i = 0; i < halfWma.size(); i++){
-            indicatorForSqrtWma.add((halfWma.get(i)*(2))-(origWma.get(i)));
+        for (int i = 0; i < halfWma.size(); i++) {
+            indicatorForSqrtWma.add((halfWma.get(i) * (2)) - (origWma.get(i)));
         }
 
         ArrayList<Float> forecastedValues = new ArrayList<Float>();
@@ -426,14 +423,14 @@ public class TechnicalIndicator {
 
     /**
      * The Kaufman's Adaptive Moving Average (KAMA)  Indicator.
+     *
      * @param timeFrameEffectiveRatio: the time frame of the effective ratio (usually 10)
-     * @param timeFrameFast: Number of data points considered before a specific time step. (usually 2)
-     * @param timeFrameSlow: Number of data points considered before a specific time step. (usually 30)
-     * @param timeSeries ArrayList holding the values for which KAMA will be computed.
+     * @param timeFrameFast:           Number of data points considered before a specific time step. (usually 2)
+     * @param timeFrameSlow:           Number of data points considered before a specific time step. (usually 30)
+     * @param timeSeries               ArrayList holding the values for which KAMA will be computed.
      */
 
     //http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:kaufman_s_adaptive_moving_average
-
     public float calculateKAMAIndicator(int timeFrameEffectiveRatio, int timeFrameFast, int timeFrameSlow, ArrayList<Float> timeSeries) {
 
         float fastest = 2 / (timeFrameFast + 1);
@@ -448,8 +445,7 @@ public class TechnicalIndicator {
         if (index < timeFrameEffectiveRatio) {
 
             return currentPrice;
-        }
-        else{
+        } else {
 
             /*
              * Efficiency Ratio (ER)
@@ -459,10 +455,10 @@ public class TechnicalIndicator {
              * Volatility is the sum of the absolute value of the last ten price changes (Close - Prior Close).
              */
             int startChangeIndex = Math.max(0, index - timeFrameEffectiveRatio);
-            float change = Math.abs(currentPrice-timeSeries.get(startChangeIndex));
+            float change = Math.abs(currentPrice - timeSeries.get(startChangeIndex));
             float volatility = 0f;
             for (int i = startChangeIndex; i < index; i++) {
-                volatility = volatility+ Math.abs(timeSeries.get(i + 1)- timeSeries.get(i));
+                volatility = volatility + Math.abs(timeSeries.get(i + 1) - timeSeries.get(i));
             }
             float er = change / volatility;
             /*
@@ -470,19 +466,18 @@ public class TechnicalIndicator {
              * SC = [ER x (fastest SC - slowest SC) + slowest SC]2
              * SC = [ER x (2/(2+1) - 2/(30+1)) + 2/(30+1)]2
              */
-            float sc = (float) Math.pow(er * (fastest - slowest)+slowest, 2);
+            float sc = (float) Math.pow(er * (fastest - slowest) + slowest, 2);
             /*
              * KAMA
              * Current KAMA = Prior KAMA + SC x (Price - Prior KAMA)
              */
 
 
-            priorKAMA = priorKAMA + (sc * (currentPrice-priorKAMA));
+            priorKAMA = priorKAMA + (sc * (currentPrice - priorKAMA));
 
             return priorKAMA;
 
         }
-
 
 
     }
@@ -490,10 +485,10 @@ public class TechnicalIndicator {
     /**
      * Moving average convergence divergence (MACDIndicator) indicator.
      * Using EMAIndicator
-     * @param shortTimeFrame Number of data points considered before a specific time step. (short period)
-     * @param longTimeFrame Number of data points considered before a specific time step. (long period)
-     * @param timeSeries ArrayList holding the values for which MACD will be computed.
      *
+     * @param shortTimeFrame Number of data points considered before a specific time step. (short period)
+     * @param longTimeFrame  Number of data points considered before a specific time step. (long period)
+     * @param timeSeries     ArrayList holding the values for which MACD will be computed.
      */
 
     public float calculateMACDIndicator(int shortTimeFrame, int longTimeFrame, ArrayList<Float> timeSeries) {
@@ -507,7 +502,7 @@ public class TechnicalIndicator {
 
         float longTermEma = calculateEMAIndicator(longTimeFrame, timeSeries);
 
-        return (shortTermEma-longTermEma);
+        return (shortTermEma - longTermEma);
 
     }
 
@@ -515,16 +510,15 @@ public class TechnicalIndicator {
     /**
      * Chande's Range Action Verification Index (RAVI) indicator.
      * Using SMAIndicator
+     *
      * @param shortSmaTimeFrame: Number of data points considered before a specific time step. (usually 7)
-     * @param longSmaTimeFrame: Number of data points considered before a specific time step. (usually 65)
-     * @param timeSeries  ArrayList holding the values for which RAVI will be computed.
+     * @param longSmaTimeFrame:  Number of data points considered before a specific time step. (usually 65)
+     * @param timeSeries         ArrayList holding the values for which RAVI will be computed.
      */
-
 
 
     //Uptrend Level � The level to draw the uptrend indicator line. The default value is 0.3.
     //Downtrend Level � The level to draw the downtrend indicator line. The default value is -0.3.
-
     public float calculateRAVIIndicator(int shortSmaTimeFrame, int longSmaTimeFrame, ArrayList<Float> timeSeries) {
 
 
@@ -544,7 +538,8 @@ public class TechnicalIndicator {
 
     /**
      * Rate of change (ROCIndicator) indicator (Aka Momentum).
-     * @param timeFrame Number of data points considered before a specific time step.
+     *
+     * @param timeFrame  Number of data points considered before a specific time step.
      * @param timeSeries ArrayList holding the values for which ROC will be computed.
      */
 
@@ -592,11 +587,12 @@ public class TechnicalIndicator {
     /**
      * Relative strength index indicator.
      * Using AverageGainIndicator, AverageLossIndicator
-     * @param timeFrame Number of data points considered before a specific time step.
+     *
+     * @param timeFrame   Number of data points considered before a specific time step.
      * @param closePrices ArrayList holding the security close prices.
      */
 
-    public float calculateRSIIndicator(int timeFrame, ArrayList<Float> closePrices){
+    public float calculateRSIIndicator(int timeFrame, ArrayList<Float> closePrices) {
 
         float averageGainIndicator = calculateAverageGainIndicator(timeFrame, closePrices);
         float averageLossIndicator = calculateAverageLossIndicator(timeFrame, closePrices);
@@ -607,19 +603,19 @@ public class TechnicalIndicator {
 
         if (index == 0) {
             relativeStrength = 0f;
-        }
-        else{
-            relativeStrength = averageGainIndicator/(averageLossIndicator);
+        } else {
+            relativeStrength = averageGainIndicator / (averageLossIndicator);
         }
 
-        return (100 - (100 / (1+relativeStrength)));
+        return (100 - (100 / (1 + relativeStrength)));
 
     }
 
     /**
      * Triple exponential moving average (TRIX) indicator.
      * Using EMA
-     * @param timeFrame Number of data points considered before a specific time step.
+     *
+     * @param timeFrame  Number of data points considered before a specific time step.
      * @param timeSeries ArrayList holding the values for which TRIX will be computed.
      */
 
@@ -640,7 +636,7 @@ public class TechnicalIndicator {
 
         int index = Market.getCurrentDay();
 
-        float forecatValue = (3 * (emaValues.get(index) - (emaEmaValues.get(index)))+ (emaEmaEmaValues.get(index)));
+        float forecatValue = (3 * (emaValues.get(index) - (emaEmaValues.get(index))) + (emaEmaEmaValues.get(index)));
 
         emaValues.clear();
 
@@ -655,15 +651,16 @@ public class TechnicalIndicator {
     /**
      * William's R indicator.
      * Using MaxPriceIndicator, MinPriceIndicator, ClosePriceIndicator, HighestValueIndicator, LowestValueIndicator
-     * @param timeFrame Number of data points considered before a specific time step.
-     * @param highPrices ArrayList holding the security high prices.
-     * @param lowPrices ArrayList holding the security low prices.
+     *
+     * @param timeFrame   Number of data points considered before a specific time step.
+     * @param highPrices  ArrayList holding the security high prices.
+     * @param lowPrices   ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
      */
 
 
     public float calculateWilliamsRIndicator(int timeFrame, ArrayList<Float> closePrices,
-                                             ArrayList<Float> highPrices, ArrayList<Float> lowPrices){
+                                             ArrayList<Float> highPrices, ArrayList<Float> lowPrices) {
 
 
         float highestHigh = calculateHighestValue(timeFrame, highPrices);
@@ -672,14 +669,15 @@ public class TechnicalIndicator {
 
         int index = Market.getCurrentDay();
 
-        return ( ((highestHigh-(closePrices.get(index)))
-                / (highestHigh-(lowestMin)))
-                * (-100) );
+        return (((highestHigh - (closePrices.get(index)))
+                / (highestHigh - (lowestMin)))
+                * (-100));
     }
 
     /**
      * WMA indicator.
-     * @param timeFrame Number of data points considered before a specific time step.
+     *
+     * @param timeFrame  Number of data points considered before a specific time step.
      * @param timeSeries ArrayList holding the values for which WMA will be computed.
      */
 
@@ -693,22 +691,20 @@ public class TechnicalIndicator {
 
         if (index == 0) {
             return (timeSeries.get(0));
-        }
-        else if(index - timeFrame < 0) {
+        } else if (index - timeFrame < 0) {
             value = 0f;
-            for(int i = index + 1; i > 0; i--) {
-                value = value+(i*(timeSeries.get(i-1)));
+            for (int i = index + 1; i > 0; i--) {
+                value = value + (i * (timeSeries.get(i - 1)));
             }
-            return (value/(((index + 1) * (index + 2) / 2)));
-        }
-        else{
+            return (value / (((index + 1) * (index + 2) / 2)));
+        } else {
             value = 0f;
             actualIndex = index;
-            for(int i = timeFrame; i > 0; i--) {
-                value = value+(i*(timeSeries.get(actualIndex)));
+            for (int i = timeFrame; i > 0; i--) {
+                value = value + (i * (timeSeries.get(actualIndex)));
                 actualIndex--;
             }
-            return (value/((timeFrame * (timeFrame + 1) / 2)));
+            return (value / ((timeFrame * (timeFrame + 1) / 2)));
         }
 
     }
@@ -724,22 +720,20 @@ public class TechnicalIndicator {
 
             if (index == 0) {
                 forecatsedValues.add(timeSeries.get(0));
-            }
-            else if(index - timeFrame < 0) {
+            } else if (index - timeFrame < 0) {
                 value = 0f;
-                for(int i = index + 1; i > 0; i--) {
-                    value = value+(i*(timeSeries.get(i-1)));
+                for (int i = index + 1; i > 0; i--) {
+                    value = value + (i * (timeSeries.get(i - 1)));
                 }
-                forecatsedValues.add(value/(((index + 1) * (index + 2) / 2)));
-            }
-            else{
+                forecatsedValues.add(value / (((index + 1) * (index + 2) / 2)));
+            } else {
                 value = 0f;
                 actualIndex = index;
-                for(int i = timeFrame; i > 0; i--) {
-                    value = value+(i*(timeSeries.get(actualIndex)));
+                for (int i = timeFrame; i > 0; i--) {
+                    value = value + (i * (timeSeries.get(actualIndex)));
                     actualIndex--;
                 }
-                forecatsedValues.add(value/((timeFrame * (timeFrame + 1) / 2)));
+                forecatsedValues.add(value / ((timeFrame * (timeFrame + 1) / 2)));
             }
 
         }
@@ -749,12 +743,12 @@ public class TechnicalIndicator {
     /**
      * Zero-lag exponential moving average (ZLEMA) indicator.
      * Using SMA
-     * @param timeFrame Number of data points considered before a specific time step.
+     *
+     * @param timeFrame  Number of data points considered before a specific time step.
      * @param timeSeries ArrayList holding the values for which ZLEMA will be computed.
      */
 
     //@see http://www.fmlabs.com/reference/default.htm?url=ZeroLagExpMA.htm
-
     public float calculateZLEMAIndicator(int timeFrame, ArrayList<Float> timeSeries) {
 
         float k = 2 / ((timeFrame + 1));
@@ -768,17 +762,14 @@ public class TechnicalIndicator {
         if (index + 1 < timeFrame) {
             // Starting point of the ZLEMA
             return sma;
-        }
-        else if (index == 0) {
+        } else if (index == 0) {
             // If the timeframe is bigger than the indicator's value count
             return (timeSeries.get(0));
-        }
-        else{
+        } else {
             float zlemaPrev = timeSeries.get(index - 1);
-            return (k*(2 * (timeSeries.get(index)) - (timeSeries.get(index-lag)))
+            return (k * (2 * (timeSeries.get(index)) - (timeSeries.get(index - lag)))
                     + (1 - (k) * (zlemaPrev)));
         }
-
 
 
     }
@@ -787,16 +778,16 @@ public class TechnicalIndicator {
 
     /**
      * Mass index indicator.
+     *
      * @param emaTimeFrame: the time frame for EMAs (usually 9)
-     * @param timeFrame Number of data points considered before a specific time step.
-     * @param highPrices ArrayList holding the security high prices.
-     * @param lowPrices ArrayList holding the security low prices.
-     * @param closePrices ArrayList holding the security close prices.
+     * @param timeFrame     Number of data points considered before a specific time step.
+     * @param highPrices    ArrayList holding the security high prices.
+     * @param lowPrices     ArrayList holding the security low prices.
+     * @param closePrices   ArrayList holding the security close prices.
      */
 
     //@see http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:mass_index
-
-    public float calculateMassIndexIndicator(int emaTimeFrame, int timeFrame, ArrayList<Float> highPrices, ArrayList<Float> lowPrices, ArrayList<Float> closePrices, ArrayList<Float> forecastedValues){
+    public float calculateMassIndexIndicator(int emaTimeFrame, int timeFrame, ArrayList<Float> highPrices, ArrayList<Float> lowPrices, ArrayList<Float> closePrices, ArrayList<Float> forecastedValues) {
 
         // Difference
         //ArrayList<Float> highLowDifferential = new ArrayList<Float>();
@@ -823,8 +814,8 @@ public class TechnicalIndicator {
         massIndex = 0f;
 
         for (int i = startIndex; i <= index; i++) {
-            emaRatio = singleEma.get(i)/(doubleEma.get(i));
-            massIndex = massIndex+(emaRatio);
+            emaRatio = singleEma.get(i) / (doubleEma.get(i));
+            massIndex = massIndex + (emaRatio);
         }
 
 
@@ -837,14 +828,14 @@ public class TechnicalIndicator {
 
     /**
      * Ulcer index indicator.
-     * @param timeFrame Number of data points considered before a specific time step.
+     *
+     * @param timeFrame   Number of data points considered before a specific time step.
      * @param closePrices ArrayList holding the security close prices.
      */
 
     //@see http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:ulcer_index
     //@see https://en.wikipedia.org/wiki/Ulcer_index
-
-    public float calculateUlcerIndexIndicator(int timeFrame, ArrayList<Float> closePrices){
+    public float calculateUlcerIndexIndicator(int timeFrame, ArrayList<Float> closePrices) {
 
 
         float highestValueInd = calculateHighestValue(timeFrame, closePrices);
@@ -860,13 +851,13 @@ public class TechnicalIndicator {
         for (int i = startIndex; i <= index; i++) {
             currentValue = closePrices.get(i);
             highestValue = highestValueInd;
-            percentageDrawdown = currentValue-(highestValue)/(highestValue)*(100);
+            percentageDrawdown = currentValue - (highestValue) / (highestValue) * (100);
             squaredAverage = (float) (squaredAverage + Math.pow(percentageDrawdown, 2));
 
         }
 
-        squaredAverage = squaredAverage/(numberOfObservations);
-        return ((float)Math.sqrt(squaredAverage));
+        squaredAverage = squaredAverage / (numberOfObservations);
+        return ((float) Math.sqrt(squaredAverage));
 
 
     }
@@ -883,8 +874,9 @@ public class TechnicalIndicator {
 
     /**
      * Accumulation-distribution indicator.
-     * @param highPrices ArrayList holding the security high prices.
-     * @param lowPrices ArrayList holding the security low prices.
+     *
+     * @param highPrices  ArrayList holding the security high prices.
+     * @param lowPrices   ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
      */
 
@@ -900,15 +892,14 @@ public class TechnicalIndicator {
         if (index == 0) {
             ADPrevious = 0f;
             return (0f);
-        }
-        else{
+        } else {
             // Calculating the money flow multiplier
             moneyFlowMultiplier = clvIndicator;
 
             // Calculating the money flow volume
             moneyFlowVolume = moneyFlowMultiplier * (tradeVolume.get(index));
 
-            ADPrevious = moneyFlowVolume+ADPrevious;
+            ADPrevious = moneyFlowVolume + ADPrevious;
 
             return ADPrevious;
         }
@@ -917,16 +908,16 @@ public class TechnicalIndicator {
 
     /**
      * Chaikin Money Flow (CMF) indicator.
-     * @param timeFrame Number of data points considered before a specific time step.
-     * @param highPrices ArrayList holding the security high prices.
-     * @param lowPrices ArrayList holding the security low prices.
+     *
+     * @param timeFrame   Number of data points considered before a specific time step.
+     * @param highPrices  ArrayList holding the security high prices.
+     * @param lowPrices   ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
      */
 
 
     //@see http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:chaikin_money_flow_cmf
     //@see http://www.fmlabs.com/reference/default.htm?url=ChaikinMoneyFlow.htm
-
     public float calculateChaikinMoneyFlowIndicator(int timeFrame, ArrayList<Float> highPrices, ArrayList<Float> lowPrices, ArrayList<Float> closePrices, ArrayList<Float> tradingVolume) {
 
         float clvIndicator = calculateCloseLocationValueIndicator(closePrices, highPrices, lowPrices);
@@ -943,13 +934,13 @@ public class TechnicalIndicator {
         startIndex = Math.max(0, index - timeFrame + 1);
         sumOfMoneyFlowVolume = 0f;
         for (int i = startIndex; i <= index; i++) {
-            temp = clvIndicator*(tradingVolume.get(i));
-            sumOfMoneyFlowVolume = sumOfMoneyFlowVolume+(temp);
+            temp = clvIndicator * (tradingVolume.get(i));
+            sumOfMoneyFlowVolume = sumOfMoneyFlowVolume + (temp);
         }
 
         sumOfVolume = volumeIndicator;
 
-        return ( sumOfMoneyFlowVolume/sumOfVolume);
+        return (sumOfMoneyFlowVolume / sumOfVolume);
 
 
     }
@@ -957,9 +948,10 @@ public class TechnicalIndicator {
 
     /**
      * The volume-weighted average price (VWAP) Indicator.
-     * @param timeFrame Number of data points considered before a specific time step.
-     * @param highPrices ArrayList holding the security high prices.
-     * @param lowPrices ArrayList holding the security low prices.
+     *
+     * @param timeFrame   Number of data points considered before a specific time step.
+     * @param highPrices  ArrayList holding the security high prices.
+     * @param lowPrices   ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
      */
 
@@ -967,7 +959,6 @@ public class TechnicalIndicator {
     //@see http://www.investopedia.com/articles/trading/11/trading-with-vwap-mvwap.asp
     //@see http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:vwap_intraday
     //@see https://en.wikipedia.org/wiki/Volume-weighted_average_price
-
     public float calculateVWAPIndicator(int timeFrame, ArrayList<Float> highPrices, ArrayList<Float> lowPrices, ArrayList<Float> closePrices, ArrayList<Float> tradingVolume) {
 
         float typicalPrice = calculateTypicalPriceIndicator(closePrices, highPrices, lowPrices);
@@ -981,16 +972,15 @@ public class TechnicalIndicator {
 
         if (index <= 0) {
             return (typicalPrice);
-        }
-        else{
+        } else {
             startIndex = Math.max(0, index - timeFrame + 1);
             cumulativeTPV = 0f;
             cumulativeVolume = 0f;
             for (int i = startIndex; i <= index; i++) {
-                cumulativeTPV = cumulativeTPV+(typicalPrice*(volumeIndicator));
-                cumulativeVolume = cumulativeVolume+volumeIndicator;
+                cumulativeTPV = cumulativeTPV + (typicalPrice * (volumeIndicator));
+                cumulativeVolume = cumulativeVolume + volumeIndicator;
             }
-            return (cumulativeTPV/cumulativeVolume);
+            return (cumulativeTPV / cumulativeVolume);
         }
 
     }
@@ -1007,16 +997,15 @@ public class TechnicalIndicator {
 
         if (index <= 0) {
             return (typicalPrice);
-        }
-        else{
+        } else {
             startIndex = Math.max(0, index - timeFrame + 1);
             cumulativeTPV = 0f;
             cumulativeVolume = 0f;
             for (int i = startIndex; i <= index; i++) {
-                cumulativeTPV = cumulativeTPV+(typicalPrice*(volumeIndicator));
-                cumulativeVolume = cumulativeVolume+volumeIndicator;
+                cumulativeTPV = cumulativeTPV + (typicalPrice * (volumeIndicator));
+                cumulativeVolume = cumulativeVolume + volumeIndicator;
             }
-            return (cumulativeTPV/cumulativeVolume);
+            return (cumulativeTPV / cumulativeVolume);
         }
 
     }
@@ -1024,26 +1013,26 @@ public class TechnicalIndicator {
 
     /**
      * The Moving volume weighted average price (MVWAP) Indicator.
-     * @param timeFrame Number of data points considered before a specific time step.
-     * @param highPrices ArrayList holding the security high prices.
-     * @param lowPrices ArrayList holding the security low prices.
+     *
+     * @param timeFrame   Number of data points considered before a specific time step.
+     * @param highPrices  ArrayList holding the security high prices.
+     * @param lowPrices   ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
      */
 
 
     // @see http://www.investopedia.com/articles/trading/11/trading-with-vwap-mvwap.asp
-
-    public float calculateMVWAPIndicator (int timeFrame, ArrayList<Float> highPrices, ArrayList<Float> lowPrices, ArrayList<Float> closePrices, ArrayList<Float> tradingVolume) {
+    public float calculateMVWAPIndicator(int timeFrame, ArrayList<Float> highPrices, ArrayList<Float> lowPrices, ArrayList<Float> closePrices, ArrayList<Float> tradingVolume) {
 
         ArrayList<Float> vwap = new ArrayList<Float>();
 
         int index = Market.getCurrentDay();
 
-        int realFrame = Math.min(0, index-timeFrame);
+        int realFrame = Math.min(0, index - timeFrame);
 
         for (int i = index; i >= realFrame; i--) {
 
-            vwap.add( calculateVWAPIndicator(timeFrame, highPrices, lowPrices, closePrices, tradingVolume, i));
+            vwap.add(calculateVWAPIndicator(timeFrame, highPrices, lowPrices, closePrices, tradingVolume, i));
 
         }
 
@@ -1052,20 +1041,19 @@ public class TechnicalIndicator {
         return calculateSMAIndicator(timeFrame, vwap);
 
 
-
     }
 
 
     /**
      * Negative Volume Index (NVI) indicator.
-     * @param closePrices ArrayList holding the security close prices.
+     *
+     * @param closePrices   ArrayList holding the security close prices.
      * @param tradingVolume ArrayList holding the security trading volumes.
      */
 
     //@see http://www.investopedia.com/terms/n/nvi.asp
     //@see http://www.metastock.com/Customer/Resources/TAAZ/Default.aspx?p=75
     //@see http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:negative_volume_inde
-
     public float calculateNVIIndicator(ArrayList<Float> closePrices, ArrayList<Float> tradingVolume) {
 
 
@@ -1075,16 +1063,14 @@ public class TechnicalIndicator {
 
             NVIPrevious = (float) 1000;
             return NVIPrevious;
-        }
-        else if (tradingVolume.get(index) < (tradingVolume.get(index-1))){
+        } else if (tradingVolume.get(index) < (tradingVolume.get(index - 1))) {
 
-            float priceChangeRatio = closePrices.get(index)-(closePrices.get(index-1))/(closePrices.get(index-1));
+            float priceChangeRatio = closePrices.get(index) - (closePrices.get(index - 1)) / (closePrices.get(index - 1));
 
-            NVIPrevious = NVIPrevious+(priceChangeRatio*(NVIPrevious));
+            NVIPrevious = NVIPrevious + (priceChangeRatio * (NVIPrevious));
 
             return NVIPrevious;
-        }
-        else{
+        } else {
 
             return NVIPrevious;
 
@@ -1095,7 +1081,8 @@ public class TechnicalIndicator {
 
     /**
      * On-balance volume indicator.
-     * @param closePrices ArrayList holding the security close prices.
+     *
+     * @param closePrices   ArrayList holding the security close prices.
      * @param tradingVolume ArrayList holding the security trading volumes.
      */
 
@@ -1108,16 +1095,13 @@ public class TechnicalIndicator {
 
             OBVPrevious = 0f;
             return OBVPrevious;
-        }
-        else if (closePrices.get(index-1)>(closePrices.get(index))) {
-            OBVPrevious = OBVPrevious-(tradingVolume.get(index));
+        } else if (closePrices.get(index - 1) > (closePrices.get(index))) {
+            OBVPrevious = OBVPrevious - (tradingVolume.get(index));
             return OBVPrevious;
-        }
-        else if (closePrices.get(index-1)<(closePrices.get(index))) {
-            OBVPrevious = OBVPrevious+(tradingVolume.get(index));
+        } else if (closePrices.get(index - 1) < (closePrices.get(index))) {
+            OBVPrevious = OBVPrevious + (tradingVolume.get(index));
             return OBVPrevious;
-        }
-        else{
+        } else {
             return OBVPrevious;
         }
 
@@ -1127,13 +1111,13 @@ public class TechnicalIndicator {
 
     /**
      * Positive Volume Index (PVI) indicator.
-     * @param closePrices ArrayList holding the security close prices.
+     *
+     * @param closePrices   ArrayList holding the security close prices.
      * @param tradingVolume ArrayList holding the security trading volumes.
      */
 
     //@see http://www.metastock.com/Customer/Resources/TAAZ/Default.aspx?p=92
     //@see http://www.investopedia.com/terms/p/pvi.asp
-
     public float calculatePVIIndicator(ArrayList<Float> closePrices, ArrayList<Float> tradingVolume) {
 
         int index = Market.getCurrentDay();
@@ -1141,16 +1125,14 @@ public class TechnicalIndicator {
         if (index == 0) {
             PVIPrevious = (float) 1000;
             return PVIPrevious;
-        }
-        else if (tradingVolume.get(index)>(tradingVolume.get(index-1))){
+        } else if (tradingVolume.get(index) > (tradingVolume.get(index - 1))) {
 
-            float priceChangeRatio = closePrices.get(index)-(closePrices.get(index-1))/(closePrices.get(index-1));
+            float priceChangeRatio = closePrices.get(index) - (closePrices.get(index - 1)) / (closePrices.get(index - 1));
 
-            PVIPrevious = PVIPrevious+(priceChangeRatio*PVIPrevious);
+            PVIPrevious = PVIPrevious + (priceChangeRatio * PVIPrevious);
 
             return PVIPrevious;
-        }
-        else{
+        } else {
             return PVIPrevious;
 
         }
@@ -1163,9 +1145,10 @@ public class TechnicalIndicator {
 
     /**
      * Percentage price oscillator (PPO) indicator.
+     *
      * @param shortTimeFrame Number of data points considered before a specific time step. (short period)
-     * @param longTimeFrame Number of data points considered before a specific time step. (long period)
-     * @param closePrices ArrayList holding the security close prices.
+     * @param longTimeFrame  Number of data points considered before a specific time step. (long period)
+     * @param closePrices    ArrayList holding the security close prices.
      */
 
     public float calculatePPOIndicator(int shortTimeFrame, int longTimeFrame, ArrayList<Float> closePrices) {
@@ -1175,23 +1158,23 @@ public class TechnicalIndicator {
         }
 
 
-
         float shortTermEma = calculateEMAIndicator(shortTimeFrame, closePrices);
 
         float longTermEma = calculateEMAIndicator(longTimeFrame, closePrices);
 
 
-        return (shortTermEma-(longTermEma)
-                /(longTermEma)
-                *(100));
+        return (shortTermEma - (longTermEma)
+                / (longTermEma)
+                * (100));
 
 
     }
 
     /**
      * Stochastic oscillator K.
-     * @param timeFrame Number of data points considered before a specific time step.
-     * @param lowPrices ArrayList holding the security low prices.
+     *
+     * @param timeFrame   Number of data points considered before a specific time step.
+     * @param lowPrices   ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
      */
 
@@ -1200,16 +1183,15 @@ public class TechnicalIndicator {
     // MinPriceIndicator and returns StochasticOsiclatorK over this indicator.
 
     // Needs revision, since highest and lowest must be computed as the timeFrame moves
-
-    public float calculateStochasticOscillatorKIndicator (int timeFrame, ArrayList<Float> closePrices, ArrayList<Float> highPrices, ArrayList<Float> lowPrices, int index) {
+    public float calculateStochasticOscillatorKIndicator(int timeFrame, ArrayList<Float> closePrices, ArrayList<Float> highPrices, ArrayList<Float> lowPrices, int index) {
 
         float highestHigh = calculateHighestValue(timeFrame, highPrices);
 
         float lowestMin = calculateLowestValue(timeFrame, lowPrices);
 
-        return ( closePrices.get(index)-(lowestMin)
-                /(highestHigh-(lowestMin))
-                *(100));
+        return (closePrices.get(index) - (lowestMin)
+                / (highestHigh - (lowestMin))
+                * (100));
 
 
     }
@@ -1222,41 +1204,41 @@ public class TechnicalIndicator {
 
         int index = Market.getCurrentDay();
 
-        return ( closePrices.get(index)-(lowestMin)
-                /(highestHigh-(lowestMin))
-                *(100));
+        return (closePrices.get(index) - (lowestMin)
+                / (highestHigh - (lowestMin))
+                * (100));
 
 
     }
 
     /**
      * Stochastic oscillator D.
-     * @param timeFrame1 Number of data points considered before a specific time step. (for stochastic oscillator)
-     * @param timeFrame2 Number of data points considered before a specific time step. (for SMA)
-     * @param highPrices ArrayList holding the security high prices.
-     * @param lowPrices ArrayList holding the security low prices.
+     *
+     * @param timeFrame1  Number of data points considered before a specific time step. (for stochastic oscillator)
+     * @param timeFrame2  Number of data points considered before a specific time step. (for SMA)
+     * @param highPrices  ArrayList holding the security high prices.
+     * @param lowPrices   ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
      */
 
 
-    public float calculateStochasticOscillatorDIndicator (int timeFrame1, int timeFrame2, ArrayList<Float> closePrices, ArrayList<Float> highPrices, ArrayList<Float> lowPrices) {
+    public float calculateStochasticOscillatorDIndicator(int timeFrame1, int timeFrame2, ArrayList<Float> closePrices, ArrayList<Float> highPrices, ArrayList<Float> lowPrices) {
 
         ArrayList<Float> kIndicator = new ArrayList<Float>();
 
         int index = Market.getCurrentDay();
 
-        int realFrame = Math.min(0, index-timeFrame1);
+        int realFrame = Math.min(0, index - timeFrame1);
 
         for (int i = index; i >= realFrame; i--) {
 
-            kIndicator.add(calculateStochasticOscillatorKIndicator (timeFrame1, closePrices, highPrices, lowPrices, i));
+            kIndicator.add(calculateStochasticOscillatorKIndicator(timeFrame1, closePrices, highPrices, lowPrices, i));
 
         }
 
         kIndicator.clear();
 
         return calculateSMAIndicator(timeFrame2, kIndicator);
-
 
 
     }
@@ -1283,8 +1265,9 @@ public class TechnicalIndicator {
 
     /**
      * True range indicator.
-     * @param highPrices ArrayList holding the security high prices.
-     * @param lowPrices ArrayList holding the security low prices.
+     *
+     * @param highPrices  ArrayList holding the security high prices.
+     * @param lowPrices   ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
      */
 
@@ -1296,12 +1279,11 @@ public class TechnicalIndicator {
         int index = Market.getCurrentDay();
 
 
-
         m = -10000000;
 
-        ts = highPrices.get(index)-(lowPrices.get(index));
-        ys = index == 0 ? 0f : highPrices.get(index)-(closePrices.get(index-1));
-        yst = index == 0 ? 0f : closePrices.get(index-1)-(lowPrices.get(index));
+        ts = highPrices.get(index) - (lowPrices.get(index));
+        ys = index == 0 ? 0f : highPrices.get(index) - (closePrices.get(index - 1));
+        yst = index == 0 ? 0f : closePrices.get(index - 1) - (lowPrices.get(index));
 
 
         if (m < Math.abs(ts)) {
@@ -1319,15 +1301,14 @@ public class TechnicalIndicator {
         return (m);
 
 
-
-
     }
 
     /**
      * Average true range indicator.
-     * @param timeFrame Number of data points considered before a specific time step.
-     * @param highPrices ArrayList holding the security high prices.
-     * @param lowPrices ArrayList holding the security low prices.
+     *
+     * @param timeFrame   Number of data points considered before a specific time step.
+     * @param highPrices  ArrayList holding the security high prices.
+     * @param lowPrices   ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
      */
     public float calculateAverageTrueRangeIndicator(int timeFrame, ArrayList<Float> highPrices, ArrayList<Float> lowPrices, ArrayList<Float> closePrices) {
@@ -1342,10 +1323,9 @@ public class TechnicalIndicator {
         if (index == 0) {
             TRIPrevious = 1;
             return TRIPrevious;
-        }
-        else{
+        } else {
 
-            TRIPrevious = (TRIPrevious*(nbPeriodsMinusOne)+(TRI)/(nbPeriods));
+            TRIPrevious = (TRIPrevious * (nbPeriodsMinusOne) + (TRI) / (nbPeriods));
 
             return TRIPrevious;
         }
@@ -1356,7 +1336,8 @@ public class TechnicalIndicator {
 
     /**
      * Highest value in a given timeframe starting from an index.
-     * @param timeFrame Number of data points considered before a specific time step.
+     *
+     * @param timeFrame  Number of data points considered before a specific time step.
      * @param timeSeries ArrayList holding the values for which higest value will be computed.
      */
 
@@ -1369,17 +1350,18 @@ public class TechnicalIndicator {
         start = Math.max(0, index - timeFrame + 1);
         highest = timeSeries.get(start);
         for (int i = start + 1; i <= index; i++) {
-            if (highest< (timeSeries.get(i))) {
+            if (highest < (timeSeries.get(i))) {
                 highest = timeSeries.get(i);
             }
         }
-        return (highest) ;
+        return (highest);
 
     }
 
     /**
      * Lowest value in a given timeframe starting from an index.
-     * @param timeFrame Number of data points considered before a specific time step.
+     *
+     * @param timeFrame  Number of data points considered before a specific time step.
      * @param timeSeries ArrayList holding the values for which lowest value will be computed.
      */
 
@@ -1393,7 +1375,7 @@ public class TechnicalIndicator {
         start = Math.max(0, index - timeFrame + 1);
         lowest = timeSeries.get(start);
         for (int i = start + 1; i <= index; i++) {
-            if (lowest>(timeSeries.get(i))) {
+            if (lowest > (timeSeries.get(i))) {
                 lowest = timeSeries.get(i);
             }
         }
@@ -1403,7 +1385,8 @@ public class TechnicalIndicator {
 
     /**
      * Cumulated gains indicator.
-     * @param timeFrame Number of data points considered before a specific time step.
+     *
+     * @param timeFrame  Number of data points considered before a specific time step.
      * @param timeSeries ArrayList holding the values for which cumulated gains will be computed.
      */
     public float calculateCumulatedGainsIndicator(int timeFrame, ArrayList<Float> timeSeries) {
@@ -1415,8 +1398,8 @@ public class TechnicalIndicator {
         sumOfGains = 0f;
 
         for (int i = Math.max(1, index - timeFrame + 1); i <= index; i++) {
-            if (timeSeries.get(i)>(timeSeries.get(i - 1))) {
-                sumOfGains = sumOfGains+(timeSeries.get(i)-(timeSeries.get(i - 1)));
+            if (timeSeries.get(i) > (timeSeries.get(i - 1))) {
+                sumOfGains = sumOfGains + (timeSeries.get(i) - (timeSeries.get(i - 1)));
             }
         }
 
@@ -1427,7 +1410,8 @@ public class TechnicalIndicator {
 
     /**
      * Average gain indicator.
-     * @param timeFrame Number of data points considered before a specific time step.
+     *
+     * @param timeFrame  Number of data points considered before a specific time step.
      * @param timeSeries ArrayList holding the values for which average gains will be computed.
      */
     public float calculateAverageGainIndicator(int timeFrame, ArrayList<Float> timeSeries) {
@@ -1440,7 +1424,7 @@ public class TechnicalIndicator {
 
         realTimeFrame = Math.min(timeFrame, index + 1);
 
-        return ( cumulatedGains/realTimeFrame);
+        return (cumulatedGains / realTimeFrame);
 
 
     }
@@ -1448,7 +1432,8 @@ public class TechnicalIndicator {
 
     /**
      * Cumulated losses indicator.
-     * @param timeFrame Number of data points considered before a specific time step.
+     *
+     * @param timeFrame  Number of data points considered before a specific time step.
      * @param timeSeries ArrayList holding the values for which cumulated losses will be computed.
      */
     public float calculateCumulatedLossesIndicator(int timeFrame, ArrayList<Float> timeSeries) {
@@ -1460,17 +1445,18 @@ public class TechnicalIndicator {
 
         sumOfLosses = 0f;
         for (int i = Math.max(1, index - timeFrame + 1); i <= index; i++) {
-            if (timeSeries.get(i)<(timeSeries.get(i - 1))) {
-                sumOfLosses = sumOfLosses+(timeSeries.get(i-1)-(timeSeries.get(i)));
+            if (timeSeries.get(i) < (timeSeries.get(i - 1))) {
+                sumOfLosses = sumOfLosses + (timeSeries.get(i - 1) - (timeSeries.get(i)));
             }
         }
-        return (sumOfLosses) ;
+        return (sumOfLosses);
 
     }
 
     /**
      * Average loss indicator.
-     * @param timeFrame Number of data points considered before a specific time step.
+     *
+     * @param timeFrame  Number of data points considered before a specific time step.
      * @param timeSeries ArrayList holding the values for which average losses will be computed.
      */
     public float calculateAverageLossIndicator(int timeFrame, ArrayList<Float> timeSeries) {
@@ -1481,37 +1467,35 @@ public class TechnicalIndicator {
 
         int realTimeFrame = Math.min(timeFrame, index + 1);
 
-        return (cumulatedLosses/realTimeFrame);
+        return (cumulatedLosses / realTimeFrame);
 
     }
 
     /**
      * Directional movement down indicator.
+     *
      * @param highPrices ArrayList holding the security high prices.
-     * @param lowPrices ArrayList holding the security low prices.
+     * @param lowPrices  ArrayList holding the security low prices.
      */
     public float calculateDirectionalMovementDownIndicator(ArrayList<Float> highPrices, ArrayList<Float> lowPrices) {
 
         int index = Market.getCurrentDay();
 
 
-
         if (index == 0) {
             return (0f);
-        }
-        else{
-            float prevMaxPrice = highPrices.get(index-1);
+        } else {
+            float prevMaxPrice = highPrices.get(index - 1);
             float maxPrice = highPrices.get(index);
-            float prevMinPrice = lowPrices.get(index-1);
+            float prevMinPrice = lowPrices.get(index - 1);
             float minPrice = highPrices.get(index);
 
-            if ((prevMaxPrice>=(maxPrice) && prevMinPrice<=(minPrice))
-                    || maxPrice- (prevMaxPrice)>=(prevMinPrice-(minPrice))) {
+            if ((prevMaxPrice >= (maxPrice) && prevMinPrice <= (minPrice))
+                    || maxPrice - (prevMaxPrice) >= (prevMinPrice - (minPrice))) {
                 return (0f);
-            }
-            else{
+            } else {
 
-                return (prevMinPrice- (minPrice) );
+                return (prevMinPrice - (minPrice));
             }
         }
 
@@ -1520,9 +1504,10 @@ public class TechnicalIndicator {
 
     /**
      * Average Directional Movement Down Indicator
-     * @param timeFrame Number of data points considered before a specific time step.
+     *
+     * @param timeFrame  Number of data points considered before a specific time step.
      * @param highPrices ArrayList holding the security high prices.
-     * @param lowPrices ArrayList holding the security low prices.
+     * @param lowPrices  ArrayList holding the security low prices.
      */
     public float calculateAverageDirectionalMovementDownIndicator(int timeFrame, ArrayList<Float> highPrices, ArrayList<Float> lowPrices) {
 
@@ -1537,10 +1522,9 @@ public class TechnicalIndicator {
             ADMDownPrevious = 1;
             return ADMDownPrevious;
 
-        }
-        else{
+        } else {
 
-            ADMDownPrevious = ADMDownPrevious*(nbPeriodsMinusOne)/(nbPeriods)+(dmdown/(nbPeriods));
+            ADMDownPrevious = ADMDownPrevious * (nbPeriodsMinusOne) / (nbPeriods) + (dmdown / (nbPeriods));
             return ADMDownPrevious;
 
         }
@@ -1550,8 +1534,9 @@ public class TechnicalIndicator {
 
     /**
      * Directional movement up indicator.
+     *
      * @param highPrices ArrayList holding the security high prices.
-     * @param lowPrices ArrayList holding the security low prices.
+     * @param lowPrices  ArrayList holding the security low prices.
      */
     public float calculateDirectionalMovementUpIndicator(ArrayList<Float> highPrices, ArrayList<Float> lowPrices) {
 
@@ -1559,22 +1544,19 @@ public class TechnicalIndicator {
 
         if (index == 0) {
             return 0f;
-        }
-        else{
-            float prevMaxPrice = highPrices.get(index-1);
+        } else {
+            float prevMaxPrice = highPrices.get(index - 1);
             float maxPrice = highPrices.get(index);
-            float prevMinPrice = lowPrices.get(index-1);
+            float prevMinPrice = lowPrices.get(index - 1);
             float minPrice = highPrices.get(index);
 
-            if ((maxPrice<(prevMaxPrice) && minPrice>(prevMinPrice))
-                    || prevMinPrice-(minPrice)==(maxPrice-(prevMaxPrice))) {
+            if ((maxPrice < (prevMaxPrice) && minPrice > (prevMinPrice))
+                    || prevMinPrice - (minPrice) == (maxPrice - (prevMaxPrice))) {
                 return 0f;
-            }
-            else if (maxPrice-(prevMaxPrice)>(prevMinPrice-(minPrice))){
+            } else if (maxPrice - (prevMaxPrice) > (prevMinPrice - (minPrice))) {
 
-                return (maxPrice-(prevMaxPrice));
-            }
-            else{
+                return (maxPrice - (prevMaxPrice));
+            } else {
                 return 0f;
             }
 
@@ -1586,9 +1568,10 @@ public class TechnicalIndicator {
 
     /**
      * Average directional movement up indicator.
-     * @param timeFrame Number of data points considered before a specific time step.
+     *
+     * @param timeFrame  Number of data points considered before a specific time step.
      * @param highPrices ArrayList holding the security high prices.
-     * @param lowPrices ArrayList holding the security low prices.
+     * @param lowPrices  ArrayList holding the security low prices.
      */
     public float calculateAverageDirectionalMovementUpIndicator(int timeFrame, ArrayList<Float> highPrices, ArrayList<Float> lowPrices) {
 
@@ -1603,10 +1586,9 @@ public class TechnicalIndicator {
         if (index == 0) {
             ADMUpPrevious = 1;
             return ADMUpPrevious;
-        }
-        else{
+        } else {
 
-            ADMUpPrevious = (ADMUpPrevious*(nbPeriodsMinusOne)/(nbPeriods)+(dmup/(nbPeriods)));
+            ADMUpPrevious = (ADMUpPrevious * (nbPeriodsMinusOne) / (nbPeriods) + (dmup / (nbPeriods)));
 
             return ADMUpPrevious;
 
@@ -1617,27 +1599,28 @@ public class TechnicalIndicator {
 
     /**
      * Close Location Value (CLV) indicator.
+     *
      * @param closePrices ArrayList holding the security close prices.
-     * @param highPrices ArrayList holding the security high prices.
-     * @param lowPrices ArrayList holding the security low prices.
+     * @param highPrices  ArrayList holding the security high prices.
+     * @param lowPrices   ArrayList holding the security low prices.
      */
 
     //@see http://www.investopedia.com/terms/c/close_location_value.asp
-
     public float calculateCloseLocationValueIndicator(ArrayList<Float> closePrices, ArrayList<Float> highPrices, ArrayList<Float> lowPrices) {
 
         int index = Market.getCurrentDay();
 
-        return ( ( (closePrices.get(index)-(lowPrices.get(index)))-(highPrices.get(index)-(closePrices.get(index))) )/(highPrices.get(index)-(lowPrices.get(index))) );
+        return (((closePrices.get(index) - (lowPrices.get(index))) - (highPrices.get(index) - (closePrices.get(index)))) / (highPrices.get(index) - (lowPrices.get(index))));
 
 
     }
 
     /**
      * Directional up indicator.
-     * @param timeFrame Number of data points considered before a specific time step.
-     * @param highPrices ArrayList holding the security high prices.
-     * @param lowPrices ArrayList holding the security low prices.
+     *
+     * @param timeFrame   Number of data points considered before a specific time step.
+     * @param highPrices  ArrayList holding the security high prices.
+     * @param lowPrices   ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
      */
     public float calculateDirectionalUpIndicator(int timeFrame, ArrayList<Float> highPrices, ArrayList<Float> lowPrices, ArrayList<Float> closePrices) {
@@ -1647,15 +1630,16 @@ public class TechnicalIndicator {
 
         float atr = calculateAverageTrueRangeIndicator(timeFrame, highPrices, lowPrices, closePrices);
 
-        return (admup/atr);
+        return (admup / atr);
 
     }
 
     /**
      * Directional down indicator.
-     * @param timeFrame Number of data points considered before a specific time step.
-     * @param highPrices ArrayList holding the security high prices.
-     * @param lowPrices ArrayList holding the security low prices.
+     *
+     * @param timeFrame   Number of data points considered before a specific time step.
+     * @param highPrices  ArrayList holding the security high prices.
+     * @param lowPrices   ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
      */
 
@@ -1667,15 +1651,15 @@ public class TechnicalIndicator {
 
         float atr = calculateAverageTrueRangeIndicator(timeFrame, highPrices, lowPrices, closePrices);
 
-        return (admdown/(atr));
-
+        return (admdown / (atr));
 
 
     }
 
     /**
      * VolumeIndicator
-     * @param timeFrame Number of data points considered before a specific time step.
+     *
+     * @param timeFrame     Number of data points considered before a specific time step.
      * @param tradingVolume ArrayList holding the security trading volumes.
      */
     public float calculateVolumeIndicator(int timeFrame, ArrayList<Float> tradingVolume) {
@@ -1690,7 +1674,7 @@ public class TechnicalIndicator {
         sumOfVolume = 0f;
 
         for (int i = startIndex; i <= index; i++) {
-            sumOfVolume = sumOfVolume+(tradingVolume.get(i));
+            sumOfVolume = sumOfVolume + (tradingVolume.get(i));
         }
 
         return (sumOfVolume);
@@ -1701,18 +1685,18 @@ public class TechnicalIndicator {
 
     /**
      * Typical price indicator.
+     *
      * @param closePrices ArrayList holding the security close prices.
-     * @param highPrices ArrayList holding the security high prices.
-     * @param lowPrices ArrayList holding the security low prices.
+     * @param highPrices  ArrayList holding the security high prices.
+     * @param lowPrices   ArrayList holding the security low prices.
      */
-    public float calculateTypicalPriceIndicator (ArrayList<Float> closePrices, ArrayList<Float> highPrices, ArrayList<Float> lowPrices){
+    public float calculateTypicalPriceIndicator(ArrayList<Float> closePrices, ArrayList<Float> highPrices, ArrayList<Float> lowPrices) {
 
         int index = Market.getCurrentDay();
 
-        return (highPrices.get(index)+(lowPrices.get(index))+(closePrices.get(index))/(3));
+        return (highPrices.get(index) + (lowPrices.get(index)) + (closePrices.get(index)) / (3));
 
     }
-
 
 
     /////////////////////////////// Compute Signals /////////////////////////////
@@ -1720,21 +1704,21 @@ public class TechnicalIndicator {
     /**
      * Eliminate the hold signals.
      */
-    public void eliminateHoldSignal(ArrayList<Integer> forecastedSignal){
+    public void eliminateHoldSignal(ArrayList<Integer> forecastedSignal) {
 
         // Make sure that the last signal is not hold, if so, make it buy
 
-        if (forecastedSignal.get(forecastedSignal.size() - 1) == 2){
+        if (forecastedSignal.get(forecastedSignal.size() - 1) == 2) {
             forecastedSignal.set(forecastedSignal.size() - 1, 1);
         }
 
         // Eliminate all the hold signals by a reverse scan of signals
 
-        for(int j = forecastedSignal.size()-1 ; j > 0 ; j--){
+        for (int j = forecastedSignal.size() - 1; j > 0; j--) {
 
-            if (forecastedSignal.get(j-1) == 2){
+            if (forecastedSignal.get(j - 1) == 2) {
 
-                forecastedSignal.set(j-1, forecastedSignal.get(j));
+                forecastedSignal.set(j - 1, forecastedSignal.get(j));
             }
 
         }
@@ -1745,7 +1729,7 @@ public class TechnicalIndicator {
     /**
      * Calculate the actual buy/sell signals.
      */
-    public void calculateActualSignal(ArrayList<Float> forecastedValues, ArrayList<Integer> forecastedSignal){
+    public void calculateActualSignal(ArrayList<Float> forecastedValues, ArrayList<Integer> forecastedSignal) {
 
         // 2 Hold
         // 1 Buy
@@ -1753,15 +1737,13 @@ public class TechnicalIndicator {
 
         int j;
 
-        for(j = 0 ; j < forecastedValues.size()-1 ; j++){
+        for (j = 0; j < forecastedValues.size() - 1; j++) {
 
-            if (forecastedValues.get(j)<(forecastedValues.get(j+1))){ // Buy
+            if (forecastedValues.get(j) < (forecastedValues.get(j + 1))) { // Buy
                 forecastedSignal.add(1);
-            }
-            else if (forecastedValues.get(j)==(forecastedValues.get(j+1))){ // Hold
+            } else if (forecastedValues.get(j) == (forecastedValues.get(j + 1))) { // Hold
                 forecastedSignal.add(2);
-            }
-            else{ // Sell
+            } else { // Sell
                 forecastedSignal.add(0);
             }
         }
@@ -1775,10 +1757,11 @@ public class TechnicalIndicator {
     }
 
     // Used for SMA, EMA
+
     /**
      * Calculate the the forecasted signals based on the forecasted values for several indicators such as SMA and EMA
      */
-    public int calculateSignal(float forecastValue, ArrayList<Float> timeSeries){
+    public int calculateSignal(float forecastValue, ArrayList<Float> timeSeries) {
 
         // 2 Hold
         // 1 Buy
@@ -1789,23 +1772,23 @@ public class TechnicalIndicator {
 
         int index = timeSeries.size() - 1;
 
-        if (timeSeries.get(index) < forecastValue){ // Buy
+        if (timeSeries.get(index) < forecastValue) { // Buy
             return 1;
-        }
-        else if (timeSeries.get(index) == forecastValue){ // Hold
+        } else if (timeSeries.get(index) == forecastValue) { // Hold
             return 2;
-        }
-        else{ // Sell
+        } else { // Sell
             return 0;
         }
     }
 
     // Used for MACD
+
     /**
      * Calculate the the forecasted signals based on the forecasted values for MACD
+     *
      * @param timeSeries ArrayList holding the security close prices.
      */
-    public int calculateMACDSignal(float forecastValue, ArrayList<Float> timeSeries){
+    public int calculateMACDSignal(float forecastValue, ArrayList<Float> timeSeries) {
 
         // 2 Hold
         // 1 Buy
@@ -1814,13 +1797,11 @@ public class TechnicalIndicator {
         float Ema = calculateEMAIndicator(9, timeSeries);
 
 
-        if (forecastValue<Ema){ // Sell
+        if (forecastValue < Ema) { // Sell
             return 0;
-        }
-        else if (forecastValue == Ema){ // Hold
+        } else if (forecastValue == Ema) { // Hold
             return 2;
-        }
-        else{ // Buy
+        } else { // Buy
             return 1;
         }
 
@@ -1830,22 +1811,21 @@ public class TechnicalIndicator {
     }
 
     // Used for ROC
+
     /**
      * Calculate the the forecasted signals based on the forecasted values for ROC
      */
-    public int calculateROCSignal(float forecastValue){
+    public int calculateROCSignal(float forecastValue) {
 
         // 2 Hold
         // 1 Buy
         // 0 Sell
 
-        if (forecastValue>0f){ // Buy
+        if (forecastValue > 0f) { // Buy
             return 1;
-        }
-        else if (forecastValue< 0f ){ // Sell
+        } else if (forecastValue < 0f) { // Sell
             return 0;
-        }
-        else{ // Hold
+        } else { // Hold
             return 2;
         }
 
@@ -1855,23 +1835,23 @@ public class TechnicalIndicator {
     }
 
     // Used for RAVI
+
     /**
      * Calculate the the forecasted signals based on the forecasted values for RAVI
+     *
      * @param thershold
      */
-    public int calculateRAVISignal(float forecastValue, float thershold){
+    public int calculateRAVISignal(float forecastValue, float thershold) {
 
         // 2 Hold
         // 1 Buy
         // 0 Sell
 
-        if (forecastValue>thershold){ // Buy
+        if (forecastValue > thershold) { // Buy
             return 1;
-        }
-        else if (forecastValue<thershold){ // Sell
+        } else if (forecastValue < thershold) { // Sell
             return 0;
-        }
-        else{ // Hold
+        } else { // Hold
             return 2;
         }
 
@@ -1881,24 +1861,24 @@ public class TechnicalIndicator {
     }
 
     // Used for DMI
+
     /**
      * Calculate the the forecasted signals based on the forecasted values for DMI
+     *
      * @param thershold
      */
-    public int calculateDMISignal(float forecastValue ,float thershold){
+    public int calculateDMISignal(float forecastValue, float thershold) {
 
         // 2 Hold
         // 1 Buy
         // 0 Sell
 
 
-        if (forecastValue>(thershold)){ // Buy
+        if (forecastValue > (thershold)) { // Buy
             return 1;
-        }
-        else if (forecastValue<(thershold*(-1))){ // Sell
+        } else if (forecastValue < (thershold * (-1))) { // Sell
             return 0;
-        }
-        else{ // Hold
+        } else { // Hold
             return 2;
         }
 
@@ -1909,11 +1889,12 @@ public class TechnicalIndicator {
 
     /**
      * Calculate the the forecasted signals based on the forecasted values for Chandelier
-     * @param forecastedValuesLong ArrayList holding the forecasted values by long Chandelier.
+     *
+     * @param forecastedValuesLong  ArrayList holding the forecasted values by long Chandelier.
      * @param forecastedValuesShort ArrayList holding the forecasted values by short Cahndelier.
      * @param closePrices
      */
-    public void calculateChandelierExitSignal(ArrayList<Float> forecastedValuesLong, ArrayList<Float> forecastedValuesShort, ArrayList<Integer> forecastedSignal, ArrayList<Float> closePrices ){
+    public void calculateChandelierExitSignal(ArrayList<Float> forecastedValuesLong, ArrayList<Float> forecastedValuesShort, ArrayList<Integer> forecastedSignal, ArrayList<Float> closePrices) {
 
         // 2 Hold
         // 1 Buy
@@ -1921,15 +1902,13 @@ public class TechnicalIndicator {
 
         int j;
 
-        for(j = 0 ; j < forecastedValuesLong.size() ; j++){
+        for (j = 0; j < forecastedValuesLong.size(); j++) {
 
-            if (forecastedValuesLong.get(j)>(closePrices.get(j))){ // Sell
+            if (forecastedValuesLong.get(j) > (closePrices.get(j))) { // Sell
                 forecastedSignal.add(0);
-            }
-            else if (forecastedValuesShort.get(j)<(closePrices.get(j))){ // Buy
+            } else if (forecastedValuesShort.get(j) < (closePrices.get(j))) { // Buy
                 forecastedSignal.add(1);
-            }
-            else{ // Hold
+            } else { // Hold
                 forecastedSignal.add(2);
             }
         }
@@ -1939,25 +1918,25 @@ public class TechnicalIndicator {
     }
 
     // Used for RSI
+
     /**
      * Calculate the the forecasted signals based on the forecasted values for RSI
+     *
      * @param thershold1
      * @param thershold2
      */
-    public int calculateRSISignal(float forecastValue, float thershold1, float thershold2){
+    public int calculateRSISignal(float forecastValue, float thershold1, float thershold2) {
 
         // 2 Hold
         // 1 Buy
         // 0 Sell
 
 
-        if (forecastValue>thershold1){ // Sell
+        if (forecastValue > thershold1) { // Sell
             return 0;
-        }
-        else if (forecastValue<thershold2){ // Buy
+        } else if (forecastValue < thershold2) { // Buy
             return 1;
-        }
-        else{ // Hold
+        } else { // Hold
             return 2;
         }
 
@@ -1967,22 +1946,21 @@ public class TechnicalIndicator {
     }
 
     // Used for VWAPS
+
     /**
      * Calculate the the forecasted signals based on the forecasted values for VWAPS
      */
-    public int calculateVWAPSignal(float forecastValue, float compareToValue){
+    public int calculateVWAPSignal(float forecastValue, float compareToValue) {
 
         // 2 Hold
         // 1 Buy
         // 0 Sell
 
-        if (forecastValue> compareToValue){ // buy
+        if (forecastValue > compareToValue) { // buy
             return 1;
-        }
-        else if (forecastValue < compareToValue){ // sell
+        } else if (forecastValue < compareToValue) { // sell
             return 0;
-        }
-        else{ // Hold
+        } else { // Hold
             return 2;
         }
 
