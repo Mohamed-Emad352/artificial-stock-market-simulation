@@ -161,26 +161,24 @@ public class TechnicalIndicator {
 
         float sma = calculateSMAIndicator(timeFrame, timeSeries);
 
-        float multiplier = 2 / (timeFrame + 1);
+        float multiplier = 2f / (timeFrame + 1);
 
         int index = Market.getCurrentDay();
 
-        if (index + 1 < timeFrame) {
+        if (index == 0) {
+            // If the timeframe is bigger than the indicator's value count
+            emaPrev = Market.getCurrentPrice();
+            return emaPrev;
+        }
+        else if (index + 1 < timeFrame) {
             // Starting point of the EMA
             emaPrev = sma;
             return emaPrev;
         }
-        else if (index == 0) {
-            // If the timeframe is bigger than the indicator's value count
-            emaPrev = timeSeries.get(0);
-            return emaPrev;
-        }
         else{
-            emaPrev = (timeSeries.get(index)-(emaPrev))*(multiplier)+(emaPrev);
+            emaPrev = (timeSeries.get(index - 1)-(emaPrev))*(multiplier)+(emaPrev);
             return emaPrev;
         }
-
-
     }
 
     // Can be more efficient by computing for the timeFrame only not the whole series
