@@ -433,17 +433,19 @@ public class TechnicalIndicator {
     //http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:kaufman_s_adaptive_moving_average
     public float calculateKAMAIndicator(int timeFrameEffectiveRatio, int timeFrameFast, int timeFrameSlow, ArrayList<Float> timeSeries) {
 
-        float fastest = 2 / (timeFrameFast + 1);
+        float fastest = 2f / (timeFrameFast + 1);
 
-        float slowest = 2 / (timeFrameSlow + 1);
+        float slowest = 2f / (timeFrameSlow + 1);
 
         float currentPrice;
 
         int index = Market.getCurrentDay();
-
-        currentPrice = timeSeries.get(index);
+        if (index != 0) {
+            currentPrice = timeSeries.get(index - 1);
+        } else {
+            currentPrice = Market.getCurrentPrice();
+        }
         if (index < timeFrameEffectiveRatio) {
-
             return currentPrice;
         } else {
 
@@ -457,7 +459,7 @@ public class TechnicalIndicator {
             int startChangeIndex = Math.max(0, index - timeFrameEffectiveRatio);
             float change = Math.abs(currentPrice - timeSeries.get(startChangeIndex));
             float volatility = 0f;
-            for (int i = startChangeIndex; i < index; i++) {
+            for (int i = startChangeIndex; i < index-1; i++) {
                 volatility = volatility + Math.abs(timeSeries.get(i + 1) - timeSeries.get(i));
             }
             float er = change / volatility;
