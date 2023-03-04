@@ -636,7 +636,13 @@ public class TechnicalIndicator {
 
         int index = Market.getCurrentDay();
 
-        float forecatValue = (3 * (emaValues.get(index) - (emaEmaValues.get(index))) + (emaEmaEmaValues.get(index)));
+        float forecastValue;
+
+        if (index != 0) {
+            forecastValue = (3 * (emaValues.get(index-1) - (emaEmaValues.get(index-1))) + (emaEmaEmaValues.get(index-1)));
+        } else {
+            forecastValue = Market.getCurrentPrice();
+        }
 
         emaValues.clear();
 
@@ -644,7 +650,7 @@ public class TechnicalIndicator {
 
         emaEmaEmaValues.clear();
 
-        return forecatValue;
+        return forecastValue;
 
     }
 
