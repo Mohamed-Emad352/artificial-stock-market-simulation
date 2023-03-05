@@ -28,9 +28,9 @@ public class Market {
     private final Integer noiseMean = 0;
     private final Float liquidity = (float) 0.4308;
     private static Integer numberOfStocks;
-    private final static Integer numberOfTraders = 160;
+    private final static Integer numberOfTraders = 4;
     private final static Integer MaximumNumberOfStocks = 30 * numberOfTraders;
-    private final Integer numberOfFundamentalists = 0;
+    private final Integer numberOfFundamentalists = 70;
     private final LinkedList<Trader> traders = new LinkedList<>();
     private static Float budget = 20000f;
 
@@ -62,7 +62,7 @@ public class Market {
             numOfBuyAndSell.get(type).put(Decision.Buy, 0);
         }
 
-        numberOfChartistTraders.put(ChartistType.TripleExpMovingAverage, 160);
+        numberOfChartistTraders.put(ChartistType.VWAP, 90);
         numberOfChartistTraders.put(ChartistType.LongShort, 0);
         numberOfChartistTraders.put(ChartistType.TimeLag, 0);
         stockPricesOverTime.add(currentPrice);

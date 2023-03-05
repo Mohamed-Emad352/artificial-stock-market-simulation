@@ -164,6 +164,7 @@ public class Main extends Application {
             Market.lowPrices.add(lowestPrice);
             Market.tradeVolume.add(tradingVolume);
             Market.priceChangesPerDay.add(priceChanges);
+            System.out.println(Market.tradeVolume.add(tradingVolume));
 
         }
 
