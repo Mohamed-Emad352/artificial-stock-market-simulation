@@ -131,6 +131,7 @@ public class Main extends Application {
 
                     if (Market.getCurrentPrice() > highestPrice) {
                         highestPrice = Market.getCurrentPrice();
+
                     }
                 }
             }
@@ -164,6 +165,9 @@ public class Main extends Application {
             Market.lowPrices.add(lowestPrice);
             Market.tradeVolume.add(tradingVolume);
             Market.priceChangesPerDay.add(priceChanges);
+            System.out.println("high :" + Market.highPrices);
+            System.out.println("low :" + Market.lowPrices);
+            System.out.println("close :" + Market.closePrices);
 
         }
 

@@ -900,14 +900,16 @@ public class TechnicalIndicator {
         if (index == 0) {
             ADPrevious = 0f;
             return (0f);
-        } else {
+        }
+
+        else {
             // Calculating the money flow multiplier
             moneyFlowMultiplier = clvIndicator;
 
             // Calculating the money flow volume
-            moneyFlowVolume = moneyFlowMultiplier * (tradeVolume.get(index));
-
+            moneyFlowVolume = moneyFlowMultiplier * (tradeVolume.get(index-1));
             ADPrevious = moneyFlowVolume + ADPrevious;
+
 
             return ADPrevious;
         }
@@ -1617,8 +1619,10 @@ public class TechnicalIndicator {
     public float calculateCloseLocationValueIndicator(ArrayList<Float> closePrices, ArrayList<Float> highPrices, ArrayList<Float> lowPrices) {
 
         int index = Market.getCurrentDay();
-
-        return (((closePrices.get(index) - (lowPrices.get(index))) - (highPrices.get(index) - (closePrices.get(index)))) / (highPrices.get(index) - (lowPrices.get(index))));
+        if (index == 0)
+            return 1;
+        else
+            return ((closePrices.get(index-1) - (lowPrices.get(index-1))) - (highPrices.get(index-1) - (closePrices.get(index-1)))) / (highPrices.get(index-1) - (lowPrices.get(index-1)));
 
 
     }
