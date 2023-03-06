@@ -1684,7 +1684,6 @@ public class TechnicalIndicator {
         else
         {
             for (int i = startIndex; i <= index; i++) {
-                System.out.println(tradingVolume.get(i - 1));
                 sumOfVolume = sumOfVolume + (tradingVolume.get(i - 1));
             }
         }
