@@ -1405,7 +1405,7 @@ public class TechnicalIndicator {
 
         sumOfGains = 0f;
 
-        for (int i = Math.max(1, index - timeFrame + 1); i <= index; i++) {
+        for (int i = Math.max(1, index - timeFrame + 1); i <= index-1; i++) {
             if (timeSeries.get(i) > (timeSeries.get(i - 1))) {
                 sumOfGains = sumOfGains + (timeSeries.get(i) - (timeSeries.get(i - 1)));
             }
@@ -1452,7 +1452,7 @@ public class TechnicalIndicator {
 
 
         sumOfLosses = 0f;
-        for (int i = Math.max(1, index - timeFrame + 1); i <= index; i++) {
+        for (int i = Math.max(1, index - timeFrame + 1); i <= index-1; i++) {
             if (timeSeries.get(i) < (timeSeries.get(i - 1))) {
                 sumOfLosses = sumOfLosses + (timeSeries.get(i - 1) - (timeSeries.get(i)));
             }
