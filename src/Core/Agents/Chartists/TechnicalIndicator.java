@@ -1171,9 +1171,9 @@ public class TechnicalIndicator {
         float longTermEma = calculateEMAIndicator(longTimeFrame, closePrices);
 
 
-        return (shortTermEma - (longTermEma)
-                / (longTermEma)
-                * (100));
+        return ((shortTermEma - longTermEma)
+                / (longTermEma))
+                * (100);
 
 
     }
