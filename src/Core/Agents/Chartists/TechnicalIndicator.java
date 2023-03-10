@@ -321,7 +321,11 @@ public class TechnicalIndicator {
 
         int index = forecastedValues.size();
 
-        return forecastedValues.get(index);
+        if (index==0)
+            return 0f;
+        else
+            return forecastedValues.get(index-1);
+
 
     }
 
