@@ -62,7 +62,11 @@ public class Market {
             numOfBuyAndSell.get(type).put(Decision.Buy, 0);
         }
 
+//<<<<<<< HEAD
         numberOfChartistTraders.put(ChartistType.PPO, 160);
+//=======
+        numberOfChartistTraders.put(ChartistType.KAMA, 0);
+//>>>>>>> a59f89c288537dddd04b3e2b61dd0611943279f9
         numberOfChartistTraders.put(ChartistType.LongShort, 0);
         numberOfChartistTraders.put(ChartistType.TimeLag, 0);
         stockPricesOverTime.add(currentPrice);

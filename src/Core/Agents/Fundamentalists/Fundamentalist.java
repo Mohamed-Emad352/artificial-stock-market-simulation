@@ -35,11 +35,4 @@ public class Fundamentalist extends Trader {
         { return Decision.Sell;}
         else {return null;}
     }
-
-    @Override
-    public Integer getDesiredOrderVolume() {
-        float orderVolume = abs(ReactionCoefficient *
-                (this.stockFundamentalValue - Market.getCurrentPrice()));
-        return (int)orderVolume;
-    }
 }
