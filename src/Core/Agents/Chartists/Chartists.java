@@ -6,8 +6,6 @@ import Core.Enums.ChartistType;
 import Core.Enums.Decision;
 import Core.Market.Market;
 
-import static java.lang.Math.abs;
-
 public class Chartists extends Trader {
     public ChartistType type;
     int movingAverageWindowSize = Main.randGenr.nextInt(240) + 1;
@@ -155,10 +153,5 @@ public class Chartists extends Trader {
         } else {
             return null;
         }
-    }
-
-    @Override
-    public Integer getDesiredOrderVolume() {
-        return (int) abs(ReactionCoefficient * forecastValue);
     }
 }

@@ -415,10 +415,11 @@ public class TechnicalIndicator {
         halfWma.clear();
         origWma.clear();
         indicatorForSqrtWma.clear();
-
         int index = forecastedValues.size() - 1;
-
-        return forecastedValues.get(index);
+        if (Market.getCurrentDay() == 0)
+            return Market.getCurrentPrice();
+        else
+            return forecastedValues.get(index);
     }
 
     /**
@@ -433,17 +434,19 @@ public class TechnicalIndicator {
     //http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:kaufman_s_adaptive_moving_average
     public float calculateKAMAIndicator(int timeFrameEffectiveRatio, int timeFrameFast, int timeFrameSlow, ArrayList<Float> timeSeries) {
 
-        float fastest = 2 / (timeFrameFast + 1);
+        float fastest = 2f / (timeFrameFast + 1);
 
-        float slowest = 2 / (timeFrameSlow + 1);
+        float slowest = 2f / (timeFrameSlow + 1);
 
         float currentPrice;
 
         int index = Market.getCurrentDay();
-
-        currentPrice = timeSeries.get(index);
+        if (index != 0) {
+            currentPrice = timeSeries.get(index - 1);
+        } else {
+            currentPrice = Market.getCurrentPrice();
+        }
         if (index < timeFrameEffectiveRatio) {
-
             return currentPrice;
         } else {
 
@@ -457,7 +460,7 @@ public class TechnicalIndicator {
             int startChangeIndex = Math.max(0, index - timeFrameEffectiveRatio);
             float change = Math.abs(currentPrice - timeSeries.get(startChangeIndex));
             float volatility = 0f;
-            for (int i = startChangeIndex; i < index; i++) {
+            for (int i = startChangeIndex; i < index-1; i++) {
                 volatility = volatility + Math.abs(timeSeries.get(i + 1) - timeSeries.get(i));
             }
             float er = change / volatility;
@@ -675,9 +678,14 @@ public class TechnicalIndicator {
 
         int index = Market.getCurrentDay();
 
-        return (((highestHigh - (closePrices.get(index)))
-                / (highestHigh - (lowestMin)))
-                * (-100));
+        if (index == 0 )
+            return (((highestHigh - (Market.getCurrentPrice()))
+                    / (highestHigh - (lowestMin)))
+                    * (-100));
+        else
+            return (((highestHigh - (closePrices.get(index-1)))
+                    / (highestHigh - (lowestMin)))
+                    * (-100));
     }
 
     /**
@@ -897,15 +905,17 @@ public class TechnicalIndicator {
 
         if (index == 0) {
             ADPrevious = 0f;
-            return (0f);
-        } else {
+            return 0;
+        }
+
+        else {
             // Calculating the money flow multiplier
             moneyFlowMultiplier = clvIndicator;
 
             // Calculating the money flow volume
-            moneyFlowVolume = moneyFlowMultiplier * (tradeVolume.get(index));
-
+            moneyFlowVolume = moneyFlowMultiplier * (tradeVolume.get(index-1));
             ADPrevious = moneyFlowVolume + ADPrevious;
+
 
             return ADPrevious;
         }
@@ -1011,6 +1021,7 @@ public class TechnicalIndicator {
                 cumulativeTPV = cumulativeTPV + (typicalPrice * (volumeIndicator));
                 cumulativeVolume = cumulativeVolume + volumeIndicator;
             }
+
             return (cumulativeTPV / cumulativeVolume);
         }
 
@@ -1354,12 +1365,15 @@ public class TechnicalIndicator {
         int index = Market.getCurrentDay();
 
         start = Math.max(0, index - timeFrame + 1);
-        highest = timeSeries.get(start);
-        for (int i = start + 1; i <= index; i++) {
-            if (highest < (timeSeries.get(i))) {
-                highest = timeSeries.get(i);
+        if (index == 0)
+             highest = Market.getCurrentPrice();
+        else
+            highest = timeSeries.get(start);
+            for (int i = start + 1; i <= index; i++) {
+                if (highest < (timeSeries.get(i-1))) {
+                    highest = timeSeries.get(i-1);
+                }
             }
-        }
         return (highest);
 
     }
@@ -1379,11 +1393,14 @@ public class TechnicalIndicator {
         int index = Market.getCurrentDay();
 
         start = Math.max(0, index - timeFrame + 1);
-        lowest = timeSeries.get(start);
-        for (int i = start + 1; i <= index; i++) {
-            if (lowest > (timeSeries.get(i))) {
-                lowest = timeSeries.get(i);
-            }
+        if (index==0)
+            lowest = Market.getCurrentPrice();
+        else
+            lowest = timeSeries.get(start);
+            for (int i = start + 1; i <= index; i++) {
+                if (lowest > (timeSeries.get(i-1))) {
+                    lowest = timeSeries.get(i-1);
+                }
         }
         return (lowest);
 
@@ -1402,8 +1419,11 @@ public class TechnicalIndicator {
         int index = Market.getCurrentDay();
 
         sumOfGains = 0f;
+        if (index == 1) {
+            sumOfGains = Market.getCurrentPrice();
+        }
 
-        for (int i = Math.max(1, index - timeFrame + 1); i <= index; i++) {
+        for (int i = Math.max(1, index - timeFrame + 1); i < index; i++) {
             if (timeSeries.get(i) > (timeSeries.get(i - 1))) {
                 sumOfGains = sumOfGains + (timeSeries.get(i) - (timeSeries.get(i - 1)));
             }
@@ -1450,7 +1470,7 @@ public class TechnicalIndicator {
 
 
         sumOfLosses = 0f;
-        for (int i = Math.max(1, index - timeFrame + 1); i <= index; i++) {
+        for (int i = Math.max(1, index - timeFrame + 1); i < index; i++) {
             if (timeSeries.get(i) < (timeSeries.get(i - 1))) {
                 sumOfLosses = sumOfLosses + (timeSeries.get(i - 1) - (timeSeries.get(i)));
             }
@@ -1615,8 +1635,11 @@ public class TechnicalIndicator {
     public float calculateCloseLocationValueIndicator(ArrayList<Float> closePrices, ArrayList<Float> highPrices, ArrayList<Float> lowPrices) {
 
         int index = Market.getCurrentDay();
-
-        return (((closePrices.get(index) - (lowPrices.get(index))) - (highPrices.get(index) - (closePrices.get(index)))) / (highPrices.get(index) - (lowPrices.get(index))));
+        if (index == 0)
+            return 1;
+        else {
+            return ((closePrices.get(index-1) - (lowPrices.get(index-1))) - (highPrices.get(index-1) - (closePrices.get(index-1)))) / (highPrices.get(index-1) - (lowPrices.get(index-1)));
+        }
 
 
     }
@@ -1879,18 +1902,18 @@ public class TechnicalIndicator {
     /**
      * Calculate the the forecasted signals based on the forecasted values for DMI
      *
-     * @param thershold
+     * @param threshold
      */
-    public int calculateDMISignal(float forecastValue, float thershold) {
+    public int calculateDMISignal(float forecastValue, float threshold) {
 
         // 2 Hold
         // 1 Buy
         // 0 Sell
 
 
-        if (forecastValue > (thershold)) { // Buy
+        if (forecastValue > (threshold)) { // Buy
             return 1;
-        } else if (forecastValue < (thershold * (-1))) { // Sell
+        } else if (forecastValue < (threshold * (-1))) { // Sell
             return 0;
         } else { // Hold
             return 2;
