@@ -417,7 +417,7 @@ public class TechnicalIndicator {
         indicatorForSqrtWma.clear();
         int index = forecastedValues.size() - 1;
         if (Market.getCurrentDay() == 0)
-            return(0);
+            return Market.getCurrentPrice();
         else
             return forecastedValues.get(index);
     }
