@@ -415,10 +415,11 @@ public class TechnicalIndicator {
         halfWma.clear();
         origWma.clear();
         indicatorForSqrtWma.clear();
-
         int index = forecastedValues.size() - 1;
-
-        return forecastedValues.get(index);
+        if (Market.getCurrentDay() == 0)
+            return Market.getCurrentPrice();
+        else
+            return forecastedValues.get(index);
     }
 
     /**

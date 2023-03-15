@@ -5,7 +5,6 @@ import Core.Agents.Trader;
 import Core.Enums.Decision;
 import Core.Market.Market;
 
-import static java.lang.Math.abs;
 import static java.lang.Math.exp;
 
 public class Fundamentalist extends Trader {
