@@ -1404,8 +1404,11 @@ public class TechnicalIndicator {
         int index = Market.getCurrentDay();
 
         sumOfGains = 0f;
+        if (index == 1) {
+            sumOfGains = Market.getCurrentPrice();
+        }
 
-        for (int i = Math.max(1, index - timeFrame + 1); i <= index-1; i++) {
+        for (int i = Math.max(1, index - timeFrame + 1); i < index; i++) {
             if (timeSeries.get(i) > (timeSeries.get(i - 1))) {
                 sumOfGains = sumOfGains + (timeSeries.get(i) - (timeSeries.get(i - 1)));
             }
@@ -1452,7 +1455,7 @@ public class TechnicalIndicator {
 
 
         sumOfLosses = 0f;
-        for (int i = Math.max(1, index - timeFrame + 1); i <= index-1; i++) {
+        for (int i = Math.max(1, index - timeFrame + 1); i < index; i++) {
             if (timeSeries.get(i) < (timeSeries.get(i - 1))) {
                 sumOfLosses = sumOfLosses + (timeSeries.get(i - 1) - (timeSeries.get(i)));
             }
