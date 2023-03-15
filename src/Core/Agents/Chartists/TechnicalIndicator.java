@@ -905,15 +905,17 @@ public class TechnicalIndicator {
 
         if (index == 0) {
             ADPrevious = 0f;
-            return (0f);
-        } else {
+            return 0;
+        }
+
+        else {
             // Calculating the money flow multiplier
             moneyFlowMultiplier = clvIndicator;
 
             // Calculating the money flow volume
-            moneyFlowVolume = moneyFlowMultiplier * (tradeVolume.get(index));
-
+            moneyFlowVolume = moneyFlowMultiplier * (tradeVolume.get(index-1));
             ADPrevious = moneyFlowVolume + ADPrevious;
+
 
             return ADPrevious;
         }
@@ -1632,8 +1634,11 @@ public class TechnicalIndicator {
     public float calculateCloseLocationValueIndicator(ArrayList<Float> closePrices, ArrayList<Float> highPrices, ArrayList<Float> lowPrices) {
 
         int index = Market.getCurrentDay();
-
-        return (((closePrices.get(index) - (lowPrices.get(index))) - (highPrices.get(index) - (closePrices.get(index)))) / (highPrices.get(index) - (lowPrices.get(index))));
+        if (index == 0)
+            return 1;
+        else {
+            return ((closePrices.get(index-1) - (lowPrices.get(index-1))) - (highPrices.get(index-1) - (closePrices.get(index-1)))) / (highPrices.get(index-1) - (lowPrices.get(index-1)));
+        }
 
 
     }
@@ -1888,18 +1893,18 @@ public class TechnicalIndicator {
     /**
      * Calculate the the forecasted signals based on the forecasted values for DMI
      *
-     * @param thershold
+     * @param threshold
      */
-    public int calculateDMISignal(float forecastValue, float thershold) {
+    public int calculateDMISignal(float forecastValue, float threshold) {
 
         // 2 Hold
         // 1 Buy
         // 0 Sell
 
 
-        if (forecastValue > (thershold)) { // Buy
+        if (forecastValue > (threshold)) { // Buy
             return 1;
-        } else if (forecastValue < (thershold * (-1))) { // Sell
+        } else if (forecastValue < (threshold * (-1))) { // Sell
             return 0;
         } else { // Hold
             return 2;

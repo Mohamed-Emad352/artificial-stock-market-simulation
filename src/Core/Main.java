@@ -131,6 +131,7 @@ public class Main extends Application {
 
                     if (Market.getCurrentPrice() > highestPrice) {
                         highestPrice = Market.getCurrentPrice();
+
                     }
                 }
             }
