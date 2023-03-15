@@ -678,9 +678,14 @@ public class TechnicalIndicator {
 
         int index = Market.getCurrentDay();
 
-        return (((highestHigh - (closePrices.get(index)))
-                / (highestHigh - (lowestMin)))
-                * (-100));
+        if (index == 0 )
+            return (((highestHigh - (Market.getCurrentPrice()))
+                    / (highestHigh - (lowestMin)))
+                    * (-100));
+        else
+            return (((highestHigh - (closePrices.get(index-1)))
+                    / (highestHigh - (lowestMin)))
+                    * (-100));
     }
 
     /**
@@ -1357,12 +1362,15 @@ public class TechnicalIndicator {
         int index = Market.getCurrentDay();
 
         start = Math.max(0, index - timeFrame + 1);
-        highest = timeSeries.get(start);
-        for (int i = start + 1; i <= index; i++) {
-            if (highest < (timeSeries.get(i))) {
-                highest = timeSeries.get(i);
+        if (index == 0)
+             highest = Market.getCurrentPrice();
+        else
+            highest = timeSeries.get(start);
+            for (int i = start + 1; i <= index; i++) {
+                if (highest < (timeSeries.get(i-1))) {
+                    highest = timeSeries.get(i-1);
+                }
             }
-        }
         return (highest);
 
     }
@@ -1382,11 +1390,14 @@ public class TechnicalIndicator {
         int index = Market.getCurrentDay();
 
         start = Math.max(0, index - timeFrame + 1);
-        lowest = timeSeries.get(start);
-        for (int i = start + 1; i <= index; i++) {
-            if (lowest > (timeSeries.get(i))) {
-                lowest = timeSeries.get(i);
-            }
+        if (index==0)
+            lowest = Market.getCurrentPrice();
+        else
+            lowest = timeSeries.get(start);
+            for (int i = start + 1; i <= index; i++) {
+                if (lowest > (timeSeries.get(i-1))) {
+                    lowest = timeSeries.get(i-1);
+                }
         }
         return (lowest);
 
