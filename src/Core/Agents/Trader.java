@@ -6,8 +6,6 @@ import Core.Enums.Decision;
 import Core.Market.Market;
 
 import java.util.LinkedList;
-import java.util.Random;
-
 abstract public class Trader {
     private final Integer Id;
     private static Integer IdTracker = 1;
@@ -89,14 +87,12 @@ abstract public class Trader {
 
     public abstract Decision decideBuyOrSell();
 
-    public abstract Integer getDesiredOrderVolume();
-
     public Integer getPracticalOrderVolume() {
         if (this.decideBuyOrSell() == Decision.Buy) {
-            return Math.min(this.getDesiredOrderVolume(), (int)(this.currentCash / this.getLimitPrice()));
+            return (int)(this.currentCash / this.getLimitPrice());
         }
         else if (this.decideBuyOrSell() == Decision.Sell) {
-            return Math.min(this.getDesiredOrderVolume(), this.stocksOwned);
+            return this.stocksOwned;
         }
         else {
             return 0;
