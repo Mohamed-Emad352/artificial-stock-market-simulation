@@ -937,8 +937,10 @@ public class TechnicalIndicator {
     public float calculateChaikinMoneyFlowIndicator(int timeFrame, ArrayList<Float> highPrices, ArrayList<Float> lowPrices, ArrayList<Float> closePrices, ArrayList<Float> tradingVolume) {
 
         float clvIndicator = calculateCloseLocationValueIndicator(closePrices, highPrices, lowPrices);
+        //System.out.println("clvIndicator: " + clvIndicator);
 
         float volumeIndicator = calculateVolumeIndicator(timeFrame, tradingVolume);
+      //  System.out.println("volumeIndicator: " + volumeIndicator);
 
         int index = Market.getCurrentDay();
 
@@ -950,7 +952,10 @@ public class TechnicalIndicator {
         startIndex = Math.max(0, index - timeFrame + 1);
         sumOfMoneyFlowVolume = 0f;
         for (int i = startIndex; i <= index; i++) {
-            temp = clvIndicator * (tradingVolume.get(i));
+            if(startIndex == 0)
+                temp = 0;
+            else
+                temp = clvIndicator * (tradingVolume.get(i - 1));
             sumOfMoneyFlowVolume = sumOfMoneyFlowVolume + (temp);
         }
 
@@ -1639,8 +1644,6 @@ public class TechnicalIndicator {
         else {
             return ((closePrices.get(index-1) - (lowPrices.get(index-1))) - (highPrices.get(index-1) - (closePrices.get(index-1)))) / (highPrices.get(index-1) - (lowPrices.get(index-1)));
         }
-
-
     }
 
     /**
@@ -1702,7 +1705,10 @@ public class TechnicalIndicator {
         sumOfVolume = 0f;
 
         for (int i = startIndex; i <= index; i++) {
-            sumOfVolume = sumOfVolume + (tradingVolume.get(i));
+            if(startIndex == 0)
+                sumOfVolume = 0;
+            else
+                sumOfVolume = sumOfVolume + (tradingVolume.get(i - 1));
         }
 
         return (sumOfVolume);
