@@ -1294,12 +1294,15 @@ public class TechnicalIndicator {
 
         int index = Market.getCurrentDay();
 
+        if (index == 0 || index == 1)
+            return (0f);
 
         m = -10000000;
 
-        ts = highPrices.get(index) - (lowPrices.get(index));
-        ys = index == 0 ? 0f : highPrices.get(index) - (closePrices.get(index - 1));
-        yst = index == 0 ? 0f : closePrices.get(index - 1) - (lowPrices.get(index));
+
+        ts = highPrices.get(index-1) - (lowPrices.get(index-1));
+        ys = index == 0 ? 0f : highPrices.get(index-1) - (closePrices.get(index - 2));
+        yst = index == 0 ? 0f : closePrices.get(index - 2) - (lowPrices.get(index-1));
 
 
         if (m < Math.abs(ts)) {
@@ -1507,13 +1510,13 @@ public class TechnicalIndicator {
         int index = Market.getCurrentDay();
 
 
-        if (index == 0) {
+        if (index == 0 || index==1 ) {
             return (0f);
         } else {
-            float prevMaxPrice = highPrices.get(index - 1);
-            float maxPrice = highPrices.get(index);
-            float prevMinPrice = lowPrices.get(index - 1);
-            float minPrice = highPrices.get(index);
+            float prevMaxPrice = highPrices.get(index - 2);
+            float maxPrice = highPrices.get(index-1);
+            float prevMinPrice = lowPrices.get(index - 2);
+            float minPrice = highPrices.get(index-1);
 
             if ((prevMaxPrice >= (maxPrice) && prevMinPrice <= (minPrice))
                     || maxPrice - (prevMaxPrice) >= (prevMinPrice - (minPrice))) {
@@ -1567,13 +1570,13 @@ public class TechnicalIndicator {
 
         int index = Market.getCurrentDay();
 
-        if (index == 0) {
+        if (index == 0 || index == 1) {
             return 0f;
         } else {
-            float prevMaxPrice = highPrices.get(index - 1);
-            float maxPrice = highPrices.get(index);
-            float prevMinPrice = lowPrices.get(index - 1);
-            float minPrice = highPrices.get(index);
+            float prevMaxPrice = highPrices.get(index - 2);
+            float maxPrice = highPrices.get(index -1);
+            float prevMinPrice = lowPrices.get(index - 2);
+            float minPrice = highPrices.get(index-1);
 
             if ((maxPrice < (prevMaxPrice) && minPrice > (prevMinPrice))
                     || prevMinPrice - (minPrice) == (maxPrice - (prevMaxPrice))) {
