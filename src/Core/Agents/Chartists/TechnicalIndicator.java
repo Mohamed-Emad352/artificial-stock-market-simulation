@@ -785,8 +785,8 @@ public class TechnicalIndicator {
             return (timeSeries.get(0));
         } else {
             float zlemaPrev = timeSeries.get(index - 1);
-            return (k * (2 * (timeSeries.get(index)) - (timeSeries.get(index - lag)))
-                    + (1 - (k) * (zlemaPrev)));
+            return (k * (2 * (timeSeries.get(index-1)) - (timeSeries.get(index - 1 - lag)))
+                    + (1 - (k)) * (zlemaPrev));
         }
 
 
