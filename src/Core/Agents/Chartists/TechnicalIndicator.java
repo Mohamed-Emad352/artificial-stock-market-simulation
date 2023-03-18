@@ -1079,13 +1079,14 @@ public class TechnicalIndicator {
 
         int index = Market.getCurrentDay();
 
-        if (index == 0) {
+        if (index == 0 || index == 1) {
 
             NVIPrevious = (float) 1000;
             return NVIPrevious;
-        } else if (tradingVolume.get(index) < (tradingVolume.get(index - 1))) {
+        }
+        else if (tradingVolume.get(index - 1) < (tradingVolume.get(index - 2))) {
 
-            float priceChangeRatio = closePrices.get(index) - (closePrices.get(index - 1)) / (closePrices.get(index - 1));
+            float priceChangeRatio = (closePrices.get(index - 1) - closePrices.get(index - 2)) / (closePrices.get(index - 2));
 
             NVIPrevious = NVIPrevious + (priceChangeRatio * (NVIPrevious));
 
@@ -1142,12 +1143,13 @@ public class TechnicalIndicator {
 
         int index = Market.getCurrentDay();
 
-        if (index == 0) {
+        if (index == 0 || index == 1) {
             PVIPrevious = (float) 1000;
             return PVIPrevious;
-        } else if (tradingVolume.get(index) > (tradingVolume.get(index - 1))) {
+        }
+        else if (tradingVolume.get(index - 1) > (tradingVolume.get(index - 2))) {
 
-            float priceChangeRatio = closePrices.get(index) - (closePrices.get(index - 1)) / (closePrices.get(index - 1));
+            float priceChangeRatio = (closePrices.get(index - 1) - closePrices.get(index - 2)) / closePrices.get(index - 2);
 
             PVIPrevious = PVIPrevious + (priceChangeRatio * PVIPrevious);
 
