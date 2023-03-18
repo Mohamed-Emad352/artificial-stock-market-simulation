@@ -1025,6 +1025,7 @@ public class TechnicalIndicator {
                 cumulativeTPV = cumulativeTPV + (typicalPrice * (volumeIndicator));
                 cumulativeVolume = cumulativeVolume + volumeIndicator;
             }
+
             return (cumulativeTPV / cumulativeVolume);
         }
 
@@ -1709,8 +1710,13 @@ public class TechnicalIndicator {
         startIndex = Math.max(0, index - timeFrame + 1);
         sumOfVolume = 0f;
 
-        for (int i = startIndex; i <= index; i++) {
-            sumOfVolume = sumOfVolume + (tradingVolume.get(i));
+        if(startIndex == 0)
+            sumOfVolume = 0;
+        else
+        {
+            for (int i = startIndex; i <= index; i++) {
+                sumOfVolume = sumOfVolume + (tradingVolume.get(i - 1));
+            }
         }
 
         return (sumOfVolume);
@@ -1730,7 +1736,10 @@ public class TechnicalIndicator {
 
         int index = Market.getCurrentDay();
 
-        return (highPrices.get(index) + (lowPrices.get(index)) + (closePrices.get(index)) / (3));
+        if(index == 0)
+            return Market.getCurrentPrice();
+        else
+            return (highPrices.get(index - 1) + (lowPrices.get(index - 1)) + (closePrices.get(index - 1)) / (3));
 
     }
 

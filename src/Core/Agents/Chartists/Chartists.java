@@ -140,7 +140,7 @@ public class Chartists extends Trader {
             case WilliamR -> d = TI.calculateRSISignal(forecastValue, -20, -80);
             case AD, Chaikin -> d = TI.calculateDMISignal(forecastValue, 0);
             case VWAP, MVWAP ->
-                    d = TI.calculateVWAPSignal(forecastValue, Market.closePrices.get(Market.getCurrentDay() - 1));
+                    d = TI.calculateVWAPSignal(forecastValue, Market.getCurrentPrice() - 1);
             case NVI, PVI -> {
                 temp = TI.calculateEMAIndicator(10, Market.closePrices);
                 d = TI.calculateVWAPSignal(forecastValue, temp);
