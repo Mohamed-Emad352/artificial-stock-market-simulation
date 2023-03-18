@@ -1491,12 +1491,12 @@ public class TechnicalIndicator {
         int index = Market.getCurrentDay();
 
 
-        if (index == 0 || index == 1) {
+        if (index >= 1) {
             return (0f);
         } else {
-            float prevMaxPrice = highPrices.get(index - 2);
+            float prevMaxPrice = highPrices.get(index - 1);
             float maxPrice = highPrices.get(index-1);
-            float prevMinPrice = lowPrices.get(index - 2);
+            float prevMinPrice = lowPrices.get(index - 1);
             float minPrice = highPrices.get(index-1);
 
             if ((prevMaxPrice >= (maxPrice) && prevMinPrice <= (minPrice))
