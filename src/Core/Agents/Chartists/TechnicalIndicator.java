@@ -1512,7 +1512,7 @@ public class TechnicalIndicator {
         int index = Market.getCurrentDay();
 
 
-        if (index >= 1) {
+        if (index >= 0) {
             return (0f);
         } else {
             float prevMaxPrice = highPrices.get(index - 1);
