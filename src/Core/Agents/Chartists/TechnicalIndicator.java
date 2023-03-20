@@ -560,9 +560,12 @@ public class TechnicalIndicator {
 
         int index = Market.getCurrentDay();
 
+        if (index == 0)
+            return (0f);
+
         nIndex = Math.max(index - timeFrame, 0);
         nPeriodsAgoValue = timeSeries.get(nIndex);
-        currentValue = timeSeries.get(index);
+        currentValue = timeSeries.get(index-1);
 
         return (currentValue - (nPeriodsAgoValue)
                 / (nPeriodsAgoValue)
