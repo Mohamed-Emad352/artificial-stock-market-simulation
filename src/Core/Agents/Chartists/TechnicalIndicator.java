@@ -1522,9 +1522,9 @@ public class TechnicalIndicator {
         if (index >= 0) {
             return (0f);
         } else {
-            float prevMaxPrice = highPrices.get(index - 1);
+            float prevMaxPrice = highPrices.get(index - 2);
             float maxPrice = highPrices.get(index-1);
-            float prevMinPrice = lowPrices.get(index - 1);
+            float prevMinPrice = lowPrices.get(index - 2);
             float minPrice = highPrices.get(index-1);
 
             if ((prevMaxPrice >= (maxPrice) && prevMinPrice <= (minPrice))
