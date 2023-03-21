@@ -708,10 +708,10 @@ public class TechnicalIndicator {
         int index = Market.getCurrentDay();
 
         if (index == 0) {
-            return (timeSeries.get(0));
+            return Market.getCurrentPrice();
         } else if (index - timeFrame < 0) {
             value = 0f;
-            for (int i = index + 1; i > 0; i--) {
+            for (int i = index ; i > 0; i--) {
                 value = value + (i * (timeSeries.get(i - 1)));
             }
             return (value / (((index + 1) * (index + 2) / 2)));
@@ -719,7 +719,7 @@ public class TechnicalIndicator {
             value = 0f;
             actualIndex = index;
             for (int i = timeFrame; i > 0; i--) {
-                value = value + (i * (timeSeries.get(actualIndex)));
+                value = value + (i * (timeSeries.get(actualIndex-1)));
                 actualIndex--;
             }
             return (value / ((timeFrame * (timeFrame + 1) / 2)));
