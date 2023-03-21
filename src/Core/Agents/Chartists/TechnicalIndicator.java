@@ -1186,9 +1186,9 @@ public class TechnicalIndicator {
         float longTermEma = calculateEMAIndicator(longTimeFrame, closePrices);
 
 
-        return (shortTermEma - (longTermEma)
-                / (longTermEma)
-                * (100));
+        return ((shortTermEma - longTermEma)
+                / (longTermEma))
+                * (100);
 
 
     }
@@ -1842,9 +1842,9 @@ public class TechnicalIndicator {
         float Ema = calculateEMAIndicator(9, timeSeries);
 
 
-        if (forecastValue < Ema) { // Sell
+        if (forecastValue < 0) { // Sell
             return 0;
-        } else if (forecastValue == Ema) { // Hold
+        } else if (forecastValue == 0) { // Hold
             return 2;
         } else { // Buy
             return 1;
