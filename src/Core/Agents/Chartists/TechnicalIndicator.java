@@ -957,8 +957,13 @@ public class TechnicalIndicator {
         startIndex = Math.max(0, index - timeFrame + 1);
         sumOfMoneyFlowVolume = 0f;
         for (int i = startIndex; i <= index; i++) {
-            temp = clvIndicator * (tradingVolume.get(i));
-            sumOfMoneyFlowVolume = sumOfMoneyFlowVolume + (temp);
+            if (startIndex == 0)
+                sumOfMoneyFlowVolume = 0;
+            else{
+                temp = clvIndicator * (tradingVolume.get(i - 1));
+                sumOfMoneyFlowVolume = sumOfMoneyFlowVolume + (temp);
+            }
+
         }
 
         sumOfVolume = volumeIndicator;
