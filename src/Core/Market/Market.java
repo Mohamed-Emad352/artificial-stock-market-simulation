@@ -105,10 +105,8 @@ public class Market {
 
     public void updatePrice()
     {
-        //Random r = new Random();
         float noiseStandardDeviation = (float) Math.sqrt(noiseVariance);
         float noise = (float) (Main.randGenr.nextGaussian() * noiseStandardDeviation + noiseMean);
-        //currentPrice += (1 / liquidity) * netOrders + noise;
         currentPrice += noise;
     }
 
