@@ -23,7 +23,7 @@ public class Market {
     private static Integer currentDay;
     private static Float currentPrice = (float) 1000.0;
 
-    private final Integer tradingDays = 500;
+    private final Integer tradingDays = 240;
     private final Float noiseVariance = (float) 0.0058;
     private final Integer noiseMean = 0;
     private final Float liquidity = (float) 0.4308;
@@ -62,7 +62,7 @@ public class Market {
             numOfBuyAndSell.get(type).put(Decision.Buy, 0);
         }
 
-        numberOfChartistTraders.put(ChartistType.ROC, 70);
+        numberOfChartistTraders.put(ChartistType.RAVI, 160);
         numberOfChartistTraders.put(ChartistType.RSI, 0);
         numberOfChartistTraders.put(ChartistType.TimeLag, 0);
         stockPricesOverTime.add(currentPrice);

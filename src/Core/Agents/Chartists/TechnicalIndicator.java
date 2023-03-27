@@ -218,6 +218,7 @@ public class TechnicalIndicator {
      * @param lowPrices   ArrayList holding the security low prices.
      * @param closePrices ArrayList holding the security close prices.
      */
+
     public float calculateADMIndicator(int timeFrame, ArrayList<Float> highPrices, ArrayList<Float> lowPrices, ArrayList<Float> closePrices) {
 
         float dm = calculateDMIndicator(timeFrame, highPrices, lowPrices, closePrices);
@@ -235,12 +236,10 @@ public class TechnicalIndicator {
 
             ADMPrevious = ADMPrevious * (nbPeriodsMinusOne) / (nbPeriods) + (dm / (nbPeriods));
 
-
             System.out.println("ADMPrevious = " + ADMPrevious);
             return ADMPrevious;
 
         }
-
 
     }
 
@@ -535,13 +534,11 @@ public class TechnicalIndicator {
             throw new IllegalArgumentException("Long term period count must be greater than short term period count");
         }
 
-
         float shortSma = calculateSMAIndicator(shortSmaTimeFrame, timeSeries);
 
         float longSma = calculateSMAIndicator(longSmaTimeFrame, timeSeries);
 
-        return ((shortSma - longSma) / (longSma) * (100));
-
+        return ((shortSma - longSma) / (longSma)) * (100);
 
     }
 
@@ -1112,7 +1109,6 @@ public class TechnicalIndicator {
 
         }
 
-
     }
 
     /**
@@ -1200,9 +1196,9 @@ public class TechnicalIndicator {
         float longTermEma = calculateEMAIndicator(longTimeFrame, closePrices);
 
 
-        return (shortTermEma - (longTermEma)
-                / (longTermEma)
-                * (100));
+        return ((shortTermEma - longTermEma)
+                / (longTermEma))
+                * (100);
 
 
     }
@@ -1226,11 +1222,12 @@ public class TechnicalIndicator {
 
         float lowestMin = calculateLowestValue(timeFrame, lowPrices);
 
-        return (closePrices.get(index) - (lowestMin)
-                / (highestHigh - (lowestMin))
-                * (100));
-
-
+        if (index == 0)
+            return 0;
+        else
+            return ((closePrices.get(index - 1) - lowestMin)
+                    / (highestHigh - lowestMin))
+                    * (100);
     }
 
     public float calculateStochasticOscillatorKIndicator(int timeFrame, ArrayList<Float> closePrices, ArrayList<Float> highPrices, ArrayList<Float> lowPrices) {
@@ -1607,10 +1604,7 @@ public class TechnicalIndicator {
             } else {
                 return 0f;
             }
-
         }
-
-
     }
 
 
@@ -1626,7 +1620,6 @@ public class TechnicalIndicator {
         float nbPeriods = (timeFrame);
         float nbPeriodsMinusOne = (timeFrame - 1);
 
-
         float dmup = calculateDirectionalMovementUpIndicator(highPrices, lowPrices);
 
         int index = Market.getCurrentDay();
@@ -1635,13 +1628,10 @@ public class TechnicalIndicator {
             ADMUpPrevious = 1;
             return ADMUpPrevious;
         } else {
-
             ADMUpPrevious = (ADMUpPrevious * (nbPeriodsMinusOne) / (nbPeriods) + (dmup / (nbPeriods)));
 
             return ADMUpPrevious;
-
         }
-
     }
 
 
@@ -1663,13 +1653,10 @@ public class TechnicalIndicator {
             if(highPrices.get(index-1) == lowPrices.get(index-1) ) {
                 System.out.println("high price = low price");
                 return (closePrices.get(index - 1) - lowPrices.get(index - 1)) - (highPrices.get(index - 1) - closePrices.get(index - 1));
-
             }
             else
                 return ((closePrices.get(index-1) - lowPrices.get(index-1)) - (highPrices.get(index-1) - closePrices.get(index-1))) / (highPrices.get(index-1) - lowPrices.get(index-1));
         }
-
-
     }
 
     /**
@@ -1682,13 +1669,11 @@ public class TechnicalIndicator {
      */
     public float calculateDirectionalUpIndicator(int timeFrame, ArrayList<Float> highPrices, ArrayList<Float> lowPrices, ArrayList<Float> closePrices) {
 
-
         float admup = calculateAverageDirectionalMovementUpIndicator(timeFrame, highPrices, lowPrices);
 
         float atr = calculateAverageTrueRangeIndicator(timeFrame, highPrices, lowPrices, closePrices);
 
         return (admup / atr);
-
     }
 
     /**
@@ -1703,14 +1688,11 @@ public class TechnicalIndicator {
 
     public float calculateDirectionaldownIndicator(int timeFrame, ArrayList<Float> highPrices, ArrayList<Float> lowPrices, ArrayList<Float> closePrices) {
 
-
         float admdown = calculateAverageDirectionalMovementDownIndicator(timeFrame, highPrices, lowPrices);
 
         float atr = calculateAverageTrueRangeIndicator(timeFrame, highPrices, lowPrices, closePrices);
 
         return (admdown / (atr));
-
-
     }
 
     /**
@@ -1723,9 +1705,7 @@ public class TechnicalIndicator {
 
         float sumOfVolume;
         int startIndex;
-
         int index = Market.getCurrentDay();
-
 
         startIndex = Math.max(0, index - timeFrame + 1);
         sumOfVolume = 0f;
@@ -1738,10 +1718,7 @@ public class TechnicalIndicator {
                 sumOfVolume = sumOfVolume + (tradingVolume.get(i - 1));
             }
         }
-
         return (sumOfVolume);
-
-
     }
 
 
@@ -1765,7 +1742,6 @@ public class TechnicalIndicator {
             System.out.println(" closePrices.get(index - 1)  = " + closePrices.get(index - 1));
             */
             return (highPrices.get(index - 1) + lowPrices.get(index - 1) + closePrices.get(index - 1)) / 3;
-
         }
     }
 
@@ -1864,22 +1840,17 @@ public class TechnicalIndicator {
         // 2 Hold
         // 1 Buy
         // 0 Sell
-        System.out.println("forecast value = " + forecastValue);
 
         float Ema = calculateEMAIndicator(9, timeSeries);
-        System.out.println("Ema = " + Ema);
 
-        if (forecastValue < Ema) { // Sell
+        if (forecastValue < 0) { // Sell
             return 0;
-        } else if (forecastValue == Ema) { // Hold
+        } else if (forecastValue == 0) { // Hold
             return 2;
         } else { // Buy
             return 1;
         }
-
-
         //eliminateHoldSignal(forecastedSignal);
-
     }
 
     // Used for ROC
