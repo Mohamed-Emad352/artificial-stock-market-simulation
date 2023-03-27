@@ -319,7 +319,6 @@ public class TechnicalIndicator {
         sum.clear();
 
         int index = forecastedValues.size();
-
         if (index==0)
             return 0f;
         else {
@@ -556,13 +555,15 @@ public class TechnicalIndicator {
 
         int index = Market.getCurrentDay();
 
+        if (index == 0)
+            return (0f);
+
         nIndex = Math.max(index - timeFrame, 0);
         nPeriodsAgoValue = timeSeries.get(nIndex);
-        currentValue = timeSeries.get(index);
-
-        return (currentValue - (nPeriodsAgoValue)
-                / (nPeriodsAgoValue)
-                * (100));
+        currentValue = timeSeries.get(index-1);
+        return ((currentValue - nPeriodsAgoValue)
+                / (nPeriodsAgoValue))
+                * (100);
 
 
     }
@@ -705,10 +706,10 @@ public class TechnicalIndicator {
         int index = Market.getCurrentDay();
 
         if (index == 0) {
-            return (timeSeries.get(0));
+            return Market.getCurrentPrice();
         } else if (index - timeFrame < 0) {
             value = 0f;
-            for (int i = index + 1; i > 0; i--) {
+            for (int i = index ; i > 0; i--) {
                 value = value + (i * (timeSeries.get(i - 1)));
             }
             return (value / (((index + 1) * (index + 2) / 2)));
@@ -716,7 +717,7 @@ public class TechnicalIndicator {
             value = 0f;
             actualIndex = index;
             for (int i = timeFrame; i > 0; i--) {
-                value = value + (i * (timeSeries.get(actualIndex)));
+                value = value + (i * (timeSeries.get(actualIndex-1)));
                 actualIndex--;
             }
             return (value / ((timeFrame * (timeFrame + 1) / 2)));
@@ -950,8 +951,13 @@ public class TechnicalIndicator {
         startIndex = Math.max(0, index - timeFrame + 1);
         sumOfMoneyFlowVolume = 0f;
         for (int i = startIndex; i <= index; i++) {
-            temp = clvIndicator * (tradingVolume.get(i));
-            sumOfMoneyFlowVolume = sumOfMoneyFlowVolume + (temp);
+            if (startIndex == 0)
+                sumOfMoneyFlowVolume = 0;
+            else{
+                temp = clvIndicator * (tradingVolume.get(i - 1));
+                sumOfMoneyFlowVolume = sumOfMoneyFlowVolume + (temp);
+            }
+
         }
 
         sumOfVolume = volumeIndicator;
@@ -1514,9 +1520,9 @@ public class TechnicalIndicator {
         if (index >= 0) {
             return (0f);
         } else {
-            float prevMaxPrice = highPrices.get(index - 1);
+            float prevMaxPrice = highPrices.get(index - 2);
             float maxPrice = highPrices.get(index-1);
-            float prevMinPrice = lowPrices.get(index - 1);
+            float prevMinPrice = lowPrices.get(index - 2);
             float minPrice = highPrices.get(index-1);
 
             if ((prevMaxPrice >= (maxPrice) && prevMinPrice <= (minPrice))
@@ -1818,8 +1824,6 @@ public class TechnicalIndicator {
         // 2 Hold
         // 1 Buy
         // 0 Sell
-
-        float Ema = calculateEMAIndicator(9, timeSeries);
 
         if (forecastValue < 0) { // Sell
             return 0;

@@ -62,8 +62,9 @@ public class Market {
             numOfBuyAndSell.get(type).put(Decision.Buy, 0);
         }
 
-        numberOfChartistTraders.put(ChartistType.RAVI, 160);
-        numberOfChartistTraders.put(ChartistType.RSI, 0);
+
+        numberOfChartistTraders.put(ChartistType.Chaikin, 160);
+        numberOfChartistTraders.put(ChartistType.LongShort, 0);
         numberOfChartistTraders.put(ChartistType.TimeLag, 0);
         stockPricesOverTime.add(currentPrice);
         stockPricesOverTime.push(currentPrice);
@@ -105,10 +106,8 @@ public class Market {
 
     public void updatePrice()
     {
-        //Random r = new Random();
         float noiseStandardDeviation = (float) Math.sqrt(noiseVariance);
         float noise = (float) (Main.randGenr.nextGaussian() * noiseStandardDeviation + noiseMean);
-        //currentPrice += (1 / liquidity) * netOrders + noise;
         currentPrice += noise;
     }
 
