@@ -235,6 +235,8 @@ public class TechnicalIndicator {
 
             ADMPrevious = ADMPrevious * (nbPeriodsMinusOne) / (nbPeriods) + (dm / (nbPeriods));
 
+
+            System.out.println("ADMPrevious = " + ADMPrevious);
             return ADMPrevious;
 
         }
@@ -323,9 +325,10 @@ public class TechnicalIndicator {
 
         if (index==0)
             return 0f;
-        else
-            return forecastedValues.get(index-1);
-
+        else {
+            System.out.println("forecasted value = " + forecastedValues.get(index - 1));
+            return forecastedValues.get(index - 1);
+        }
 
     }
 
@@ -508,7 +511,6 @@ public class TechnicalIndicator {
         float shortTermEma = calculateEMAIndicator(shortTimeFrame, timeSeries);
 
         float longTermEma = calculateEMAIndicator(longTimeFrame, timeSeries);
-
         return (shortTermEma - longTermEma);
 
     }
@@ -588,6 +590,7 @@ public class TechnicalIndicator {
                     / (nPeriodsAgoValue)
                     * (100));
         }
+
 
     }
 
@@ -920,7 +923,11 @@ public class TechnicalIndicator {
             moneyFlowVolume = moneyFlowMultiplier * (tradeVolume.get(index-1));
             ADPrevious = moneyFlowVolume + ADPrevious;
 
-
+            System.out.println("moneyFlowVolume = " + moneyFlowVolume);
+            System.out.println("moneyFlowMultiplier = " + moneyFlowMultiplier);
+            System.out.println("clvIndicator = " + clvIndicator);
+            System.out.println("tradeVolume.get(index-1) = " + tradeVolume.get(index-1));
+            System.out.println("ADPrevious = " + ADPrevious);
             return ADPrevious;
         }
 
@@ -1024,9 +1031,16 @@ public class TechnicalIndicator {
             for (int i = startIndex; i <= index; i++) {
                 cumulativeTPV = cumulativeTPV + (typicalPrice * (volumeIndicator));
                 cumulativeVolume = cumulativeVolume + volumeIndicator;
+
+
             }
 
+            System.out.println("typicalPrice = " + typicalPrice );
+            System.out.println("cumulativeTPV = " + cumulativeTPV );
+            System.out.println("cumulativeVolume = " + cumulativeVolume );
+
             return (cumulativeTPV / cumulativeVolume);
+
         }
 
     }
@@ -1049,14 +1063,14 @@ public class TechnicalIndicator {
 
         int index = Market.getCurrentDay();
 
-        int realFrame = Math.min(0, index - timeFrame);
+        int realFrame = Math.min(0, index - timeFrame );
 
         for (int i = index; i >= realFrame; i--) {
 
             vwap.add(calculateVWAPIndicator(timeFrame, highPrices, lowPrices, closePrices, tradingVolume, i));
 
         }
-
+        System.out.println("vwap = " + vwap);
         vwap.clear();
 
         return calculateSMAIndicator(timeFrame, vwap);
@@ -1646,7 +1660,13 @@ public class TechnicalIndicator {
         if (index == 0)
             return 1;
         else {
-            return ((closePrices.get(index-1) - (lowPrices.get(index-1))) - (highPrices.get(index-1) - (closePrices.get(index-1)))) / (highPrices.get(index-1) - (lowPrices.get(index-1)));
+            if(highPrices.get(index-1) == lowPrices.get(index-1) ) {
+                System.out.println("high price = low price");
+                return (closePrices.get(index - 1) - lowPrices.get(index - 1)) - (highPrices.get(index - 1) - closePrices.get(index - 1));
+
+            }
+            else
+                return ((closePrices.get(index-1) - lowPrices.get(index-1)) - (highPrices.get(index-1) - closePrices.get(index-1))) / (highPrices.get(index-1) - lowPrices.get(index-1));
         }
 
 
@@ -1738,9 +1758,15 @@ public class TechnicalIndicator {
 
         if(index == 0)
             return Market.getCurrentPrice();
-        else
-            return (highPrices.get(index - 1) + (lowPrices.get(index - 1)) + (closePrices.get(index - 1)) / (3));
+        else {
+            /*
+            System.out.println(" highPrices.get(index - 1)  = " + highPrices.get(index - 1));
+            System.out.println(" lowPrices.get(index - 1)  = " + lowPrices.get(index - 1));
+            System.out.println(" closePrices.get(index - 1)  = " + closePrices.get(index - 1));
+            */
+            return (highPrices.get(index - 1) + lowPrices.get(index - 1) + closePrices.get(index - 1)) / 3;
 
+        }
     }
 
 
@@ -1838,9 +1864,10 @@ public class TechnicalIndicator {
         // 2 Hold
         // 1 Buy
         // 0 Sell
+        System.out.println("forecast value = " + forecastValue);
 
         float Ema = calculateEMAIndicator(9, timeSeries);
-
+        System.out.println("Ema = " + Ema);
 
         if (forecastValue < Ema) { // Sell
             return 0;
@@ -1918,6 +1945,7 @@ public class TechnicalIndicator {
         // 1 Buy
         // 0 Sell
 
+        //System.out.println("forecast value = " + forecastValue);
 
         if (forecastValue > (threshold)) { // Buy
             return 1;

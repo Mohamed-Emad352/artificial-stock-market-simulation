@@ -104,12 +104,13 @@ public class Main extends Application {
 
 
         for (int day = 0; day <= market.getTradingDays(); day++) {
+            System.out.println("Current day = " + day);
             market.setCurrentDay(day);
 
             Market.openPrices.add(Market.getCurrentPrice());
 
-            lowestPrice = 100000000;
-            highestPrice = -10000000;
+            lowestPrice = Market.getCurrentPrice();
+            highestPrice = Market.getCurrentPrice();
             tradingVolume = 0;
             priceChanges = 0;
 
@@ -127,13 +128,17 @@ public class Main extends Application {
 
                     if (Market.getCurrentPrice() < lowestPrice) {
                         lowestPrice = Market.getCurrentPrice();
+
                     }
 
                     if (Market.getCurrentPrice() > highestPrice) {
                         highestPrice = Market.getCurrentPrice();
 
+
                     }
+
                 }
+
             }
 
             for (Trader trader: market.getTraders()) {
