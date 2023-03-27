@@ -320,7 +320,6 @@ public class TechnicalIndicator {
         sum.clear();
 
         int index = forecastedValues.size();
-
         if (index==0)
             return 0f;
         else
@@ -566,10 +565,9 @@ public class TechnicalIndicator {
         nIndex = Math.max(index - timeFrame, 0);
         nPeriodsAgoValue = timeSeries.get(nIndex);
         currentValue = timeSeries.get(index-1);
-
-        return (currentValue - (nPeriodsAgoValue)
-                / (nPeriodsAgoValue)
-                * (100));
+        return ((currentValue - nPeriodsAgoValue)
+                / (nPeriodsAgoValue))
+                * (100);
 
 
     }
