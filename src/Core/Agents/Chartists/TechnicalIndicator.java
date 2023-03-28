@@ -235,8 +235,6 @@ public class TechnicalIndicator {
         } else {
 
             ADMPrevious = ADMPrevious * (nbPeriodsMinusOne) / (nbPeriods) + (dm / (nbPeriods));
-
-            System.out.println("ADMPrevious = " + ADMPrevious);
             return ADMPrevious;
 
         }
@@ -325,7 +323,6 @@ public class TechnicalIndicator {
         if (index==0)
             return 0f;
         else {
-            System.out.println("forecasted value = " + forecastedValues.get(index - 1));
             return forecastedValues.get(index - 1);
         }
 
@@ -350,7 +347,7 @@ public class TechnicalIndicator {
 
         //forecastedValues.add(dup.get(index).minus(ddown.get(index)).abs().dividedBy(dup.get(index).plus(ddown.get(index))).multipliedBy(float.HUNDRED));
 
-        return ((dup - ddown) / (dup) + ddown) * (100);
+        return ((dup - ddown) / (dup + ddown)) * (100);
 
     }
 
@@ -920,11 +917,6 @@ public class TechnicalIndicator {
             moneyFlowVolume = moneyFlowMultiplier * (tradeVolume.get(index-1));
             ADPrevious = moneyFlowVolume + ADPrevious;
 
-            System.out.println("moneyFlowVolume = " + moneyFlowVolume);
-            System.out.println("moneyFlowMultiplier = " + moneyFlowMultiplier);
-            System.out.println("clvIndicator = " + clvIndicator);
-            System.out.println("tradeVolume.get(index-1) = " + tradeVolume.get(index-1));
-            System.out.println("ADPrevious = " + ADPrevious);
             return ADPrevious;
         }
 
@@ -1032,10 +1024,6 @@ public class TechnicalIndicator {
 
             }
 
-            System.out.println("typicalPrice = " + typicalPrice );
-            System.out.println("cumulativeTPV = " + cumulativeTPV );
-            System.out.println("cumulativeVolume = " + cumulativeVolume );
-
             return (cumulativeTPV / cumulativeVolume);
 
         }
@@ -1067,12 +1055,8 @@ public class TechnicalIndicator {
             vwap.add(calculateVWAPIndicator(timeFrame, highPrices, lowPrices, closePrices, tradingVolume, i));
 
         }
-        System.out.println("vwap = " + vwap);
         vwap.clear();
-
         return calculateSMAIndicator(timeFrame, vwap);
-
-
     }
 
 
@@ -1651,7 +1635,6 @@ public class TechnicalIndicator {
             return 1;
         else {
             if(highPrices.get(index-1) == lowPrices.get(index-1) ) {
-                System.out.println("high price = low price");
                 return (closePrices.get(index - 1) - lowPrices.get(index - 1)) - (highPrices.get(index - 1) - closePrices.get(index - 1));
             }
             else
@@ -1736,11 +1719,6 @@ public class TechnicalIndicator {
         if(index == 0)
             return Market.getCurrentPrice();
         else {
-            /*
-            System.out.println(" highPrices.get(index - 1)  = " + highPrices.get(index - 1));
-            System.out.println(" lowPrices.get(index - 1)  = " + lowPrices.get(index - 1));
-            System.out.println(" closePrices.get(index - 1)  = " + closePrices.get(index - 1));
-            */
             return (highPrices.get(index - 1) + lowPrices.get(index - 1) + closePrices.get(index - 1)) / 3;
         }
     }
@@ -1915,8 +1893,6 @@ public class TechnicalIndicator {
         // 2 Hold
         // 1 Buy
         // 0 Sell
-
-        //System.out.println("forecast value = " + forecastValue);
 
         if (forecastValue > (threshold)) { // Buy
             return 1;
