@@ -21,18 +21,22 @@ public class Market {
     public static Integer currentOrderQuantity = 0;
 
     private static Integer currentDay;
-    private static Float currentPrice = (float) 1000.0;
+    private static Float currentPrice = (float) 1000;
 
     private final Integer tradingDays = 240;
-    private final Float noiseVariance = (float) 0.0058;
+    private final Float noiseVariance = (float) 0.1;
     private final Integer noiseMean = 0;
     private final Float liquidity = (float) 0.4308;
     private static Integer numberOfStocks;
-    private final static Integer numberOfTraders = 160;
-    private final static Integer MaximumNumberOfStocks = 100 * numberOfTraders;
-    private final Integer numberOfFundamentalists = 0;
+
+    private static Float budget = 5000000f;
+
+    private final static Integer numberOfTraders = 3000;
+    private final Integer numberOfFundamentalists = 1000;
+
+    private final static Integer MaximumNumberOfStocks =
+            Math.round((budget / currentPrice) * numberOfTraders);
     private final LinkedList<Trader> traders = new LinkedList<>();
-    private static Float budget = 20000f;
 
     public static ArrayList<Float> closePrices;
     public static ArrayList<Float> openPrices;
@@ -40,7 +44,6 @@ public class Market {
     public static ArrayList<Float> lowPrices;
     public static ArrayList<Float> tradeVolume; // Should be Long if volumes are high
     public static ArrayList<Integer> priceChangesPerDay;
-
 
 
     public Market() {
@@ -63,11 +66,9 @@ public class Market {
         }
 
 
-        numberOfChartistTraders.put(ChartistType.Chaikin, 160);
-        numberOfChartistTraders.put(ChartistType.LongShort, 0);
-        numberOfChartistTraders.put(ChartistType.TimeLag, 0);
+        numberOfChartistTraders.put(ChartistType.SimpleMovingAverage, 1000);
+        numberOfChartistTraders.put(ChartistType.DoubleExpMovingAverage, 1000);
         stockPricesOverTime.add(currentPrice);
-        stockPricesOverTime.push(currentPrice);
         numberOfStocks = MaximumNumberOfStocks;
     }
 

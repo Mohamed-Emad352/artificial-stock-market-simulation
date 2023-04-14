@@ -43,39 +43,5 @@ public class Controller {
             lineChart.setCreateSymbols(false);
             tab.setContent(lineChart);
         }
-        initializePieCharts();
-    }
-
-    private void initializePieCharts() {
-        PieChartDataSets[] dataSets = Main.getPieChartDataSets();
-        for (PieChartDataSets sets: dataSets) {
-            Tab tab = new Tab();
-            tab.setText(sets.tabTitle());
-            tabPane.getTabs().add(tab);
-            GridPane pane = new GridPane();
-            pane.setPadding(new Insets(20, 20, 20 ,20));
-            tab.setContent(pane);
-            PieChart[] charts = new PieChart[sets.data().size()];
-            for (int dataIndex = 0; dataIndex < sets.data().size(); dataIndex++) {
-                PieChart pieChart = new PieChart();
-                pieChart.setTitle(sets.chartTitles().get(dataIndex));
-                for (int seriesIndex = 0; seriesIndex < sets.data().get(dataIndex).size(); seriesIndex++) {
-                    PieChart.Data slice = new PieChart.Data(sets.seriesNames().get(dataIndex).get(seriesIndex),
-                            sets.data().get(dataIndex).get(seriesIndex));
-                    pieChart.getData().add(slice);
-                }
-                charts[dataIndex] = pieChart;
-            }
-            int rowIndex = 0;
-            int columnIndex = 0;
-            for (PieChart chart: charts) {
-                pane.add(chart, rowIndex, columnIndex);
-                columnIndex++;
-                if (columnIndex >= 2) {
-                    columnIndex = 0;
-                    rowIndex++;
-                }
-            }
-        }
     }
 }
