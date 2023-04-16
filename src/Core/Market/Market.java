@@ -21,18 +21,20 @@ public class Market {
     public static Integer currentOrderQuantity = 0;
 
     private static Integer currentDay;
-    private static Float currentPrice = (float) 1000;
+    private static Float currentPrice = (float) 150;
 
-    private final Integer tradingDays = 240;
+    private final Integer tradingDays = 1;
     private final Float noiseVariance = (float) 0.1;
     private final Integer noiseMean = 0;
-    private final Float liquidity = (float) 0.4308;
+    private final static Float liquidity = (float) 0.4308;
     private static Integer numberOfStocks;
 
     private static Float budget = 5000000f;
 
-    private final static Integer numberOfTraders = 3000;
+    private final static Integer numberOfTraders = 2000;
     private final Integer numberOfFundamentalists = 1000;
+
+    private final static Float minimumPrice = 20f;
 
     private final static Integer MaximumNumberOfStocks =
             Math.round((budget / currentPrice) * numberOfTraders);
@@ -66,7 +68,6 @@ public class Market {
         }
 
 
-        numberOfChartistTraders.put(ChartistType.SimpleMovingAverage, 1000);
         numberOfChartistTraders.put(ChartistType.DoubleExpMovingAverage, 1000);
         stockPricesOverTime.add(currentPrice);
         numberOfStocks = MaximumNumberOfStocks;
@@ -136,6 +137,14 @@ public class Market {
             orderDirection = 0;
         }
 
+        float newPrice = currentPrice + ((1 / liquidity) * order.quantity * orderDirection);
+        System.out.println("new price: "  + newPrice);
+        System.out.println("price: "  + currentPrice);
+        if (newPrice <= minimumPrice) {
+            order.quantity = 0;
+            orderDirection = 0;
+        }
+
         Float NewCash = -1 * orderDirection * order.quantity * currentPrice;
         if (orderDirection == -1 && budget < NewCash) {
             order.quantity = (int)Math.floor(budget / getCurrentPrice());
@@ -154,7 +163,7 @@ public class Market {
         String className = order.trader.getClass().getName();
         String[] classNameL = className.split("[.]");
         String classNameOfTrader = classNameL[classNameL.length - 1];
-        budget += -NewCash;
+        budget -= NewCash;
         System.out.println("Price: " + getCurrentPrice());
         System.out.println("Quantity: "+ order.quantity);
         System.out.println("Direction: "+ orderDirection);
