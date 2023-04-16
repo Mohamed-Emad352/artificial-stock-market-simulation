@@ -138,8 +138,6 @@ public class Market {
         }
 
         float newPrice = currentPrice + ((1 / liquidity) * order.quantity * orderDirection);
-        System.out.println("new price: "  + newPrice);
-        System.out.println("price: "  + currentPrice);
         if (newPrice <= minimumPrice) {
             order.quantity = 0;
             orderDirection = 0;

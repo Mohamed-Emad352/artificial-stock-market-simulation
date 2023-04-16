@@ -117,7 +117,6 @@ public class Main extends Application {
 
                 if (Market.currentOrderQuantity != 0) {
                     priceChanges++;
-
                     market.updatePriceAfterOrder();
 
 
@@ -135,7 +134,7 @@ public class Main extends Application {
                     }
 
                 }
-
+                System.out.println("price: "  + Market.getCurrentPrice());
             }
 
             for (Trader trader: traders) {

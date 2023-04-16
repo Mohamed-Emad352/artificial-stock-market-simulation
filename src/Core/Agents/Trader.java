@@ -60,10 +60,7 @@ abstract public class Trader {
 
     public void requestOrder() {
         Order order = this.constructOrder();
-        if (order.decision != null)
-        {
-            Market.executeOrder(order);
-        }
+        Market.executeOrder(order);
     }
 
     public void pushToOwnedAssets() {
