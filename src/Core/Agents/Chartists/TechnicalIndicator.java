@@ -1871,7 +1871,6 @@ public class TechnicalIndicator {
         // 2 Hold
         // 1 Buy
         // 0 Sell
-
         if (forecastValue > thershold) { // Buy
             return 1;
         } else if (forecastValue < thershold) { // Sell

@@ -23,21 +23,21 @@ public class Market {
     private static Integer currentDay;
     private static Float currentPrice = (float) 150;
 
-    private final Integer tradingDays = 1;
+
     private final Float noiseVariance = (float) 0.1;
     private final Integer noiseMean = 0;
     private final static Float liquidity = (float) 0.4308;
     private static Integer numberOfStocks;
+    private final Integer tradingDays = 240;
+    private final static Integer numberOfTraders = 7000;
+    private final Integer numberOfFundamentalists = 3000;
+    private static Float budget = (float) 3000000 ;
+    private final static Integer MaximumNumberOfStocks =
+            Math.round((budget / currentPrice) * numberOfTraders);
 
-    private static Float budget = 5000000f;
-
-    private final static Integer numberOfTraders = 2000;
-    private final Integer numberOfFundamentalists = 1000;
 
     private final static Float minimumPrice = 20f;
 
-    private final static Integer MaximumNumberOfStocks =
-            Math.round((budget / currentPrice) * numberOfTraders);
     private final LinkedList<Trader> traders = new LinkedList<>();
 
     public static ArrayList<Float> closePrices;
@@ -68,7 +68,10 @@ public class Market {
         }
 
 
-        numberOfChartistTraders.put(ChartistType.DoubleExpMovingAverage, 1000);
+        numberOfChartistTraders.put(ChartistType.RAVI,1000);
+        numberOfChartistTraders.put(ChartistType.SimpleMovingAverage,1000);
+        numberOfChartistTraders.put(ChartistType.MACD,2000);
+
         stockPricesOverTime.add(currentPrice);
         numberOfStocks = MaximumNumberOfStocks;
     }
@@ -144,6 +147,7 @@ public class Market {
         }
 
         Float NewCash = -1 * orderDirection * order.quantity * currentPrice;
+
         if (orderDirection == -1 && budget < NewCash) {
             order.quantity = (int)Math.floor(budget / getCurrentPrice());
             NewCash = -1 * orderDirection * order.quantity * currentPrice;
@@ -151,6 +155,9 @@ public class Market {
         if (order.quantity == 0) {
             orderDirection = 0;
         }
+
+        if(order.quantity > 20)
+            order.quantity=20;
 
         order.trader.updateCash(NewCash);
         currentOrderQuantity = orderDirection * order.quantity;
