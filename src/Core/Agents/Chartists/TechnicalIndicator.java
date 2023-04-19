@@ -905,6 +905,8 @@ public class TechnicalIndicator {
 
         int index = Market.getCurrentDay();
 
+        ADPrevious = 0f;
+
         if (index == 0) {
             ADPrevious = 0f;
             return 0;
@@ -1061,7 +1063,7 @@ public class TechnicalIndicator {
             vwap.add(calculateVWAPIndicator(timeFrame, highPrices, lowPrices, closePrices, tradingVolume, i));
 
         }
-        vwap.clear();
+        //vwap.clear();
         return calculateSMAIndicator(timeFrame, vwap);
     }
 
@@ -1078,17 +1080,17 @@ public class TechnicalIndicator {
     //@see http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:negative_volume_inde
     public float calculateNVIIndicator(ArrayList<Float> closePrices, ArrayList<Float> tradingVolume) {
 
-
         int index = Market.getCurrentDay();
 
         if (index == 0 || index == 1) {
 
-            NVIPrevious = (float) 1000;
+            NVIPrevious = Market.getCurrentPrice();
+
             return NVIPrevious;
         }
         else if (tradingVolume.get(index - 1) < (tradingVolume.get(index - 2))) {
 
-            float priceChangeRatio = (closePrices.get(index - 1) - closePrices.get(index - 2)) / (closePrices.get(index - 2));
+            float priceChangeRatio = (closePrices.get(index - 1) - closePrices.get(index - 2)) / closePrices.get(index - 2);
 
             NVIPrevious = NVIPrevious + (priceChangeRatio * (NVIPrevious));
 
@@ -1145,7 +1147,7 @@ public class TechnicalIndicator {
         int index = Market.getCurrentDay();
 
         if (index == 0 || index == 1) {
-            PVIPrevious = (float) 1000;
+            PVIPrevious = Market.getCurrentPrice();
             return PVIPrevious;
         }
         else if (tradingVolume.get(index - 1) > (tradingVolume.get(index - 2))) {
@@ -1187,8 +1189,8 @@ public class TechnicalIndicator {
 
 
         return ((shortTermEma - longTermEma)
-                / (longTermEma))
-                * (100);
+                / longTermEma)
+                * 100;
 
 
     }
@@ -1954,7 +1956,6 @@ public class TechnicalIndicator {
         // 1 Buy
         // 0 Sell
 
-
         if (forecastValue > thershold1) { // Sell
             return 0;
         } else if (forecastValue < thershold2) { // Buy
@@ -1963,9 +1964,7 @@ public class TechnicalIndicator {
             return 2;
         }
 
-
         //eliminateHoldSignal(forecastedSignal);
-
     }
 
     // Used for VWAPS
@@ -1986,11 +1985,6 @@ public class TechnicalIndicator {
         } else { // Hold
             return 2;
         }
-
-
         //eliminateHoldSignal(forecastedSignal);
-
     }
-
-
 }

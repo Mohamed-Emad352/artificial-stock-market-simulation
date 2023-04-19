@@ -17,6 +17,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.*;
 
+import static Core.Market.Market.numOfBuyAndSell;
+
 /*
 List of Changes:
 1- Add Time and Memory measures
@@ -134,7 +136,6 @@ public class Main extends Application {
                     }
 
                 }
-                System.out.println("price: "  + Market.getCurrentPrice());
             }
 
             for (Trader trader: traders) {

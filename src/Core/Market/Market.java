@@ -19,27 +19,21 @@ public class Market {
     private final static LinkedList<Float> stockPricesOverTime = new LinkedList<>();
     private static Integer netOrders = 0;
     public static Integer currentOrderQuantity = 0;
-
     private static Integer currentDay;
     private static Float currentPrice = (float) 150;
-
-
     private final Float noiseVariance = (float) 0.1;
     private final Integer noiseMean = 0;
     private final static Float liquidity = (float) 0.4308;
     private static Integer numberOfStocks;
     private final Integer tradingDays = 240;
-    private final static Integer numberOfTraders = 7000;
-    private final Integer numberOfFundamentalists = 3000;
-    private static Float budget = (float) 3000000 ;
+    private final static Integer numberOfTraders = 24000;
+    private final Integer numberOfFundamentalists = 13000;
+    private static Float budget = (float) 10000000 ;
     private final static Integer MaximumNumberOfStocks =
             Math.round((budget / currentPrice) * numberOfTraders);
 
-
     private final static Float minimumPrice = 20f;
-
     private final LinkedList<Trader> traders = new LinkedList<>();
-
     public static ArrayList<Float> closePrices;
     public static ArrayList<Float> openPrices;
     public static ArrayList<Float> highPrices;
@@ -68,9 +62,29 @@ public class Market {
         }
 
 
-        numberOfChartistTraders.put(ChartistType.RAVI,1000);
-        numberOfChartistTraders.put(ChartistType.SimpleMovingAverage,1000);
-        numberOfChartistTraders.put(ChartistType.MACD,2000);
+        numberOfChartistTraders.put(ChartistType.SimpleMovingAverage,500);
+        numberOfChartistTraders.put(ChartistType.ExpMovingAverage,500);
+        numberOfChartistTraders.put(ChartistType.DoubleExpMovingAverage,500);
+        numberOfChartistTraders.put(ChartistType.TripleExpMovingAverage,500);
+        numberOfChartistTraders.put(ChartistType.KAMA,500);
+        numberOfChartistTraders.put(ChartistType.MACD,500);
+        numberOfChartistTraders.put(ChartistType.RAVI,500);
+        numberOfChartistTraders.put(ChartistType.ROC,500);
+        numberOfChartistTraders.put(ChartistType.WMA,500);
+        numberOfChartistTraders.put(ChartistType.ZLEMA,500);
+        numberOfChartistTraders.put(ChartistType.WilliamR,500);
+        numberOfChartistTraders.put(ChartistType.AD,500);
+        numberOfChartistTraders.put(ChartistType.Chaikin,500);
+        numberOfChartistTraders.put(ChartistType.NVI,500);
+        numberOfChartistTraders.put(ChartistType.PVI,500);
+        numberOfChartistTraders.put(ChartistType.VWAP,500);
+        numberOfChartistTraders.put(ChartistType.MVWAP,500);
+        numberOfChartistTraders.put(ChartistType.PPO,500);
+        numberOfChartistTraders.put(ChartistType.StochasticOscillatorK,500);
+        numberOfChartistTraders.put(ChartistType.RSI,500);
+        numberOfChartistTraders.put(ChartistType.CoppCurve,500);
+        numberOfChartistTraders.put(ChartistType.HMA,500);
+
 
         stockPricesOverTime.add(currentPrice);
         numberOfStocks = MaximumNumberOfStocks;
@@ -157,7 +171,7 @@ public class Market {
         }
 
         if(order.quantity > 20)
-            order.quantity=20;
+            order.quantity = 20;
 
         order.trader.updateCash(NewCash);
         currentOrderQuantity = orderDirection * order.quantity;
