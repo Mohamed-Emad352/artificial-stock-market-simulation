@@ -3,10 +3,9 @@ package Core;
 import Core.Agents.Chartists.Chartists;
 import Core.Agents.Fundamentalists.Fundamentalist;
 import Core.Agents.Trader;
+import Core.Configurations.BarChartDataSet;
 import Core.Configurations.LineChartDataSet;
-import Core.Configurations.PieChartDataSets;
 import Core.Enums.ChartistType;
-import Core.Enums.Decision;
 import Core.Market.Market;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -17,20 +16,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.*;
 
-import static Core.Market.Market.numOfBuyAndSell;
-
-/*
-List of Changes:
-1- Add Time and Memory measures
-2- Cancel the Market copy inside each trader, Market has static fields and methods
-   which can be accessed by the class object market
-3- Define a Random Generator object, set the seed and use it in all classes
-4- Add new updatePriceAfterOrders
-5- Add close, open, high, low, volume, priceChangesPerDay
-6- Add technical indicators and compute signal
-
-
-*/
+import static Core.Market.Market.chartists;
 
 public class Main extends Application {
 
@@ -39,15 +25,7 @@ public class Main extends Application {
      */
     static long startTime, endTime;
 
-    /**
-     * Random Number seed
-     */
-
     private static long randomSeed;
-
-    /**
-     * Random number generator object.
-     */
 
     public static Random randGenr = new Random();
 
@@ -55,8 +33,6 @@ public class Main extends Application {
 
     static LinkedList<Float> averageTotalCashForFundamentalists = new LinkedList<>();
     static HashMap<ChartistType, LinkedList<Float>> averageTotalCashForChartists = new HashMap<>();
-    static LinkedList<Float> totalProfitForFundamentalists = new LinkedList<>();
-    static HashMap<ChartistType, LinkedList<Float>> totalProfitForChartists = new HashMap<>();
 
     public static void main(String[] args) {
 
@@ -71,6 +47,7 @@ public class Main extends Application {
         for (int f = 0; f < market.getNumOfFundamentalists(); f++) {
             Fundamentalist fundamentalTrader = new Fundamentalist();
             market.pushTraderInList(fundamentalTrader);
+            Market.fundamentalists.push(fundamentalTrader);
         }
 
         for (ChartistType chartistType : ChartistType.values()) {
@@ -78,6 +55,7 @@ public class Main extends Application {
                 for (int i = 0; i < market.getNumberOfChartistTrader(chartistType); i++) {
                     Chartists chartist = new Chartists(chartistType);
                     market.pushTraderInList(chartist);
+                    Market.chartists.get(chartistType).push(chartist);
                 }
             }
         }
@@ -91,7 +69,6 @@ public class Main extends Application {
         for (ChartistType type : ChartistType.values()) {
             chartistsDailyCash.put(type, new LinkedList<>());
             averageTotalCashForChartists.put(type, new LinkedList<>());
-            totalProfitForChartists.put(type, new LinkedList<>());
         }
         market.subtractInitialStocksOwned(traders);
 
@@ -138,7 +115,7 @@ public class Main extends Application {
                 }
             }
 
-            for (Trader trader: traders) {
+            for (Trader trader : traders) {
                 String className = trader.getClass().getName();
                 String[] classNameL = className.split("[.]");
                 classNameOfTrader = classNameL[classNameL.length - 1];
@@ -176,20 +153,6 @@ public class Main extends Application {
 
         Trader trader;
 
-        for (Trader value : traders) {
-            trader = value;
-
-            String className = trader.getClass().getName();
-            String[] classNameL = className.split("[.]");
-            classNameOfTrader = classNameL[classNameL.length - 1];
-
-            if (classNameOfTrader.equals("Fundamentalist")) {
-                totalProfitForFundamentalists.add(trader.getTotalProfit());
-            } else if (classNameOfTrader.equals("Chartists")) {
-                totalProfitForChartists.get(((Chartists) trader).type).add(trader.getTotalProfit());
-            }
-        }
-
         endTime = System.currentTimeMillis();
 
         System.out.println("Simulation Time: " + (endTime - startTime) + " MilliSeconds");
@@ -218,7 +181,7 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    public static LineChartDataSet[] getDataSets() {
+    public static LineChartDataSet[] getLineDataSets() {
         LineChartDataSet[] datasets = new LineChartDataSet[2];
         LinkedList<LinkedList<Float>> priceData = new LinkedList<>();
         priceData.add(market.getStockPricesOverTime());
@@ -245,6 +208,18 @@ public class Main extends Application {
         datasets[1] = new LineChartDataSet("Averages of Total money", "Averages of Total money for 4 types of trader",
                 "Days", "cash", SeriesNamesForAverages, averagesTotalMoney);
 
+        return datasets;
+    }
+
+    public static LinkedList<BarChartDataSet> getBarDataSets() {
+        LinkedList<BarChartDataSet> datasets = new LinkedList<>();
+        HashMap<String, Float> data = new HashMap<>();
+        data.put("Fundamentalist", Market.getAverageFundamentalistsProfit());
+        for (var entry : chartists.entrySet()) {
+            data.put(entry.getKey().toString(), Market.getAverageProfit(entry.getKey()));
+        }
+        BarChartDataSet profitDataSet = new BarChartDataSet("Profits", "Average profits for trading strategies", "Strategy", "Profit", data);
+        datasets.add(profitDataSet);
         return datasets;
     }
 

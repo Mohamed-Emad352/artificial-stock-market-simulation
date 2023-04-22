@@ -9,8 +9,8 @@ import java.util.LinkedList;
 abstract public class Trader {
     private final Integer Id;
     private static Integer IdTracker = 1;
-    private final Float initialCash;
-    private Float currentCash;
+    public final Float initialCash;
+    public Float currentCash;
     private Integer stocksOwned = Main.randGenr.nextInt(11) + 20;
     private final LinkedList<Float> cashOwnedOverTime = new LinkedList<Float>();
     private final LinkedList<Integer> stocksOwnedOverTime = new LinkedList<Integer>();
@@ -28,13 +28,6 @@ abstract public class Trader {
         return stocksOwned;
     }
 
-    public void setStocksOwned(Integer stocksOwned) {
-        this.stocksOwned = stocksOwned;
-    }
-
-    public int getId () {return Id;}
-    public Float getCurrentCash() { return currentCash; }
-
     public void updateCash(Float newCash) {
         this.currentCash += newCash;
     }
@@ -43,9 +36,6 @@ abstract public class Trader {
         this.stocksOwned += newStocks;
     }
 
-    public void setCurrentCash(Float currentCash) {
-        this.currentCash = currentCash;
-    }
 
     public Order constructOrder() {
         Order order = new Order();
@@ -99,12 +89,12 @@ abstract public class Trader {
 
     public Float getTotalMoney()
     {
-        float valueOfStocks = this.stocksOwned * Market.getPriceFromList(Market.getCurrentDay());
+        float valueOfStocks = this.stocksOwned * Market.getCurrentPrice();
         return this.currentCash + valueOfStocks;
     }
 
-    public float getTotalProfit(){
-        return currentCash-initialCash;
+    public float getTotalProfit() {
+        return (currentCash-initialCash) + Market.getCurrentPrice() * stocksOwned;
     }
 
 }

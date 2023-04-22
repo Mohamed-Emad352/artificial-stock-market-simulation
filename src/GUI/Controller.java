@@ -1,17 +1,17 @@
 package GUI;
 
+import Core.Configurations.BarChartDataSet;
 import Core.Configurations.LineChartDataSet;
-import Core.Configurations.PieChartDataSets;
 import Core.Main;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.PieChart;
-import javafx.scene.chart.XYChart;
+import javafx.scene.chart.*;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.layout.GridPane;
+
+import java.util.LinkedList;
+
+import static Core.Market.Market.chartists;
+import static Core.Market.Market.fundamentalists;
 
 public class Controller {
     @FXML
@@ -19,7 +19,12 @@ public class Controller {
 
     @FXML
     public void initialize() {
-        LineChartDataSet[] dataSets = Main.getDataSets();
+        initializeLineCharts();
+        initializeBarCharts();
+    }
+
+    private void initializeLineCharts() {
+        LineChartDataSet[] dataSets = Main.getLineDataSets();
         for (LineChartDataSet dataSet : dataSets) {
             Tab tab = new Tab();
             tab.setText(dataSet.tabTitle());
@@ -42,6 +47,27 @@ public class Controller {
             }
             lineChart.setCreateSymbols(false);
             tab.setContent(lineChart);
+        }
+    }
+
+    private void initializeBarCharts() {
+        LinkedList<BarChartDataSet> datasets = Main.getBarDataSets();
+        for (BarChartDataSet dataSet: datasets) {
+            Tab tab = new Tab();
+            tabPane.getTabs().add(tab);
+            tab.setText(dataSet.tabTitle());
+            CategoryAxis xAxis = new CategoryAxis();
+            xAxis.setLabel(dataSet.xAxisLabel());
+            NumberAxis yAxis = new NumberAxis();
+            yAxis.setLabel(dataSet.yAxisLabel());
+            BarChart barChart = new BarChart(xAxis, yAxis);
+            barChart.setTitle(dataSet.chartTitle());
+            XYChart.Series<String,Float> series = new XYChart.Series<>();
+            for (var entry : dataSet.data().entrySet()) {
+                series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+            }
+            barChart.getData().add(series);
+            tab.setContent(barChart);
         }
     }
 }

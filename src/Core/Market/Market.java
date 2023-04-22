@@ -14,7 +14,7 @@ import java.util.LinkedList;
 
 
 public class Market {
-    private HashMap<ChartistType, Integer> numberOfChartistTraders = new HashMap<>();
+    private static HashMap<ChartistType, Integer> numberOfChartistTraders = new HashMap<>();
     public static HashMap<ChartistType, HashMap<Decision, Integer>> numOfBuyAndSell = new HashMap<>();
     private final static LinkedList<Float> stockPricesOverTime = new LinkedList<>();
     private static Integer netOrders = 0;
@@ -26,34 +26,27 @@ public class Market {
     private final static Float liquidity = (float) 0.4308;
     private static Integer numberOfStocks;
     private final Integer tradingDays = 240;
-    private final static Integer numberOfTraders = 24000;
-    private final Integer numberOfFundamentalists = 13000;
-    private static Float budget = (float) 10000000 ;
-    private final static Integer MaximumNumberOfStocks =
+    private final static Integer numberOfFundamentalists = 500;
+    private static Integer numberOfTraders = numberOfFundamentalists;
+    private static Float budget = (float) 10000000;
+    private static Integer MaximumNumberOfStocks =
             Math.round((budget / currentPrice) * numberOfTraders);
 
     private final static Float minimumPrice = 20f;
     private final LinkedList<Trader> traders = new LinkedList<>();
-    public static ArrayList<Float> closePrices;
-    public static ArrayList<Float> openPrices;
-    public static ArrayList<Float> highPrices;
-    public static ArrayList<Float> lowPrices;
-    public static ArrayList<Float> tradeVolume; // Should be Long if volumes are high
-    public static ArrayList<Integer> priceChangesPerDay;
-
+    public final static ArrayList<Float> closePrices = new ArrayList<>();
+    public final static ArrayList<Float> openPrices = new ArrayList<>();
+    public final static ArrayList<Float> highPrices = new ArrayList<>();
+    public final static ArrayList<Float> lowPrices = new ArrayList<>();
+    public final static ArrayList<Float> tradeVolume = new ArrayList<>(); // Should be Long if volumes are high
+    public final static ArrayList<Integer> priceChangesPerDay = new ArrayList<>();
+    private final static int maximumQuantity = 20;
+    public final static HashMap<ChartistType, LinkedList<Trader>> chartists = new HashMap<>();
+    public final static LinkedList<Trader> fundamentalists = new LinkedList<>();
 
     public Market() {
-
-        closePrices = new ArrayList<Float>();
-        openPrices = new ArrayList<Float>();
-        highPrices = new ArrayList<Float>();
-        lowPrices = new ArrayList<Float>();
-        tradeVolume = new ArrayList<Float>();
-        priceChangesPerDay = new ArrayList<Integer>();
-
-
         for (ChartistType type : ChartistType.values()) {
-            numOfBuyAndSell.put(type, new HashMap<Decision, Integer>() {
+            numOfBuyAndSell.put(type, new HashMap<>() {
                 {
                     put(Decision.Sell, 0);
                 }
@@ -61,35 +54,21 @@ public class Market {
             numOfBuyAndSell.get(type).put(Decision.Buy, 0);
         }
 
-
-        numberOfChartistTraders.put(ChartistType.SimpleMovingAverage,500);
-        numberOfChartistTraders.put(ChartistType.ExpMovingAverage,500);
-        numberOfChartistTraders.put(ChartistType.DoubleExpMovingAverage,500);
-        numberOfChartistTraders.put(ChartistType.TripleExpMovingAverage,500);
-        numberOfChartistTraders.put(ChartistType.KAMA,500);
-        numberOfChartistTraders.put(ChartistType.MACD,500);
-        numberOfChartistTraders.put(ChartistType.RAVI,500);
-        numberOfChartistTraders.put(ChartistType.ROC,500);
-        numberOfChartistTraders.put(ChartistType.WMA,500);
-        numberOfChartistTraders.put(ChartistType.ZLEMA,500);
-        numberOfChartistTraders.put(ChartistType.WilliamR,500);
-        numberOfChartistTraders.put(ChartistType.AD,500);
-        numberOfChartistTraders.put(ChartistType.Chaikin,500);
-        numberOfChartistTraders.put(ChartistType.NVI,500);
-        numberOfChartistTraders.put(ChartistType.PVI,500);
-        numberOfChartistTraders.put(ChartistType.VWAP,500);
-        numberOfChartistTraders.put(ChartistType.MVWAP,500);
-        numberOfChartistTraders.put(ChartistType.PPO,500);
-        numberOfChartistTraders.put(ChartistType.StochasticOscillatorK,500);
-        numberOfChartistTraders.put(ChartistType.RSI,500);
-        numberOfChartistTraders.put(ChartistType.CoppCurve,500);
-        numberOfChartistTraders.put(ChartistType.HMA,500);
-
-
+        setChartistCount(ChartistType.WilliamR, 100);
+        setChartistCount(ChartistType.SimpleMovingAverage, 100);
+        setChartistCount(ChartistType.MACD, 100);
+        setChartistCount(ChartistType.ROC, 100);
+        setChartistCount(ChartistType.TripleExpMovingAverage, 100);
         stockPricesOverTime.add(currentPrice);
         numberOfStocks = MaximumNumberOfStocks;
     }
 
+    public static void setChartistCount(ChartistType type, int number) {
+        numberOfChartistTraders.put(type ,number);
+        chartists.put(type, new LinkedList<>());
+        numberOfTraders += number;
+        MaximumNumberOfStocks = Math.round((budget / currentPrice) * numberOfTraders);
+    }
 
     public void setCurrentDay(int day) {
         currentDay = day;
@@ -170,8 +149,8 @@ public class Market {
             orderDirection = 0;
         }
 
-        if(order.quantity > 20)
-            order.quantity = 20;
+        if(order.quantity > maximumQuantity)
+            order.quantity = maximumQuantity;
 
         order.trader.updateCash(NewCash);
         currentOrderQuantity = orderDirection * order.quantity;
@@ -234,5 +213,24 @@ public class Market {
 
     public void setNetOrders(Integer netOrders) {
         this.netOrders = netOrders;
+    }
+
+    public static Float getAverageProfit(ChartistType type) {
+        LinkedList<Trader> traders = chartists.get(type);
+        float profitSum = 0f;
+        for (Trader trader: traders) {
+            profitSum += trader.getTotalProfit();
+        }
+        profitSum /= traders.size();
+        return profitSum;
+    }
+
+    public static Float getAverageFundamentalistsProfit() {
+        float profitSum = 0f;
+        for (Trader trader: fundamentalists) {
+            profitSum += trader.getTotalProfit();
+        }
+        profitSum /= fundamentalists.size();
+        return profitSum;
     }
 }
