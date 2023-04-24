@@ -29,38 +29,33 @@ public class Main extends Application {
 
     public static Random randGenr = new Random();
 
-    static Market market;
-
-    static LinkedList<Float> averageTotalCashForFundamentalists = new LinkedList<>();
-    static HashMap<ChartistType, LinkedList<Float>> averageTotalCashForChartists = new HashMap<>();
+    static LinkedList<Float> averageCashForFundamentalists = new LinkedList<>();
+    static HashMap<ChartistType, LinkedList<Float>> averageCashForChartists = new HashMap<>();
 
     public static void main(String[] args) {
-
         startTime = System.currentTimeMillis();
 
         randomSeed = 10;
 
-        randGenr.setSeed(randomSeed);
+        Market.initialize();
 
-        market = new Market();
-
-        for (int f = 0; f < market.getNumOfFundamentalists(); f++) {
+        for (int f = 0; f < Market.getNumOfFundamentalists(); f++) {
             Fundamentalist fundamentalTrader = new Fundamentalist();
-            market.pushTraderInList(fundamentalTrader);
+            Market.pushTraderInList(fundamentalTrader);
             Market.fundamentalists.push(fundamentalTrader);
         }
 
         for (ChartistType chartistType : ChartistType.values()) {
-            if (market.getNumberOfChartistTrader(chartistType) != null) {
-                for (int i = 0; i < market.getNumberOfChartistTrader(chartistType); i++) {
+            if (Market.getNumberOfChartistTrader(chartistType) != null) {
+                for (int i = 0; i < Market.getNumberOfChartistTrader(chartistType); i++) {
                     Chartists chartist = new Chartists(chartistType);
-                    market.pushTraderInList(chartist);
+                    Market.pushTraderInList(chartist);
                     Market.chartists.get(chartistType).push(chartist);
                 }
             }
         }
 
-        LinkedList<Trader> traders = market.getTraders();
+        LinkedList<Trader> traders = Market.getTraders();
         Collections.shuffle(traders, randGenr);
 
         LinkedList<Float> fundamentalistsDailyCash = new LinkedList<Float>();
@@ -68,9 +63,9 @@ public class Main extends Application {
 
         for (ChartistType type : ChartistType.values()) {
             chartistsDailyCash.put(type, new LinkedList<>());
-            averageTotalCashForChartists.put(type, new LinkedList<>());
+            averageCashForChartists.put(type, new LinkedList<>());
         }
-        market.subtractInitialStocksOwned(traders);
+        Market.subtractInitialStocksOwned(traders);
 
         String classNameOfTrader;
 
@@ -79,9 +74,9 @@ public class Main extends Application {
         int priceChanges;
 
 
-        for (int day = 0; day <= market.getTradingDays(); day++) {
+        for (int day = 0; day <= Market.getTradingDays(); day++) {
             System.out.println("Current day = " + day);
-            market.setCurrentDay(day);
+            Market.setCurrentDay(day);
 
             Market.openPrices.add(Market.getCurrentPrice());
 
@@ -96,7 +91,7 @@ public class Main extends Application {
 
                 if (Market.currentOrderQuantity != 0) {
                     priceChanges++;
-                    market.updatePriceAfterOrder();
+                    Market.updatePriceAfterOrder();
 
 
                     tradingVolume += Market.currentOrderQuantity;
@@ -127,16 +122,15 @@ public class Main extends Application {
                 }
             }
 
-            averageTotalCashForFundamentalists.add(getAverageOfLinkedList(fundamentalistsDailyCash));
+            averageCashForFundamentalists.add(getAverageOfLinkedList(fundamentalistsDailyCash));
             fundamentalistsDailyCash.clear();
             for (ChartistType type : ChartistType.values()) {
-                averageTotalCashForChartists.get(type).add(getAverageOfLinkedList(chartistsDailyCash.get(type)));
+                averageCashForChartists.get(type).add(getAverageOfLinkedList(chartistsDailyCash.get(type)));
                 chartistsDailyCash.put(type, new LinkedList<>());
             }
 
-            market.updatePrice();
-            market.pushNewPriceToStockPrices(Market.getCurrentPrice());
-            market.setNetOrders(0);
+            Market.updatePrice();
+            Market.pushNewPriceToStockPrices(Market.getCurrentPrice());
 
             Market.closePrices.add(Market.getCurrentPrice());
             Market.highPrices.add(highestPrice);
@@ -150,8 +144,6 @@ public class Main extends Application {
         System.out.println("Fund Sell orders = " + Fundamentalist.numOfSellOrders);
         System.out.println(Market.numOfBuyAndSell);
 
-
-        Trader trader;
 
         endTime = System.currentTimeMillis();
 
@@ -184,7 +176,7 @@ public class Main extends Application {
     public static LineChartDataSet[] getLineDataSets() {
         LineChartDataSet[] datasets = new LineChartDataSet[2];
         LinkedList<LinkedList<Float>> priceData = new LinkedList<>();
-        priceData.add(market.getStockPricesOverTime());
+        priceData.add(Market.getStockPricesOverTime());
         LinkedList<String> seriesNames = new LinkedList<>();
         seriesNames.add("Stock Price");
         datasets[0] = new LineChartDataSet("Stock Prices", "Stock Price",
@@ -193,19 +185,19 @@ public class Main extends Application {
         LinkedList<LinkedList<Float>> averagesTotalMoney = new LinkedList<>();
         LinkedList<String> SeriesNamesForAverages = new LinkedList<>();
         for (ChartistType type : ChartistType.values()) {
-            if (market.getNumberOfChartistTrader(type) == null || market.getNumberOfChartistTrader(type) == 0) {
+            if (Market.getNumberOfChartistTrader(type) == null || Market.getNumberOfChartistTrader(type) == 0) {
                 continue;
             }
-            LinkedList<Float> averageTotalCash = averageTotalCashForChartists.get(type);
+            LinkedList<Float> averageTotalCash = averageCashForChartists.get(type);
             averagesTotalMoney.add(averageTotalCash);
             SeriesNamesForAverages.add("Averages of total money for " + type.toString());
 
         }
-        if (market.getNumOfFundamentalists() != 0) {
-            averagesTotalMoney.add(averageTotalCashForFundamentalists);
+        if (Market.getNumOfFundamentalists() != 0) {
+            averagesTotalMoney.add(averageCashForFundamentalists);
             SeriesNamesForAverages.add("Averages of total money for Fundamentalists");
         }
-        datasets[1] = new LineChartDataSet("Averages of Total money", "Averages of Total money for 4 types of trader",
+        datasets[1] = new LineChartDataSet("Averages of Total money", "Averages of Total money for traders",
                 "Days", "cash", SeriesNamesForAverages, averagesTotalMoney);
 
         return datasets;
@@ -223,10 +215,16 @@ public class Main extends Application {
         return datasets;
     }
 
+    public static void reset() {
+//        totalAverageCashForChartists.add(averageCashForChartists);
+//        totalAverageCashForFundamentalists.add(getAverageOfLinkedList(averageCashForFundamentalists));
+//        averageCashForChartists.clear();
+//        averageCashForFundamentalists.clear();
+    }
+
     /**
      * Method to display heap memory utilized by the simulator.
      */
-
     public static void displayMemoryUsage() {
 
         java.io.PrintStream out = System.out;
@@ -256,6 +254,4 @@ public class Main extends Application {
         long memoryInUse = totalMemory - freeMemory;
         out.println("Memory already used by heap -> " + memoryInUse + " MB");
     }
-
-
 }

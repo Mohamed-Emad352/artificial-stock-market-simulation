@@ -10,8 +10,6 @@ import javafx.scene.control.TabPane;
 
 import java.util.LinkedList;
 
-import static Core.Market.Market.chartists;
-import static Core.Market.Market.fundamentalists;
 
 public class Controller {
     @FXML
@@ -19,8 +17,8 @@ public class Controller {
 
     @FXML
     public void initialize() {
-        initializeLineCharts();
         initializeBarCharts();
+        initializeLineCharts();
     }
 
     private void initializeLineCharts() {
