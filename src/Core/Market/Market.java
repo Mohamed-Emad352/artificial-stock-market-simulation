@@ -27,9 +27,11 @@ public class Market {
     private final static Float liquidity = 0.4308f;
     private static Integer numberOfStocks;
     private final static Integer tradingDays = 240;
-    private final static Integer numberOfFundamentalists = 440;
+    private final static Integer numberOfFundamentalists = 400
+            ;
     private static Integer numberOfTraders = numberOfFundamentalists;
-    private static Float budget = (float) 2000000000;
+    private static final Float initialBudget = 200000000f;
+    private static Float budget = initialBudget;
     private static Integer MaximumNumberOfStocks =
             Math.round((budget / currentPrice) * numberOfTraders);
 
@@ -41,34 +43,15 @@ public class Market {
     public final static ArrayList<Float> lowPrices = new ArrayList<>();
     public final static ArrayList<Float> tradeVolume = new ArrayList<>(); // Should be Long if volumes are high
     public final static ArrayList<Integer> priceChangesPerDay = new ArrayList<>();
-    private final static int maximumQuantity = 20;
     public final static HashMap<ChartistType, LinkedList<Trader>> chartists = new HashMap<>();
     public final static LinkedList<Trader> fundamentalists = new LinkedList<>();
 
     public static void initialize() {
         initializeBuySellMap();
-        setChartistCount(ChartistType.WilliamR, 20);
-        setChartistCount(ChartistType.SimpleMovingAverage, 20);
-        setChartistCount(ChartistType.MACD, 20);
-        setChartistCount(ChartistType.ROC, 20);
-        setChartistCount(ChartistType.StochasticOscillatorK, 20);
-        setChartistCount(ChartistType.RAVI, 20);
-        setChartistCount(ChartistType.RSI, 20);
-        setChartistCount(ChartistType.DoubleExpMovingAverage, 20);
-        setChartistCount(ChartistType.CoppCurve, 20);
-        setChartistCount(ChartistType.ExpMovingAverage, 20);
-        setChartistCount(ChartistType.NVI, 20);
-        setChartistCount(ChartistType.Chaikin, 20);
-        setChartistCount(ChartistType.VWAP, 20);
-        setChartistCount(ChartistType.MVWAP, 20);
-        setChartistCount(ChartistType.PVI, 20);
-        setChartistCount(ChartistType.WMA, 20);
-        setChartistCount(ChartistType.ZLEMA, 20);
-        setChartistCount(ChartistType.KAMA, 20);
-        setChartistCount(ChartistType.AD, 20);
-        setChartistCount(ChartistType.HMA, 20);
-        setChartistCount(ChartistType.PPO, 20);
-        setChartistCount(ChartistType.TripleExpMovingAverage, 20);
+        for (ChartistType type: ChartistType.values()) {
+            if (type != ChartistType.DMI && type != ChartistType.ADMI)
+                setChartistCount(type, 20);
+        }
         stockPricesOverTime.add(currentPrice);
         numberOfStocks = MaximumNumberOfStocks;
     }
@@ -170,8 +153,8 @@ public class Market {
             orderDirection = 0;
         }
 
-        if(order.quantity > maximumQuantity)
-            order.quantity = maximumQuantity;
+        if(order.quantity > 40)
+            order.quantity = 40;
 
         order.trader.updateCash(NewCash);
         currentOrderQuantity = orderDirection * order.quantity;
@@ -253,7 +236,9 @@ public class Market {
         stockPricesOverTime.clear();
         currentOrderQuantity = 0;
         currentPrice = initialPrice;
+        budget = initialBudget;
         numberOfChartistTraders.clear();
+        numberOfTraders = numberOfFundamentalists;
         chartists.clear();
         fundamentalists.clear();
         traders.clear();
