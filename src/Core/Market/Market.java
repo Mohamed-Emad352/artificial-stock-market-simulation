@@ -27,9 +27,9 @@ public class Market {
     private final static Float liquidity = 0.4308f;
     private static Integer numberOfStocks;
     private final static Integer tradingDays = 240;
-    private final static Integer numberOfFundamentalists = 500;
+    private final static Integer numberOfFundamentalists = 440;
     private static Integer numberOfTraders = numberOfFundamentalists;
-    private static Float budget = (float) 10000000;
+    private static Float budget = (float) 2000000000;
     private static Integer MaximumNumberOfStocks =
             Math.round((budget / currentPrice) * numberOfTraders);
 
@@ -47,11 +47,28 @@ public class Market {
 
     public static void initialize() {
         initializeBuySellMap();
-        setChartistCount(ChartistType.WilliamR, 100);
-        setChartistCount(ChartistType.SimpleMovingAverage, 100);
-        setChartistCount(ChartistType.MACD, 100);
-        setChartistCount(ChartistType.ROC, 100);
-        setChartistCount(ChartistType.TripleExpMovingAverage, 100);
+        setChartistCount(ChartistType.WilliamR, 20);
+        setChartistCount(ChartistType.SimpleMovingAverage, 20);
+        setChartistCount(ChartistType.MACD, 20);
+        setChartistCount(ChartistType.ROC, 20);
+        setChartistCount(ChartistType.StochasticOscillatorK, 20);
+        setChartistCount(ChartistType.RAVI, 20);
+        setChartistCount(ChartistType.RSI, 20);
+        setChartistCount(ChartistType.DoubleExpMovingAverage, 20);
+        setChartistCount(ChartistType.CoppCurve, 20);
+        setChartistCount(ChartistType.ExpMovingAverage, 20);
+        setChartistCount(ChartistType.NVI, 20);
+        setChartistCount(ChartistType.Chaikin, 20);
+        setChartistCount(ChartistType.VWAP, 20);
+        setChartistCount(ChartistType.MVWAP, 20);
+        setChartistCount(ChartistType.PVI, 20);
+        setChartistCount(ChartistType.WMA, 20);
+        setChartistCount(ChartistType.ZLEMA, 20);
+        setChartistCount(ChartistType.KAMA, 20);
+        setChartistCount(ChartistType.AD, 20);
+        setChartistCount(ChartistType.HMA, 20);
+        setChartistCount(ChartistType.PPO, 20);
+        setChartistCount(ChartistType.TripleExpMovingAverage, 20);
         stockPricesOverTime.add(currentPrice);
         numberOfStocks = MaximumNumberOfStocks;
     }

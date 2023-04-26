@@ -6,6 +6,8 @@ import Core.Enums.ChartistType;
 import Core.Enums.Decision;
 import Core.Market.Market;
 
+import static java.lang.Math.abs;
+
 public class Chartists extends Trader {
     public ChartistType type;
     int movingAverageWindowSize = Main.randGenr.nextInt(240) + 1;
@@ -153,5 +155,23 @@ public class Chartists extends Trader {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public Integer getDesiredOrderVolume() {
+        int DesiredOrder = 0;
+
+        switch (type){
+            case SimpleMovingAverage, ExpMovingAverage, DoubleExpMovingAverage, TripleExpMovingAverage, KAMA, WMA, ZLEMA, HMA,
+                    MACD, PPO, VWAP, RSI, StochasticOscillatorK, MVWAP, NVI, PVI, WilliamR -> {
+                DesiredOrder = (int) abs(ReactionCoefficient * (Market.getCurrentPrice() - forecastValue));
+            }
+
+            case RAVI, ROC, CoppCurve, AD, Chaikin ->
+            {
+                DesiredOrder = (int) abs(ReactionCoefficient * (forecastValue));
+            }
+        }
+        return DesiredOrder;
     }
 }

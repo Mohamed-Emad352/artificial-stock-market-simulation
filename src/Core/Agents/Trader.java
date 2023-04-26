@@ -14,7 +14,7 @@ abstract public class Trader {
     private Integer stocksOwned = Main.randGenr.nextInt(11) + 20;
     private final LinkedList<Float> cashOwnedOverTime = new LinkedList<Float>();
     private final LinkedList<Integer> stocksOwnedOverTime = new LinkedList<Integer>();
-    protected final Float ReactionCoefficient = (float) 0.8;
+    protected final Float ReactionCoefficient = (float) 1;
     protected final Float Aggressiveness = (float) 0.001;
 
     public Trader() { // Market market
@@ -76,15 +76,16 @@ abstract public class Trader {
 
     public Integer getPracticalOrderVolume() {
         if (this.decideBuyOrSell() == Decision.Buy) {
-            return (int)(this.currentCash / this.getLimitPrice());
+            System.out.println(" Buy Quantity = " + Math.min(this.getDesiredOrderVolume(), (int)(this.currentCash / this.getLimitPrice())));
+            return Math.min(this.getDesiredOrderVolume(), (int)(this.currentCash / this.getLimitPrice()));
         }
         else if (this.decideBuyOrSell() == Decision.Sell) {
-            return this.stocksOwned;
+            System.out.println(" Sell Quantity = " + Math.min(this.getDesiredOrderVolume(), this.stocksOwned));
+            return Math.min(this.getDesiredOrderVolume(), this.stocksOwned);
         }
         else {
             return 0;
         }
-
     }
 
     public Float getTotalMoney()
@@ -97,4 +98,5 @@ abstract public class Trader {
         return (currentCash-initialCash) + Market.getCurrentPrice() * stocksOwned;
     }
 
+    public abstract Integer getDesiredOrderVolume();
 }

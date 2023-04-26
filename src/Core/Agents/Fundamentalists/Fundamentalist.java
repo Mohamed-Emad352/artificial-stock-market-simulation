@@ -5,6 +5,7 @@ import Core.Agents.Trader;
 import Core.Enums.Decision;
 import Core.Market.Market;
 
+import static java.lang.Math.abs;
 import static java.lang.Math.exp;
 
 public class Fundamentalist extends Trader {
@@ -32,5 +33,12 @@ public class Fundamentalist extends Trader {
         else if(value < 0)
         { return Decision.Sell;}
         else {return null;}
+    }
+
+    @Override
+    public Integer getDesiredOrderVolume() {
+        float orderVolume = abs(ReactionCoefficient *
+                (this.stockFundamentalValue - Market.getCurrentPrice()));
+        return (int)orderVolume;
     }
 }
