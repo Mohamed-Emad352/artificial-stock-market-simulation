@@ -232,7 +232,7 @@ public class Market {
     public static void reset() {
         numOfBuyAndSell.clear();
         initializeBuySellMap();
-        totalStockPricesOverTime.add(stockPricesOverTime);
+        totalStockPricesOverTime.add((LinkedList<Float>) stockPricesOverTime.clone());
         stockPricesOverTime.clear();
         currentOrderQuantity = 0;
         currentPrice = initialPrice;

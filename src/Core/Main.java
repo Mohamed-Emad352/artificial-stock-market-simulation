@@ -13,8 +13,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static Core.Market.Market.*;
 
@@ -35,7 +39,8 @@ public class Main extends Application {
     static LinkedList<Float> profitsForFundamentalists = new LinkedList<>();
     static HashMap<ChartistType,LinkedList<Float>> profitsForChartists = new HashMap<>();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
+        //FileOutputStream fileOutput = new FileOutputStream("data.csv",true);
         initializeProfitLists();
         startTime = System.currentTimeMillis();
         Market.initialize();
@@ -153,10 +158,17 @@ public class Main extends Application {
             endTime = System.currentTimeMillis();
 
             System.out.println("Simulation Time: " + (endTime - startTime) + " MilliSeconds");
+            System.out.println(totalStockPricesOverTime.size());
+            for(int index=0; index<totalStockPricesOverTime.size() ; index++)
+            {
+                System.out.println(totalStockPricesOverTime.get(index));
+            }
 
             displayMemoryUsage();
 
             launch();
+
+
         }
 
     public static void initializeProfitLists(){
@@ -165,13 +177,17 @@ public class Main extends Application {
             profitsForChartists.put(type,new LinkedList<>());
         }
     }
-        public static void addProfits()
-        {
+        public static void addProfits() throws FileNotFoundException {
+            FileOutputStream fileOutput = new FileOutputStream("data3.csv", true);
+            PrintWriter writeFile = new PrintWriter(fileOutput);
             profitsForFundamentalists.add(Market.getAverageFundamentalistsProfit());
+            writeFile.println("fundamentalist , "+ Market.getAverageFundamentalistsProfit());
             for (var entry : chartists.entrySet())
             {
                 profitsForChartists.get(entry.getKey()).add(Market.getAverageProfit(entry.getKey()));
+                writeFile.println(entry.getKey().toString() + "," + Market.getAverageProfit(entry.getKey()));
             }
+            writeFile.close();
         }
     public static float getAverageOfLinkedList(LinkedList<Float> list) {
         float summation = 0;
@@ -226,11 +242,6 @@ public class Main extends Application {
     public static LinkedList<BarChartDataSet> getBarDataSets() {
         LinkedList<BarChartDataSet> datasets = new LinkedList<>();
         HashMap<String, Float> data = new HashMap<>();
-
-//        data.put("Fundamentalist", Market.getAverageFundamentalistsProfit());
-//        for (var entry : chartists.entrySet()) {
-//            data.put(entry.getKey().toString(), Market.getAverageProfit(entry.getKey()));
-//        }
         data.put("Fundamentalist", getAverageOfLinkedList(profitsForFundamentalists));
         for (var entry : chartists.entrySet()) {
              data.put(entry.getKey().toString(), getAverageOfLinkedList(profitsForChartists.get(entry.getKey())));
