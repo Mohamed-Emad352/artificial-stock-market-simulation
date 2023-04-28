@@ -45,8 +45,8 @@ public class Main extends Application {
         startTime = System.currentTimeMillis();
         Market.initialize();
 
-        for (int j = 0; j < 30; j++) {
-            randomSeed = j;
+        //for (int j = 0; j < 30; j++) {
+//            randomSeed = j;
             randGenr = new Random();
             for (int f = 0; f < Market.getNumOfFundamentalists(); f++) {
                 Fundamentalist fundamentalTrader = new Fundamentalist();
@@ -148,21 +148,21 @@ public class Main extends Application {
                 Market.priceChangesPerDay.add(priceChanges);
 
             }
-            addProfits();
+            //addProfits();
 
             System.out.println("Fund Buy orders = " + Fundamentalist.numOfBuyOrders);
             System.out.println("Fund Sell orders = " + Fundamentalist.numOfSellOrders);
             System.out.println(Market.numOfBuyAndSell);
-            reset();
-        }
+            //reset();
+       // }
             endTime = System.currentTimeMillis();
 
             System.out.println("Simulation Time: " + (endTime - startTime) + " MilliSeconds");
-            System.out.println(totalStockPricesOverTime.size());
-            for(int index=0; index<totalStockPricesOverTime.size() ; index++)
-            {
-                System.out.println(totalStockPricesOverTime.get(index));
-            }
+//            System.out.println(totalStockPricesOverTime.size());
+//            for(int index=0; index<totalStockPricesOverTime.size() ; index++)
+//            {
+//                System.out.println(totalStockPricesOverTime.get(index));
+//            }
 
             displayMemoryUsage();
 
@@ -242,9 +242,13 @@ public class Main extends Application {
     public static LinkedList<BarChartDataSet> getBarDataSets() {
         LinkedList<BarChartDataSet> datasets = new LinkedList<>();
         HashMap<String, Float> data = new HashMap<>();
-        data.put("Fundamentalist", getAverageOfLinkedList(profitsForFundamentalists));
+//        data.put("Fundamentalist", getAverageOfLinkedList(profitsForFundamentalists));
+//        for (var entry : chartists.entrySet()) {
+//             data.put(entry.getKey().toString(), getAverageOfLinkedList(profitsForChartists.get(entry.getKey())));
+//        }
+        data.put("Fundamentalist", Market.getAverageFundamentalistsProfit());
         for (var entry : chartists.entrySet()) {
-             data.put(entry.getKey().toString(), getAverageOfLinkedList(profitsForChartists.get(entry.getKey())));
+            data.put(entry.getKey().toString(), Market.getAverageProfit(entry.getKey()));
         }
         BarChartDataSet profitDataSet = new BarChartDataSet("Profits", "Average profits for trading strategies", "Strategy", "Profit", data);
         datasets.add(profitDataSet);

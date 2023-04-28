@@ -172,6 +172,9 @@ public class Chartists extends Trader {
                 DesiredOrder = (int) abs(ReactionCoefficient * (forecastValue));
             }
         }
+        System.out.println("TI: " + type);
+        System.out.println("forecast value : " + forecastValue);
+        System.out.println("desired order vol : " + DesiredOrder);
         return DesiredOrder;
     }
 }

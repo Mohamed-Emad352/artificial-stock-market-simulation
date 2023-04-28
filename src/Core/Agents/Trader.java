@@ -76,11 +76,11 @@ abstract public class Trader {
 
     public Integer getPracticalOrderVolume() {
         if (this.decideBuyOrSell() == Decision.Buy) {
-            System.out.println(" Buy Quantity = " + Math.min(this.getDesiredOrderVolume(), (int)(this.currentCash / this.getLimitPrice())));
+            System.out.println(" buy-practical Quantity = " + Math.min(this.getDesiredOrderVolume(), (int)(this.currentCash / this.getLimitPrice())));
             return Math.min(this.getDesiredOrderVolume(), (int)(this.currentCash / this.getLimitPrice()));
         }
         else if (this.decideBuyOrSell() == Decision.Sell) {
-            System.out.println(" Sell Quantity = " + Math.min(this.getDesiredOrderVolume(), this.stocksOwned));
+            System.out.println(" sell-practical Quantity = " + Math.min(this.getDesiredOrderVolume(), this.stocksOwned));
             return Math.min(this.getDesiredOrderVolume(), this.stocksOwned);
         }
         else {

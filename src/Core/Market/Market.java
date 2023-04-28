@@ -27,9 +27,9 @@ public class Market {
     private final static Float liquidity = 0.4308f;
     private static Integer numberOfStocks;
     private final static Integer tradingDays = 240;
-    private final static Integer numberOfFundamentalists = 440;
+    private final static Integer numberOfFundamentalists = 20;
     private static Integer numberOfTraders = numberOfFundamentalists;
-    private static Float budget = (float) 2000000000;
+    private static Float budget = (float) 18000000;
     private static Integer MaximumNumberOfStocks =
             Math.round((budget / currentPrice) * numberOfTraders);
 
@@ -41,12 +41,12 @@ public class Market {
     public final static ArrayList<Float> lowPrices = new ArrayList<>();
     public final static ArrayList<Float> tradeVolume = new ArrayList<>(); // Should be Long if volumes are high
     public final static ArrayList<Integer> priceChangesPerDay = new ArrayList<>();
-    private final static int maximumQuantity = 20;
+    private final static int maximumQuantity = 50;
     public final static HashMap<ChartistType, LinkedList<Trader>> chartists = new HashMap<>();
     public final static LinkedList<Trader> fundamentalists = new LinkedList<>();
 
     public static void initialize() {
-        initializeBuySellMap();
+          initializeBuySellMap();
         setChartistCount(ChartistType.WilliamR, 20);
         setChartistCount(ChartistType.SimpleMovingAverage, 20);
         setChartistCount(ChartistType.MACD, 20);

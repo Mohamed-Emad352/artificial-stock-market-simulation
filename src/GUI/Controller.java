@@ -18,7 +18,7 @@ public class Controller {
     @FXML
     public void initialize() {
         initializeBarCharts();
-       // initializeLineCharts();
+        initializeLineCharts();
     }
 
     private void initializeLineCharts() {
