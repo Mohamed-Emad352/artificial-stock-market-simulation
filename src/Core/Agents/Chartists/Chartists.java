@@ -20,74 +20,7 @@ public class Chartists extends Trader {
         this.type = type;
     }
 
-
-    public Float getMovingAverageValue() {
-
-        float MA;
-        int Day = Market.getCurrentDay();
-        int practicalMovingAverageWindowSize;
-        Float SummationOfPrices = 0f;
-        practicalMovingAverageWindowSize = Math.min(Day, movingAverageWindowSize);
-        for (int i = 1; i <= practicalMovingAverageWindowSize; i++) {
-            SummationOfPrices += Market.getPriceFromList(Day - i);
-        }
-        MA = SummationOfPrices / practicalMovingAverageWindowSize;
-        return Market.getCurrentPrice() - MA;
-    }
-
-
-    public Float getTimeLagValue() {
-        float TLPrice;
-        int Day = Market.getCurrentDay();
-        //Random rand = new Random();
-        int choice = Main.randGenr.nextInt(Day) + 1;
-        TLPrice = Market.getPriceFromList(Day - choice);
-        return Market.getCurrentPrice() - TLPrice;
-    }
-
-    public Float getLongShortTermsValue() {
-        float SMA;
-        int Day = Market.getCurrentDay();
-        int shortTerm = Day / 2;
-
-        //Random rand = new Random();
-        int choice = Main.randGenr.nextInt(Day - shortTerm) + 1;
-
-        Float SummationOfPrices = 0f;
-
-        for (int i = 1; i <= choice; i++) {
-            SummationOfPrices += Market.getPriceFromList(Day - i);
-        }
-
-        SMA = SummationOfPrices / choice;
-        SummationOfPrices = 0f;
-
-        float LMA;
-
-        int longTerm = Main.randGenr.nextInt(Day - shortTerm) + shortTerm;
-
-        for (int i = 1; i <= longTerm; i++) {
-            SummationOfPrices += Market.getPriceFromList(Day - i);
-        }
-        if (longTerm != 0)
-            LMA = SummationOfPrices / longTerm;
-        else LMA = SummationOfPrices;
-        return SMA - LMA;
-    }
-
-    public Float getValue() {
-        float value = (float) 0.0;
-        switch (type) {
-            case SimpleMovingAverage -> value = getMovingAverageValue();
-            case LongShort -> value = getLongShortTermsValue();
-            case TimeLag -> value = getTimeLagValue();
-        }
-
-        // Value is a difference that indicate buy or sell when compared to Zero
-        return value;
-    }
-
-    public float getValueNew() {
+    public void getValueNew() {
         switch (type) {
             case SimpleMovingAverage -> forecastValue = TI.calculateSMAIndicator(10, Market.closePrices);
             case ExpMovingAverage -> forecastValue = TI.calculateEMAIndicator(10, Market.closePrices);
@@ -99,10 +32,10 @@ public class Chartists extends Trader {
             case ROC -> forecastValue = TI.calculateROCIndicator(10, Market.closePrices);
             case WMA -> forecastValue = TI.calculateWMAIndicator(10, Market.closePrices);
             case ZLEMA -> forecastValue = TI.calculateZLEMAIndicator(10, Market.closePrices);
-            case DMI ->
-                    forecastValue = TI.calculateDMIndicator(10, Market.highPrices, Market.lowPrices, Market.closePrices);
-            case ADMI ->
-                    forecastValue = TI.calculateADMIndicator(10, Market.highPrices, Market.lowPrices, Market.closePrices);
+//            case DMI ->
+//                    forecastValue = TI.calculateDMIndicator(10, Market.highPrices, Market.lowPrices, Market.closePrices);
+//            case ADMI ->
+//                    forecastValue = TI.calculateADMIndicator(10, Market.highPrices, Market.lowPrices, Market.closePrices);
             case HMA -> forecastValue = TI.calculateHMAIndicator(10, Market.closePrices);
             case CoppCurve -> forecastValue = TI.calculateCoppockCurveIndicator(10, 15, 12, Market.closePrices);
             case RSI -> forecastValue = TI.calculateRSIIndicator(10, Market.closePrices);
@@ -122,7 +55,6 @@ public class Chartists extends Trader {
             case StochasticOscillatorK ->
                     forecastValue = TI.calculateStochasticOscillatorKIndicator(10, Market.closePrices, Market.highPrices, Market.lowPrices);
         }
-        return forecastValue;
     }
 
     @Override()
@@ -137,7 +69,7 @@ public class Chartists extends Trader {
             case MACD, PPO -> d = TI.calculateMACDSignal(forecastValue, Market.closePrices);
             case RAVI -> d = TI.calculateRAVISignal(forecastValue, (float) 0.3);
             case ROC, CoppCurve -> d = TI.calculateROCSignal(forecastValue);
-            case DMI, ADMI -> d = TI.calculateDMISignal(forecastValue, 25);
+//            case DMI, ADMI -> d = TI.calculateDMISignal(forecastValue, 25);
             case RSI, StochasticOscillatorK -> d = TI.calculateRSISignal(forecastValue, 70, 30);
             case WilliamR -> d = TI.calculateRSISignal(forecastValue, -20, -80);
             case AD, Chaikin -> d = TI.calculateDMISignal(forecastValue, 0);
@@ -155,23 +87,5 @@ public class Chartists extends Trader {
         } else {
             return null;
         }
-    }
-
-    @Override
-    public Integer getDesiredOrderVolume() {
-        int DesiredOrder = 0;
-
-        switch (type){
-            case SimpleMovingAverage, ExpMovingAverage, DoubleExpMovingAverage, TripleExpMovingAverage, KAMA, WMA, ZLEMA, HMA,
-                    MACD, PPO, VWAP, RSI, StochasticOscillatorK, MVWAP, NVI, PVI, WilliamR -> {
-                DesiredOrder = (int) abs(ReactionCoefficient * (Market.getCurrentPrice() - forecastValue));
-            }
-
-            case RAVI, ROC, CoppCurve, AD, Chaikin ->
-            {
-                DesiredOrder = (int) abs(ReactionCoefficient * (forecastValue));
-            }
-        }
-        return DesiredOrder;
     }
 }

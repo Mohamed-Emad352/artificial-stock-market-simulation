@@ -11,8 +11,8 @@ public enum ChartistType {
     ROC,
     WMA,
     ZLEMA,
-    DMI,
-    ADMI,
+//    DMI,
+//    ADMI,
     HMA,
     CoppCurve,
     RSI,
@@ -25,6 +25,4 @@ public enum ChartistType {
     PVI,
     PPO,
     StochasticOscillatorK,
-    TimeLag,
-    LongShort
 }

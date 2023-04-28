@@ -33,14 +33,19 @@ public class Main extends Application {
     static HashMap<ChartistType, LinkedList<Float>> averageCashForChartists = new HashMap<>();
     static LinkedList<Float> profitsForFundamentalists = new LinkedList<>();
     static HashMap<ChartistType, LinkedList<Float>> profitsForChartists = new HashMap<>();
+    static final int runs = 30;
+    static FileOutputStream fileOutput;
+    static PrintWriter writeFile;
 
     public static void main(String[] args) throws FileNotFoundException {
-        //FileOutputStream fileOutput = new FileOutputStream("data.csv",true);
+        fileOutput = new FileOutputStream("data.csv", false);
+        writeFile = new PrintWriter(fileOutput);
+        initializeCSV();
         initializeProfitLists();
         startTime = System.currentTimeMillis();
         Market.initialize();
 
-        for (int j = 0; j < 15; j++) {
+        for (int j = 0; j < runs; j++) {
             randGenr.setSeed(j);
             for (int f = 0; f < Market.getNumOfFundamentalists(); f++) {
                 Fundamentalist fundamentalTrader = new Fundamentalist();
@@ -76,6 +81,7 @@ public class Main extends Application {
 
 
             for (int day = 0; day <= Market.getTradingDays(); day++) {
+                Collections.shuffle(traders, randGenr);
                 System.out.println("Current day = " + day);
                 Market.setCurrentDay(day);
                 Market.openPrices.add(Market.getCurrentPrice());
@@ -121,14 +127,18 @@ public class Main extends Application {
                 Market.lowPrices.add(lowestPrice);
                 Market.tradeVolume.add(tradingVolume);
                 Market.priceChangesPerDay.add(priceChanges);
-
             }
-            addProfits();
+            profitsForFundamentalists.add(Market.getAverageFundamentalistsProfit());
+            for (var entry : chartists.entrySet()) {
+                profitsForChartists.get(entry.getKey()).add(Market.getAverageProfit(entry.getKey()));
+            }
             System.out.println("Fund Buy orders = " + Fundamentalist.numOfBuyOrders);
             System.out.println("Fund Sell orders = " + Fundamentalist.numOfSellOrders);
             System.out.println(Market.numOfBuyAndSell);
             reset();
         }
+        writeProfitsToCSV();
+        writeFile.close();
         endTime = System.currentTimeMillis();
         System.out.println("Simulation Time: " + (endTime - startTime) + " MilliSeconds");
         System.out.println(totalStockPricesOverTime.size());
@@ -145,16 +155,30 @@ public class Main extends Application {
         }
     }
 
-    public static void addProfits() throws FileNotFoundException {
-        FileOutputStream fileOutput = new FileOutputStream("data3.csv", true);
-        PrintWriter writeFile = new PrintWriter(fileOutput);
-        profitsForFundamentalists.add(Market.getAverageFundamentalistsProfit());
-        writeFile.println("fundamentalist , " + Market.getAverageFundamentalistsProfit());
-        for (var entry : chartists.entrySet()) {
-            profitsForChartists.get(entry.getKey()).add(Market.getAverageProfit(entry.getKey()));
-            writeFile.println(entry.getKey().toString() + "," + Market.getAverageProfit(entry.getKey()));
+    public static void writeProfitsToCSV() {
+        writeFile.print("Fundamentalist, ");
+        for (float fundamentalistProfit: profitsForFundamentalists) {
+            writeFile.print(fundamentalistProfit);
+            writeFile.print(", ");
         }
-        writeFile.close();
+        writeFile.print("\n");
+        for (var entry: profitsForChartists.entrySet()) {
+            writeFile.print(entry.getKey().toString());
+            writeFile.print(", ");
+            for (float chartistProfit: profitsForChartists.get(entry.getKey())) {
+                writeFile.print(chartistProfit);
+                writeFile.print(", ");
+            }
+            writeFile.print("\n");
+        }
+    }
+
+    public static void initializeCSV() {
+        writeFile.print(",");
+        for (int runIndex = 1; runIndex <= runs; runIndex++) {
+            writeFile.print(String.format("Run %s,", runIndex));
+        }
+        writeFile.print("\n");
     }
 
     public static float getAverageOfLinkedList(LinkedList<Float> list) {
