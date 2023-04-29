@@ -18,11 +18,11 @@ public class Controller {
     @FXML
     public void initialize() {
         initializeBarCharts();
-       // initializeLineCharts();
+       initializeLineCharts();
     }
 
     private void initializeLineCharts() {
-        LineChartDataSet[] dataSets = Main.getLineDataSets();
+        LinkedList<LineChartDataSet> dataSets = Main.getLineDataSets();
         for (LineChartDataSet dataSet : dataSets) {
             Tab tab = new Tab();
             tab.setText(dataSet.tabTitle());

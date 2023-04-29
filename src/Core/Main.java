@@ -20,11 +20,11 @@ import java.io.PrintWriter;
 import java.util.*;
 
 import static Core.Market.Market.chartists;
-import static Core.Market.Market.totalStockPricesOverTime;
 
 public class Main extends Application {
 
     public static final Random randGenr = new Random();
+    static final int runs = 30;
     /**
      * Variables used compute the simulation running time by saving start and end time of the simulation.
      */
@@ -33,7 +33,6 @@ public class Main extends Application {
     static HashMap<ChartistType, LinkedList<Float>> averageCashForChartists = new HashMap<>();
     static LinkedList<Float> profitsForFundamentalists = new LinkedList<>();
     static HashMap<ChartistType, LinkedList<Float>> profitsForChartists = new HashMap<>();
-    static final int runs = 1;
     static FileOutputStream fileOutput;
     static PrintWriter writeFile;
 
@@ -141,10 +140,6 @@ public class Main extends Application {
         writeFile.close();
         endTime = System.currentTimeMillis();
         System.out.println("Simulation Time: " + (endTime - startTime) + " MilliSeconds");
-        System.out.println(totalStockPricesOverTime.size());
-        for (int index = 0; index < totalStockPricesOverTime.size(); index++) {
-            System.out.println(totalStockPricesOverTime.get(index));
-        }
         displayMemoryUsage();
         launch();
     }
@@ -157,15 +152,15 @@ public class Main extends Application {
 
     public static void writeProfitsToCSV() {
         writeFile.print("Fundamentalist, ");
-        for (float fundamentalistProfit: profitsForFundamentalists) {
+        for (float fundamentalistProfit : profitsForFundamentalists) {
             writeFile.print(fundamentalistProfit);
             writeFile.print(", ");
         }
         writeFile.print("\n");
-        for (var entry: profitsForChartists.entrySet()) {
+        for (var entry : profitsForChartists.entrySet()) {
             writeFile.print(entry.getKey().toString());
             writeFile.print(", ");
-            for (float chartistProfit: profitsForChartists.get(entry.getKey())) {
+            for (float chartistProfit : profitsForChartists.get(entry.getKey())) {
                 writeFile.print(chartistProfit);
                 writeFile.print(", ");
             }
@@ -189,31 +184,17 @@ public class Main extends Application {
         return summation / list.size();
     }
 
-    public static LineChartDataSet[] getLineDataSets() {
-        LineChartDataSet[] datasets = new LineChartDataSet[2];
-        LinkedList<LinkedList<Float>> priceData = new LinkedList<>();
-        priceData.add(Market.getStockPricesOverTime());
-        LinkedList<String> seriesNames = new LinkedList<>();
-        seriesNames.add("Stock Price");
-        datasets[0] = new LineChartDataSet("Stock Prices", "Stock Price", "Days", "Price", seriesNames, priceData);
-
-        LinkedList<LinkedList<Float>> averagesTotalMoney = new LinkedList<>();
-        LinkedList<String> SeriesNamesForAverages = new LinkedList<>();
-        for (ChartistType type : ChartistType.values()) {
-            if (Market.getNumberOfChartistTrader(type) == null || Market.getNumberOfChartistTrader(type) == 0) {
-                continue;
-            }
-            LinkedList<Float> averageTotalCash = averageCashForChartists.get(type);
-            averagesTotalMoney.add(averageTotalCash);
-            SeriesNamesForAverages.add("Averages of total money for " + type.toString());
-
+    public static LinkedList<LineChartDataSet> getLineDataSets() {
+        LinkedList<LineChartDataSet> datasets = new LinkedList<>();
+        for (int i = 0; i < runs; i++) {
+            LinkedList<LinkedList<Float>> priceData = new LinkedList<>();
+            priceData.add(Market.totalStockPricesOverTime.get(i));
+            LinkedList<String> seriesNames = new LinkedList<>();
+            seriesNames.add("Stock Price");
+            datasets.add(new LineChartDataSet(String.format("Stock Prices for Run %d", i+1),
+                    "Stock Price", "Days", "Price",
+                    seriesNames, priceData));
         }
-        if (Market.getNumOfFundamentalists() != 0) {
-            averagesTotalMoney.add(averageCashForFundamentalists);
-            SeriesNamesForAverages.add("Averages of total money for Fundamentalists");
-        }
-        datasets[1] = new LineChartDataSet("Averages of Total money", "Averages of Total money for traders", "Days", "cash", SeriesNamesForAverages, averagesTotalMoney);
-
         return datasets;
     }
 

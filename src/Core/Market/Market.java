@@ -27,7 +27,7 @@ public class Market {
     private final static Float liquidity = 0.4308f;
     private static Integer numberOfStocks;
     private final static Integer tradingDays = 240;
-    private final static Integer numberOfFundamentalists = 10;
+    private final static Integer numberOfFundamentalists = 10000;
     private static Integer numberOfTraders = numberOfFundamentalists;
     private static final Float initialBudget = 100000000f;
     private static Float budget = initialBudget;
@@ -48,7 +48,7 @@ public class Market {
     public static void initialize() {
         initializeBuySellMap();
         for (ChartistType type: ChartistType.values()) {
-            setChartistCount(type, 10);
+            setChartistCount(type, 454);
         }
         stockPricesOverTime.add(currentPrice);
         numberOfStocks = MaximumNumberOfStocks;
