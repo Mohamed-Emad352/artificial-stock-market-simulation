@@ -33,7 +33,7 @@ public class Main extends Application {
     static HashMap<ChartistType, LinkedList<Float>> averageCashForChartists = new HashMap<>();
     static LinkedList<Float> profitsForFundamentalists = new LinkedList<>();
     static HashMap<ChartistType, LinkedList<Float>> profitsForChartists = new HashMap<>();
-    static final int runs = 30;
+    static final int runs = 1;
     static FileOutputStream fileOutput;
     static PrintWriter writeFile;
 
