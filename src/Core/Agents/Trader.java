@@ -15,7 +15,7 @@ abstract public class Trader {
     private final LinkedList<Float> cashOwnedOverTime = new LinkedList<Float>();
     private final LinkedList<Integer> stocksOwnedOverTime = new LinkedList<Integer>();
     protected final Float Aggressiveness = (float) 0.001;
-    private final float quantityFactor = 1f;
+    private final float quantityFactor = 0.4f;
 
     public Trader() {
         this.initialCash = this.stocksOwned * Market.getCurrentPrice();

@@ -29,7 +29,7 @@ public class Market {
     private final static Integer tradingDays = 240;
     private final static Integer numberOfFundamentalists = 10000;
     private static Integer numberOfTraders = numberOfFundamentalists;
-    private static final Float initialBudget = 200000000f;
+    private static final Float initialBudget = 400000000f;
     private static Float budget = initialBudget;
     private static Integer MaximumNumberOfStocks =
             Math.round((budget / currentPrice) * numberOfTraders);

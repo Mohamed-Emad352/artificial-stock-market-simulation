@@ -141,10 +141,6 @@ public class Main extends Application {
         writeFile.close();
         endTime = System.currentTimeMillis();
         System.out.println("Simulation Time: " + (endTime - startTime) + " MilliSeconds");
-        System.out.println(totalStockPricesOverTime.size());
-        for (int index = 0; index < totalStockPricesOverTime.size(); index++) {
-            System.out.println(totalStockPricesOverTime.get(index));
-        }
         displayMemoryUsage();
         launch();
     }
@@ -190,30 +186,12 @@ public class Main extends Application {
     }
 
     public static LineChartDataSet[] getLineDataSets() {
-        LineChartDataSet[] datasets = new LineChartDataSet[2];
+        LineChartDataSet[] datasets = new LineChartDataSet[1];
         LinkedList<LinkedList<Float>> priceData = new LinkedList<>();
-        priceData.add(Market.getStockPricesOverTime());
+        priceData.add(Market.totalStockPricesOverTime.get(runs-1));
         LinkedList<String> seriesNames = new LinkedList<>();
         seriesNames.add("Stock Price");
         datasets[0] = new LineChartDataSet("Stock Prices", "Stock Price", "Days", "Price", seriesNames, priceData);
-
-        LinkedList<LinkedList<Float>> averagesTotalMoney = new LinkedList<>();
-        LinkedList<String> SeriesNamesForAverages = new LinkedList<>();
-        for (ChartistType type : ChartistType.values()) {
-            if (Market.getNumberOfChartistTrader(type) == null || Market.getNumberOfChartistTrader(type) == 0) {
-                continue;
-            }
-            LinkedList<Float> averageTotalCash = averageCashForChartists.get(type);
-            averagesTotalMoney.add(averageTotalCash);
-            SeriesNamesForAverages.add("Averages of total money for " + type.toString());
-
-        }
-        if (Market.getNumOfFundamentalists() != 0) {
-            averagesTotalMoney.add(averageCashForFundamentalists);
-            SeriesNamesForAverages.add("Averages of total money for Fundamentalists");
-        }
-        datasets[1] = new LineChartDataSet("Averages of Total money", "Averages of Total money for traders", "Days", "cash", SeriesNamesForAverages, averagesTotalMoney);
-
         return datasets;
     }
 
