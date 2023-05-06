@@ -29,7 +29,7 @@ public class Market {
     private final static Integer tradingDays = 240;
     private final static Integer numberOfFundamentalists = 10000;
     private static Integer numberOfTraders = numberOfFundamentalists;
-    private static final Float initialBudget = 100000000f;
+    private static final Float initialBudget = 250000000f;
     private static Float budget = initialBudget;
     private static Integer MaximumNumberOfStocks =
             Math.round((budget / currentPrice) * numberOfTraders);
@@ -150,9 +150,6 @@ public class Market {
         if (order.quantity == 0) {
             orderDirection = 0;
         }
-
-        if(order.quantity > 40)
-            order.quantity = 40;
 
         order.trader.updateCash(NewCash);
         currentOrderQuantity = orderDirection * order.quantity;
