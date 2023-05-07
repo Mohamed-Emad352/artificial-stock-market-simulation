@@ -24,7 +24,7 @@ import static Core.Market.Market.chartists;
 public class Main extends Application {
 
     public static final Random randGenr = new Random();
-    static final int runs = 30;
+    static final int runs = 1;
     /**
      * Variables used compute the simulation running time by saving start and end time of the simulation.
      */
@@ -45,7 +45,7 @@ public class Main extends Application {
         Market.initialize();
 
         for (int j = 0; j < runs; j++) {
-            randGenr.setSeed(j);
+            randGenr.setSeed(13);
             for (int f = 0; f < Market.getNumOfFundamentalists(); f++) {
                 Fundamentalist fundamentalTrader = new Fundamentalist();
                 Market.pushTraderInList(fundamentalTrader);

@@ -40,10 +40,11 @@ abstract public class Trader {
     public Order constructOrder() {
         Order order = new Order();
         order.trader = this;
-        order.decision = this.decideBuyOrSell();
+        Decision decision = this.decideBuyOrSell();
+        order.decision = decision;
         if (order.decision != null)
         {
-            order.quantity = this.getPracticalOrderVolume();
+            order.quantity = this.getPracticalOrderVolume(decision);
         }
         return order;
     }
@@ -58,12 +59,12 @@ abstract public class Trader {
         this.stocksOwnedOverTime.push(this.stocksOwned);
     }
 
-    public Float getLimitPrice() {
-        if (this.decideBuyOrSell() == Decision.Buy) {
+    public Float getLimitPrice(Decision decision) {
+        if (decision == Decision.Buy) {
             float value = (float) (Market.getCurrentPrice() * (
                     1 + Math.abs(Main.randGenr.nextGaussian()) * this.Aggressiveness ));
             return  value;
-        } else if (this.decideBuyOrSell() == Decision.Sell) {
+        } else if (decision == Decision.Sell) {
             float value = (float) (Market.getCurrentPrice() * (
                     1 + Math.abs(Main.randGenr.nextGaussian()) * this.Aggressiveness * -1 ));
             return  value;
@@ -74,11 +75,11 @@ abstract public class Trader {
 
     public abstract Decision decideBuyOrSell();
 
-    public Integer getPracticalOrderVolume() {
-        if (this.decideBuyOrSell() == Decision.Buy) {
-            return (int)((this.currentCash / this.getLimitPrice()) * quantityFactor);
+    public Integer getPracticalOrderVolume(Decision decision) {
+        if (decision == Decision.Buy) {
+            return (int)((this.currentCash / this.getLimitPrice(decision)) * quantityFactor);
         }
-        else if (this.decideBuyOrSell() == Decision.Sell) {
+        else if (decision == Decision.Sell) {
             return (int)(this.stocksOwned * quantityFactor);
         }
         else {
