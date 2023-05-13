@@ -15,7 +15,7 @@ abstract public class Trader {
     private final LinkedList<Float> cashOwnedOverTime = new LinkedList<Float>();
     private final LinkedList<Integer> stocksOwnedOverTime = new LinkedList<Integer>();
     protected final Float Aggressiveness = (float) 0.001;
-    private final float quantityFactor = 0.3f;
+    private final double quantityFactor = 0.1;
 
     public Trader() {
         this.initialCash = this.stocksOwned * Market.getCurrentPrice();
@@ -44,7 +44,7 @@ abstract public class Trader {
         order.decision = decision;
         if (order.decision != null)
         {
-            order.quantity = this.getPracticalOrderVolume(decision);
+            order.quantity = this.getDesiredOrderVolume(decision);
         }
         return order;
     }
@@ -75,7 +75,7 @@ abstract public class Trader {
 
     public abstract Decision decideBuyOrSell();
 
-    public Integer getPracticalOrderVolume(Decision decision) {
+    public Integer getDesiredOrderVolume(Decision decision) {
         if (decision == Decision.Buy) {
             return (int)((this.currentCash / this.getLimitPrice(decision)) * quantityFactor);
         }

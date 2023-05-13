@@ -25,15 +25,9 @@ public class Market {
     private final static Float noiseVariance = 0.1f;
     private final static Integer noiseMean = 0;
     private final static Float liquidity = 0.4308f;
-    private static Integer numberOfStocks;
     private final static Integer tradingDays = 240;
     private final static Integer numberOfFundamentalists = 10000;
     private static Integer numberOfTraders = numberOfFundamentalists;
-    private static final Float initialBudget = 250000000f;
-    private static Float budget = initialBudget;
-    private static Integer MaximumNumberOfStocks =
-            Math.round((budget / currentPrice) * numberOfTraders);
-
     private final static Float minimumPrice = 20f;
     private final static LinkedList<Trader> traders = new LinkedList<>();
     public final static ArrayList<Float> closePrices = new ArrayList<>();
@@ -44,6 +38,8 @@ public class Market {
     public final static ArrayList<Integer> priceChangesPerDay = new ArrayList<>();
     public final static HashMap<ChartistType, LinkedList<Trader>> chartists = new HashMap<>();
     public final static LinkedList<Trader> fundamentalists = new LinkedList<>();
+    public final static LinkedList<Integer> tradersDesiredQuantities = new LinkedList<>();
+    public final static LinkedList<Integer> tradersPracticalQuantities = new LinkedList<>();
 
     public static void initialize() {
         initializeBuySellMap();
@@ -51,14 +47,12 @@ public class Market {
             setChartistCount(type, 454);
         }
         stockPricesOverTime.add(currentPrice);
-        numberOfStocks = MaximumNumberOfStocks;
     }
 
     public static void setChartistCount(ChartistType type, int number) {
         numberOfChartistTraders.put(type ,number);
         chartists.put(type, new LinkedList<>());
         numberOfTraders += number;
-        MaximumNumberOfStocks = Math.round((budget / currentPrice) * numberOfTraders);
     }
 
     public static void setCurrentDay(int day) {
@@ -89,16 +83,6 @@ public class Market {
         return tradingDays;
     }
 
-    public static LinkedList<Float> getStockPricesOverTime() {
-        return stockPricesOverTime;
-    }
-
-    public static void subtractInitialStocksOwned(LinkedList<Trader> traderList){
-        for(int index=0 ; index<traderList.size() ; index++){
-            numberOfStocks -= traderList.get(index).getStocksOwned();
-        }
-    }
-
     public static void updatePriceAfterOrder()
     {
         currentPrice += (1 / liquidity) * currentOrderQuantity;
@@ -120,16 +104,10 @@ public class Market {
         if (order.decision == Decision.Buy)
         {
             orderDirection = 1;
-            if(numberOfStocks < order.quantity) {
-                order.quantity = numberOfStocks;
-            }
         }
         else if (order.decision == Decision.Sell)
         {
             orderDirection = -1;
-            if(MaximumNumberOfStocks-numberOfStocks < order.quantity) {
-                order.quantity = MaximumNumberOfStocks-numberOfStocks;
-            }
         }
         else {
             orderDirection = 0;
@@ -143,10 +121,6 @@ public class Market {
 
         Float NewCash = -1 * orderDirection * order.quantity * currentPrice;
 
-        if (orderDirection == -1 && budget < NewCash) {
-            order.quantity = (int)Math.floor(budget / getCurrentPrice());
-            NewCash = -1 * orderDirection * order.quantity * currentPrice;
-        }
         if (order.quantity == 0) {
             orderDirection = 0;
         }
@@ -155,17 +129,12 @@ public class Market {
         currentOrderQuantity = orderDirection * order.quantity;
         order.trader.updateStocksOwned(currentOrderQuantity);
         order.trader.pushToOwnedAssets();
-        numberOfStocks += -1 * orderDirection * order.quantity;
         String className = order.trader.getClass().getName();
         String[] classNameL = className.split("[.]");
         String classNameOfTrader = classNameL[classNameL.length - 1];
-        budget -= NewCash;
         System.out.println("Price: " + getCurrentPrice());
         System.out.println("Quantity: "+ order.quantity);
         System.out.println("Direction: "+ orderDirection);
-        System.out.println("Budget: " + budget);
-        System.out.println("Market Stocks: " + numberOfStocks);
-        System.out.println("Max Market Stocks: " + MaximumNumberOfStocks + "\n");
 
         if ("Fundamentalist".equals(classNameOfTrader)) {
             if (orderDirection == 1) {
@@ -202,10 +171,6 @@ public class Market {
         return traders;
     }
 
-    public static Float getPriceFromList(int index) {
-        return stockPricesOverTime.get(index);
-    }
-
     public static Float getAverageProfit(ChartistType type) {
         LinkedList<Trader> traders = chartists.get(type);
         float profitSum = 0f;
@@ -231,7 +196,6 @@ public class Market {
         stockPricesOverTime.clear();
         currentOrderQuantity = 0;
         currentPrice = initialPrice;
-        budget = initialBudget;
         numberOfChartistTraders.clear();
         numberOfTraders = numberOfFundamentalists;
         chartists.clear();

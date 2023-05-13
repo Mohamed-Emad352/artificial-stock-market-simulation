@@ -72,7 +72,6 @@ public class Main extends Application {
                 chartistsDailyCash.put(type, new LinkedList<>());
                 averageCashForChartists.put(type, new LinkedList<>());
             }
-            Market.subtractInitialStocksOwned(traders);
             String classNameOfTrader;
             float lowestPrice, highestPrice;
             float tradingVolume;
@@ -89,10 +88,7 @@ public class Main extends Application {
                 tradingVolume = 0;
                 priceChanges = 0;
                 for (Trader trader : traders) {
-                    trader.requestOrder();
                     if (Market.currentOrderQuantity != 0) {
-                        priceChanges++;
-                        Market.updatePriceAfterOrder();
                         tradingVolume += Market.currentOrderQuantity;
                         if (Market.getCurrentPrice() < lowestPrice) {
                             lowestPrice = Market.getCurrentPrice();
