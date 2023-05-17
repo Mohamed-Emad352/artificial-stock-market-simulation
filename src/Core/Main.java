@@ -7,6 +7,7 @@ import Core.Configurations.BarChartDataSet;
 import Core.Configurations.LineChartDataSet;
 import Core.Enums.ChartistType;
 import Core.Market.Market;
+import Core.Utils.StockPriceDataReader;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -33,10 +34,14 @@ public class Main extends Application {
     static HashMap<ChartistType, LinkedList<Float>> averageCashForChartists = new HashMap<>();
     static LinkedList<Float> profitsForFundamentalists = new LinkedList<>();
     static HashMap<ChartistType, LinkedList<Float>> profitsForChartists = new HashMap<>();
+    static LinkedList<Double> realStockPrices = new LinkedList<>();
+    static LinkedList<Double> realTradingVolumes = new LinkedList<>();
     static FileOutputStream fileOutput;
     static PrintWriter writeFile;
+    static StockPriceDataReader dataReader;
 
     public static void main(String[] args) throws FileNotFoundException {
+        readRealStockData();
         fileOutput = new FileOutputStream("data.csv", false);
         writeFile = new PrintWriter(fileOutput);
         initializeCSV();
@@ -178,6 +183,12 @@ public class Main extends Application {
             summation += list.get(i);
         }
         return summation / list.size();
+    }
+
+    private static void readRealStockData() throws FileNotFoundException {
+        dataReader = new StockPriceDataReader();
+        realStockPrices = dataReader.getPrices();
+        realTradingVolumes = dataReader.getVolumes();
     }
 
     public static LinkedList<LineChartDataSet> getLineDataSets() {

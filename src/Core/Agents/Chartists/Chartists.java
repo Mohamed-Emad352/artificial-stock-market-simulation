@@ -6,7 +6,6 @@ import Core.Enums.ChartistType;
 import Core.Enums.Decision;
 import Core.Market.Market;
 
-import static java.lang.Math.abs;
 
 public class Chartists extends Trader {
     public ChartistType type;

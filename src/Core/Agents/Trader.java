@@ -24,10 +24,6 @@ abstract public class Trader {
         IdTracker++;
     }
 
-    public Integer getStocksOwned() {
-        return stocksOwned;
-    }
-
     public void updateCash(Float newCash) {
         this.currentCash += newCash;
     }
