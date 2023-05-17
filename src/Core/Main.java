@@ -34,7 +34,10 @@ public class Main extends Application {
     static HashMap<ChartistType, LinkedList<Float>> averageCashForChartists = new HashMap<>();
     static LinkedList<Float> profitsForFundamentalists = new LinkedList<>();
     static HashMap<ChartistType, LinkedList<Float>> profitsForChartists = new HashMap<>();
-    static LinkedList<Double> realStockPrices = new LinkedList<>();
+    static LinkedList<Double> realCloseStockPrices = new LinkedList<>();
+    static LinkedList<Double> realOpenStockPrices = new LinkedList<>();
+    static LinkedList<Double> realLowStockPrices = new LinkedList<>();
+    static LinkedList<Double> realHighStockPrices = new LinkedList<>();
     static LinkedList<Double> realTradingVolumes = new LinkedList<>();
     static FileOutputStream fileOutput;
     static PrintWriter writeFile;
@@ -187,8 +190,11 @@ public class Main extends Application {
 
     private static void readRealStockData() throws FileNotFoundException {
         dataReader = new StockPriceDataReader();
-        realStockPrices = dataReader.getPrices();
+        realOpenStockPrices = dataReader.getOpenPrices();
+        realCloseStockPrices = dataReader.getClosePrices();
         realTradingVolumes = dataReader.getVolumes();
+        realLowStockPrices = dataReader.getLowPrices();
+        realHighStockPrices = dataReader.getHighPrices();
     }
 
     public static LinkedList<LineChartDataSet> getLineDataSets() {
