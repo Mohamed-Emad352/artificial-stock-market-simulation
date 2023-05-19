@@ -2,17 +2,19 @@ package Core.Utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Scanner;
 
 public class StockPriceDataReader {
     private Scanner scanner;
     private String relativeFilePath = "/src/Core/Data/AMIA stock prices.csv";
-    private LinkedList<Double> closePrices = new LinkedList<>();
-    private LinkedList<Double> openPrices = new LinkedList<>();
-    private LinkedList<Double> highPrices = new LinkedList<>();
-    private LinkedList<Double> lowPrices = new LinkedList<>();
-    private LinkedList<Double> volumes = new LinkedList<>();
+
+    private ArrayList<Float> closePrices = new ArrayList<>();
+    private ArrayList<Float> openPrices = new ArrayList<>();
+    private ArrayList<Float> highPrices = new ArrayList<>();
+    private ArrayList<Float> lowPrices = new ArrayList<>();
+    private ArrayList<Float> volumes = new ArrayList<>();
 
     public StockPriceDataReader() throws FileNotFoundException {
         String projectDir = System.getProperty("user.dir");
@@ -21,33 +23,33 @@ public class StockPriceDataReader {
         scanner.nextLine();
         while (scanner.hasNext()) {
             String[] data = scanner.nextLine().split(",");
-            closePrices.add(Double.valueOf(data[1]));
-            openPrices.add(Double.valueOf(data[2]));
-            highPrices.add(Double.valueOf(data[3]));
-            lowPrices.add(Double.valueOf(data[4]));
+            closePrices.add(Float.valueOf(data[1]));
+            openPrices.add(Float.valueOf(data[2]));
+            highPrices.add(Float.valueOf(data[3]));
+            lowPrices.add(Float.valueOf(data[4]));
             String dirtyVolume = data[5];
             // Remove K and multiply by 1000
-            Double volume = Double.parseDouble(dirtyVolume.substring(0, dirtyVolume.length() - 1)) * 1000;
+            Float volume = Float.parseFloat(dirtyVolume.substring(0, dirtyVolume.length() - 1)) * 1000;
             volumes.add(volume);
         }
     }
 
-    public LinkedList<Double> getClosePrices() {
+    public ArrayList<Float> getClosePrices() {
         return closePrices;
     }
-    public LinkedList<Double> getOpenPrices() {
+    public ArrayList<Float> getOpenPrices() {
         return openPrices;
     }
 
-    public LinkedList<Double> getVolumes() {
+    public ArrayList<Float> getVolumes() {
         return volumes;
     }
 
-    public LinkedList<Double> getHighPrices() {
+    public ArrayList<Float> getHighPrices() {
         return highPrices;
     }
 
-    public LinkedList<Double> getLowPrices() {
+    public ArrayList<Float> getLowPrices() {
         return lowPrices;
     }
 }

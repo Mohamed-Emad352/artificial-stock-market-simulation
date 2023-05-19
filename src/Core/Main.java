@@ -34,11 +34,11 @@ public class Main extends Application {
     static HashMap<ChartistType, LinkedList<Float>> averageCashForChartists = new HashMap<>();
     static LinkedList<Float> profitsForFundamentalists = new LinkedList<>();
     static HashMap<ChartistType, LinkedList<Float>> profitsForChartists = new HashMap<>();
-    static LinkedList<Double> realCloseStockPrices = new LinkedList<>();
-    static LinkedList<Double> realOpenStockPrices = new LinkedList<>();
-    static LinkedList<Double> realLowStockPrices = new LinkedList<>();
-    static LinkedList<Double> realHighStockPrices = new LinkedList<>();
-    static LinkedList<Double> realTradingVolumes = new LinkedList<>();
+    static ArrayList<Float> realCloseStockPrices = new ArrayList<>();
+    static ArrayList<Float> realOpenStockPrices = new ArrayList<>();
+    static ArrayList<Float> realLowStockPrices = new ArrayList<>();
+    static ArrayList<Float> realHighStockPrices = new ArrayList<>();
+    static ArrayList<Float> realTradingVolumes = new ArrayList<>();
     static FileOutputStream fileOutput;
     static PrintWriter writeFile;
     static StockPriceDataReader dataReader;
@@ -83,19 +83,18 @@ public class Main extends Application {
             String classNameOfTrader;
             float lowestPrice, highestPrice;
             float tradingVolume;
-            int priceChanges;
 
 
             for (int day = 0; day <= Market.getTradingDays(); day++) {
                 Collections.shuffle(traders, randGenr);
                 System.out.println("Current day = " + day);
                 Market.setCurrentDay(day);
-                Market.openPrices.add(Market.getCurrentPrice());
-                lowestPrice = Market.getCurrentPrice();
-                highestPrice = Market.getCurrentPrice();
-                tradingVolume = 0;
-                priceChanges = 0;
-                for (Trader trader : traders) {
+                Market.openPrices.add(realOpenStockPrices.get(1349 + day));
+                lowestPrice = realLowStockPrices.get(1349 + day);
+                highestPrice = realHighStockPrices.get(1349 + day);
+                tradingVolume = realTradingVolumes.get(1349 + day);
+
+/*                for (Trader trader : traders) {
                     if (Market.currentOrderQuantity != 0) {
                         tradingVolume += Market.currentOrderQuantity;
                         if (Market.getCurrentPrice() < lowestPrice) {
@@ -105,7 +104,7 @@ public class Main extends Application {
                             highestPrice = Market.getCurrentPrice();
                         }
                     }
-                }
+                }*/
                 for (Trader trader : traders) {
                     String className = trader.getClass().getName();
                     String[] classNameL = className.split("[.]");
@@ -123,13 +122,13 @@ public class Main extends Application {
                     averageCashForChartists.get(type).add(getAverageOfLinkedList(chartistsDailyCash.get(type)));
                     chartistsDailyCash.put(type, new LinkedList<>());
                 }
-                Market.updatePrice();
+                //Market.updatePrice();
                 Market.pushNewPriceToStockPrices(Market.getCurrentPrice());
-                Market.closePrices.add(Market.getCurrentPrice());
+                Market.closePrices.add(realCloseStockPrices.get(1349 + day));
                 Market.highPrices.add(highestPrice);
                 Market.lowPrices.add(lowestPrice);
                 Market.tradeVolume.add(tradingVolume);
-                Market.priceChangesPerDay.add(priceChanges);
+                //Market.priceChangesPerDay.add(priceChanges);
             }
             profitsForFundamentalists.add(Market.getAverageFundamentalistsProfit());
             for (var entry : chartists.entrySet()) {
