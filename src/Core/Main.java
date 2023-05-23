@@ -20,12 +20,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 
-import static Core.Market.Market.chartists;
+import static Core.Market.Market.*;
 
 public class Main extends Application {
 
     public static final Random randGenr = new Random();
-    static final int runs = 30;
+    static final int runs = 2;
+    public static final int numOfPreviousDataPoints = 1340;
     /**
      * Variables used compute the simulation running time by saving start and end time of the simulation.
      */
@@ -34,14 +35,10 @@ public class Main extends Application {
     static HashMap<ChartistType, LinkedList<Float>> averageCashForChartists = new HashMap<>();
     static LinkedList<Float> profitsForFundamentalists = new LinkedList<>();
     static HashMap<ChartistType, LinkedList<Float>> profitsForChartists = new HashMap<>();
-    static ArrayList<Float> realCloseStockPrices = new ArrayList<>();
-    static ArrayList<Float> realOpenStockPrices = new ArrayList<>();
-    static ArrayList<Float> realLowStockPrices = new ArrayList<>();
-    static ArrayList<Float> realHighStockPrices = new ArrayList<>();
-    static ArrayList<Float> realTradingVolumes = new ArrayList<>();
     static FileOutputStream fileOutput;
     static PrintWriter writeFile;
     static StockPriceDataReader dataReader;
+
 
     public static void main(String[] args) throws FileNotFoundException {
         readRealStockData();
@@ -51,9 +48,24 @@ public class Main extends Application {
         initializeProfitLists();
         startTime = System.currentTimeMillis();
         Market.initialize();
+        List<Float> subListOfPrices = realOpenStockPrices.subList(numOfPreviousDataPoints,numOfPreviousDataPoints+getTradingDays());
+        listOfPrices.addAll(subListOfPrices);
+
+        List<Float> subHighPrices = Market.realHighStockPrices.subList(0, numOfPreviousDataPoints + 1);
+        List<Float> subLowPrices = Market.realLowStockPrices.subList(0, numOfPreviousDataPoints + 1);
+        List<Float> subOpenPrices = Market.realOpenStockPrices.subList(0, numOfPreviousDataPoints + 1);
+        List<Float> subClosePrices = Market.realCloseStockPrices.subList(0, numOfPreviousDataPoints + 1);
+        List<Float> subTradingVolumes = Market.realTradingVolumes.subList(0, numOfPreviousDataPoints + 1);
+
 
         for (int j = 0; j < runs; j++) {
             randGenr.setSeed(j);
+            Market.highPrices.addAll(subHighPrices);
+            Market.lowPrices.addAll(subLowPrices);
+            Market.openPrices.addAll(subOpenPrices);
+            Market.closePrices.addAll(subClosePrices);
+            Market.tradeVolumes.addAll(subTradingVolumes);
+
             for (int f = 0; f < Market.getNumOfFundamentalists(); f++) {
                 Fundamentalist fundamentalTrader = new Fundamentalist();
                 Market.pushTraderInList(fundamentalTrader);
@@ -80,33 +92,17 @@ public class Main extends Application {
                 chartistsDailyCash.put(type, new LinkedList<>());
                 averageCashForChartists.put(type, new LinkedList<>());
             }
-            String classNameOfTrader;
-            float lowestPrice, highestPrice;
-            float tradingVolume;
-
 
             for (int day = 0; day <= Market.getTradingDays(); day++) {
                 Collections.shuffle(traders, randGenr);
                 System.out.println("Current day = " + day);
                 Market.setCurrentDay(day);
-                Market.openPrices.add(realOpenStockPrices.get(1349 + day));
-                lowestPrice = realLowStockPrices.get(1349 + day);
-                highestPrice = realHighStockPrices.get(1349 + day);
-                tradingVolume = realTradingVolumes.get(1349 + day);
+                Market.openPrices.add(Market.realOpenStockPrices.get(numOfPreviousDataPoints + day));
 
-/*                for (Trader trader : traders) {
-                    if (Market.currentOrderQuantity != 0) {
-                        tradingVolume += Market.currentOrderQuantity;
-                        if (Market.getCurrentPrice() < lowestPrice) {
-                            lowestPrice = Market.getCurrentPrice();
-                        }
-                        if (Market.getCurrentPrice() > highestPrice) {
-                            highestPrice = Market.getCurrentPrice();
-                        }
-                    }
-                }*/
                 for (Trader trader : traders) {
+                    trader.requestOrder();
                     String className = trader.getClass().getName();
+                    String classNameOfTrader;
                     String[] classNameL = className.split("[.]");
                     classNameOfTrader = classNameL[classNameL.length - 1];
                     if (classNameOfTrader.equals("Fundamentalist")) {
@@ -116,20 +112,19 @@ public class Main extends Application {
                         chartistsDailyCash.get(((Chartists) trader).type).add(trader.getTotalMoney());
                     }
                 }
+
                 averageCashForFundamentalists.add(getAverageOfLinkedList(fundamentalistsDailyCash));
                 fundamentalistsDailyCash.clear();
                 for (ChartistType type : ChartistType.values()) {
                     averageCashForChartists.get(type).add(getAverageOfLinkedList(chartistsDailyCash.get(type)));
                     chartistsDailyCash.put(type, new LinkedList<>());
                 }
-                //Market.updatePrice();
-                Market.pushNewPriceToStockPrices(Market.getCurrentPrice());
-                Market.closePrices.add(realCloseStockPrices.get(1349 + day));
-                Market.highPrices.add(highestPrice);
-                Market.lowPrices.add(lowestPrice);
-                Market.tradeVolume.add(tradingVolume);
-                //Market.priceChangesPerDay.add(priceChanges);
+                Market.closePrices.add(Market.realCloseStockPrices.get(numOfPreviousDataPoints + day));
+                Market.highPrices.add(Market.realHighStockPrices.get(numOfPreviousDataPoints + day));
+                Market.lowPrices.add(Market.realLowStockPrices.get(numOfPreviousDataPoints + day));
+                Market.tradeVolumes.add(Market.realTradingVolumes.get(numOfPreviousDataPoints + day));
             }
+
             profitsForFundamentalists.add(Market.getAverageFundamentalistsProfit());
             for (var entry : chartists.entrySet()) {
                 profitsForChartists.get(entry.getKey()).add(Market.getAverageProfit(entry.getKey()));
@@ -138,7 +133,9 @@ public class Main extends Application {
             System.out.println("Fund Sell orders = " + Fundamentalist.numOfSellOrders);
             System.out.println(Market.numOfBuyAndSell);
             reset();
+
         }
+
         writeProfitsToCSV();
         writeFile.close();
         endTime = System.currentTimeMillis();
@@ -189,26 +186,23 @@ public class Main extends Application {
 
     private static void readRealStockData() throws FileNotFoundException {
         dataReader = new StockPriceDataReader();
-        realOpenStockPrices = dataReader.getOpenPrices();
-        realCloseStockPrices = dataReader.getClosePrices();
-        realTradingVolumes = dataReader.getVolumes();
-        realLowStockPrices = dataReader.getLowPrices();
-        realHighStockPrices = dataReader.getHighPrices();
+        Market.realOpenStockPrices = dataReader.getOpenPrices();
+        Market.realCloseStockPrices = dataReader.getClosePrices();
+        Market.realTradingVolumes = dataReader.getVolumes();
+        Market.realLowStockPrices = dataReader.getLowPrices();
+        Market.realHighStockPrices = dataReader.getHighPrices();
     }
-
     public static LinkedList<LineChartDataSet> getLineDataSets() {
         LinkedList<LineChartDataSet> datasets = new LinkedList<>();
-        for (int i = 0; i < runs; i++) {
-            LinkedList<LinkedList<Float>> priceData = new LinkedList<>();
-            priceData.add(Market.totalStockPricesOverTime.get(i));
-            LinkedList<String> seriesNames = new LinkedList<>();
-            seriesNames.add("Stock Price");
-            datasets.add(new LineChartDataSet(String.format("Stock Prices for Run %d", i+1),
-                    "Stock Price", "Days", "Price",
-                    seriesNames, priceData));
-        }
+        LinkedList<LinkedList<Float>> priceData = new LinkedList<>();
+        priceData.add(listOfPrices);
+        LinkedList<String> seriesNames = new LinkedList<>();
+        seriesNames.add("Stock Price");
+        datasets.add(new LineChartDataSet("Stock Prices", "Stock Price", "Days", "Price",
+                seriesNames, priceData));
         return datasets;
     }
+
 
     public static LinkedList<BarChartDataSet> getBarDataSets() {
         LinkedList<BarChartDataSet> datasets = new LinkedList<>();

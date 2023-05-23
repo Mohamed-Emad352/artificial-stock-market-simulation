@@ -11,7 +11,9 @@ abstract public class Trader {
     private static Integer IdTracker = 1;
     public final Float initialCash;
     public Float currentCash;
-    private Integer stocksOwned = Main.randGenr.nextInt(11) + 20;
+
+    private final Integer initialStocksOwned = Main.randGenr.nextInt(11) + 20;
+    private Integer stocksOwned =initialStocksOwned;
     private final LinkedList<Float> cashOwnedOverTime = new LinkedList<Float>();
     private final LinkedList<Integer> stocksOwnedOverTime = new LinkedList<Integer>();
     protected final Float Aggressiveness = (float) 0.001;
@@ -90,6 +92,8 @@ abstract public class Trader {
     }
 
     public float getTotalProfit() {
-        return (currentCash-initialCash) + Market.getCurrentPrice() * stocksOwned;
+        float profit = (currentCash + Market.getCurrentPrice() * stocksOwned ) - (initialCash + initialStocksOwned * Market.initialPrice);
+        return profit;
+
     }
 }

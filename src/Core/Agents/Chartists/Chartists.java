@@ -21,38 +21,38 @@ public class Chartists extends Trader {
 
     public void getValueNew() {
         switch (type) {
-            case SimpleMovingAverage -> forecastValue = TI.calculateSMAIndicator(10, Market.closePrices);
-            case ExpMovingAverage -> forecastValue = TI.calculateEMAIndicator(10, Market.closePrices);
-            case DoubleExpMovingAverage -> forecastValue = TI.calculateDoubleEMAIndicator(10, Market.closePrices);
-            case TripleExpMovingAverage -> forecastValue = TI.calculateTripleEMAIndicator(10, Market.closePrices);
-            case KAMA -> forecastValue = TI.calculateKAMAIndicator(7, 7, 10, Market.closePrices);
-            case MACD -> forecastValue = TI.calculateMACDIndicator(10, 15, Market.closePrices);
-            case RAVI -> forecastValue = TI.calculateRAVIIndicator(10, 15, Market.closePrices);
-            case ROC -> forecastValue = TI.calculateROCIndicator(10, Market.closePrices);
-            case WMA -> forecastValue = TI.calculateWMAIndicator(10, Market.closePrices);
-            case ZLEMA -> forecastValue = TI.calculateZLEMAIndicator(10, Market.closePrices);
+            case SimpleMovingAverage -> forecastValue = TI.calculateSMAIndicator(150, Market.closePrices);
+            case ExpMovingAverage -> forecastValue = TI.calculateEMAIndicator(150, Market.closePrices);
+            case DoubleExpMovingAverage -> forecastValue = TI.calculateDoubleEMAIndicator(150, Market.closePrices);
+            case TripleExpMovingAverage -> forecastValue = TI.calculateTripleEMAIndicator(150, Market.closePrices);
+            case KAMA -> forecastValue = TI.calculateKAMAIndicator(70, 70, 100, Market.closePrices);
+            case MACD -> forecastValue = TI.calculateMACDIndicator(100, 150, Market.closePrices);
+            case RAVI -> forecastValue = TI.calculateRAVIIndicator(100, 150, Market.closePrices);
+            case ROC -> forecastValue = TI.calculateROCIndicator(150, Market.closePrices);
+            case WMA -> forecastValue = TI.calculateWMAIndicator(150, Market.closePrices);
+            case ZLEMA -> forecastValue = TI.calculateZLEMAIndicator(150, Market.closePrices);
 //            case DMI ->
 //                    forecastValue = TI.calculateDMIndicator(10, Market.highPrices, Market.lowPrices, Market.closePrices);
 //            case ADMI ->
 //                    forecastValue = TI.calculateADMIndicator(10, Market.highPrices, Market.lowPrices, Market.closePrices);
-            case HMA -> forecastValue = TI.calculateHMAIndicator(10, Market.closePrices);
-            case CoppCurve -> forecastValue = TI.calculateCoppockCurveIndicator(10, 15, 12, Market.closePrices);
-            case RSI -> forecastValue = TI.calculateRSIIndicator(10, Market.closePrices);
+            case HMA -> forecastValue = TI.calculateHMAIndicator(150, Market.closePrices);
+            case CoppCurve -> forecastValue = TI.calculateCoppockCurveIndicator(150, 150, 120, Market.closePrices);
+            case RSI -> forecastValue = TI.calculateRSIIndicator(150, Market.closePrices);
             case WilliamR ->
-                    forecastValue = TI.calculateWilliamsRIndicator(10, Market.closePrices, Market.highPrices, Market.lowPrices);
+                    forecastValue = TI.calculateWilliamsRIndicator(150, Market.closePrices, Market.highPrices, Market.lowPrices);
             case AD ->
-                    forecastValue = TI.calculateAccumulationDistributionIndicator(Market.highPrices, Market.lowPrices, Market.closePrices, Market.tradeVolume);
+                    forecastValue = TI.calculateAccumulationDistributionIndicator(Market.highPrices, Market.lowPrices, Market.closePrices,Market.tradeVolumes);
             case Chaikin ->
-                    forecastValue = TI.calculateChaikinMoneyFlowIndicator(10, Market.highPrices, Market.lowPrices, Market.closePrices, Market.tradeVolume);
+                    forecastValue = TI.calculateChaikinMoneyFlowIndicator(100, Market.highPrices, Market.lowPrices, Market.closePrices, Market.tradeVolumes);
             case VWAP ->
-                    forecastValue = TI.calculateVWAPIndicator(10, Market.highPrices, Market.lowPrices, Market.closePrices, Market.tradeVolume);
+                    forecastValue = TI.calculateVWAPIndicator(100, Market.highPrices, Market.lowPrices, Market.closePrices, Market.tradeVolumes);
             case MVWAP ->
-                    forecastValue = TI.calculateMVWAPIndicator(10, Market.highPrices, Market.lowPrices, Market.closePrices, Market.tradeVolume);
-            case NVI -> forecastValue = TI.calculateNVIIndicator(Market.closePrices, Market.tradeVolume);
-            case PVI -> forecastValue = TI.calculatePVIIndicator(Market.closePrices, Market.tradeVolume);
-            case PPO -> forecastValue = TI.calculatePPOIndicator(10, 15, Market.closePrices);
+                    forecastValue = TI.calculateMVWAPIndicator(100, Market.highPrices, Market.lowPrices, Market.closePrices, Market.tradeVolumes);
+            case NVI -> forecastValue = TI.calculateNVIIndicator(Market.closePrices, Market.tradeVolumes);
+            case PVI -> forecastValue = TI.calculatePVIIndicator(Market.closePrices, Market.tradeVolumes);
+            case PPO -> forecastValue = TI.calculatePPOIndicator(100, 150, Market.closePrices);
             case StochasticOscillatorK ->
-                    forecastValue = TI.calculateStochasticOscillatorKIndicator(10, Market.closePrices, Market.highPrices, Market.lowPrices);
+                    forecastValue = TI.calculateStochasticOscillatorKIndicator(100, Market.closePrices, Market.highPrices, Market.lowPrices);
         }
     }
 
