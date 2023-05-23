@@ -18,8 +18,6 @@ import static Core.Main.numOfPreviousDataPoints;
 public class Market {
     private static final HashMap<ChartistType, Integer> numberOfChartistTraders = new HashMap<>();
     public static HashMap<ChartistType, HashMap<Decision, Integer>> numOfBuyAndSell = new HashMap<>();
-    private final static LinkedList<Float> stockPricesOverTime = new LinkedList<>();
-    public final static LinkedList<LinkedList<Float>> totalStockPricesOverTime = new LinkedList<>();
     public static Integer currentOrderQuantity = 0;
     private static Integer currentDay = 0;
     public static Float initialPrice ;

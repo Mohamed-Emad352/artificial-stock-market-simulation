@@ -25,7 +25,7 @@ import static Core.Market.Market.*;
 public class Main extends Application {
 
     public static final Random randGenr = new Random();
-    static final int runs = 2;
+    static final int runs = 30;
     public static final int numOfPreviousDataPoints = 1340;
     /**
      * Variables used compute the simulation running time by saving start and end time of the simulation.
