@@ -26,8 +26,7 @@ import static Core.Market.Market.*;
 public class Main extends Application {
 
     public static final Random randGenr = new Random();
-    public static final int numOfPreviousDataPoints = 1340;
-    /**
+    public static int numOfPreviousDataPoints;    /**
      * Variables used compute the simulation running time by saving start and end time of the simulation.
      */
     static long startTime, endTime;
@@ -47,10 +46,10 @@ public class Main extends Application {
         initializeCSV();
         initializeProfitLists();
         startTime = System.currentTimeMillis();
+        numOfPreviousDataPoints = realOpenStockPrices.size() - SimulationParameters.tradingDays - 4;
         Market.initialize();
         List<Float> subListOfPrices = realOpenStockPrices.subList(numOfPreviousDataPoints,numOfPreviousDataPoints + SimulationParameters.tradingDays);
         listOfPrices.addAll(subListOfPrices);
-
         List<Float> subHighPrices = Market.realHighStockPrices.subList(0, numOfPreviousDataPoints + 1);
         List<Float> subLowPrices = Market.realLowStockPrices.subList(0, numOfPreviousDataPoints + 1);
         List<Float> subOpenPrices = Market.realOpenStockPrices.subList(0, numOfPreviousDataPoints + 1);

@@ -2,8 +2,6 @@ package Core.Market;
 
 import Core.Agents.Chartists.Chartists;
 import Core.Agents.Fundamentalists.Fundamentalist;
-import Core.Configurations.SimulationParameters;
-import Core.Main;
 import Core.Agents.Trader;
 import Core.Configurations.Order;
 import Core.Enums.ChartistType;

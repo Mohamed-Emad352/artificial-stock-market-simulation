@@ -5,15 +5,14 @@ import Core.Configurations.SimulationParameters;
 import Core.Enums.Decision;
 import Core.Main;
 import Core.Market.Market;
-
 import java.util.LinkedList;
 
 abstract public class Trader {
     public final Float initialCash;
+    public Float currentCash;
     private final Integer initialStocksOwned = Main.randGenr.nextInt(11) + 20;
     private final LinkedList<Float> cashOwnedOverTime = new LinkedList<Float>();
     private final LinkedList<Integer> stocksOwnedOverTime = new LinkedList<Integer>();
-    public Float currentCash;
     private Integer stocksOwned = initialStocksOwned;
 
     public Trader() {
