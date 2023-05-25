@@ -3,13 +3,11 @@ package Core.Utils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Scanner;
 
 public class StockPriceDataReader {
     private Scanner scanner;
     private String relativeFilePath = "/src/Core/Data/AMIA stock prices.csv";
-
     private ArrayList<Float> closePrices = new ArrayList<>();
     private ArrayList<Float> openPrices = new ArrayList<>();
     private ArrayList<Float> highPrices = new ArrayList<>();

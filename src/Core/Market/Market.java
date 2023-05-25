@@ -22,7 +22,6 @@ public class Market {
     private static Integer currentDay = 0;
     public static Float initialPrice ;
     public static Float currentPrice = initialPrice;
-    private final static Integer tradingDays = 240;
     private final static Integer numberOfFundamentalists = 10000;
     private static Integer numberOfTraders = numberOfFundamentalists;
     private final static LinkedList<Trader> traders = new LinkedList<>();
@@ -78,9 +77,6 @@ public class Market {
         return realOpenStockPrices.get(numOfPreviousDataPoints + getCurrentDay());
     }
 
-    public static Integer getTradingDays() {
-        return tradingDays;
-    }
     public static void executeOrder(Order order){
         Integer orderDirection;
         if (order.decision == Decision.Buy)

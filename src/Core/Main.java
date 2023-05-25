@@ -5,6 +5,7 @@ import Core.Agents.Fundamentalists.Fundamentalist;
 import Core.Agents.Trader;
 import Core.Configurations.BarChartDataSet;
 import Core.Configurations.LineChartDataSet;
+import Core.Configurations.SimulationParameters;
 import Core.Enums.ChartistType;
 import Core.Market.Market;
 import Core.Utils.StockPriceDataReader;
@@ -48,7 +49,7 @@ public class Main extends Application {
         initializeProfitLists();
         startTime = System.currentTimeMillis();
         Market.initialize();
-        List<Float> subListOfPrices = realOpenStockPrices.subList(numOfPreviousDataPoints,numOfPreviousDataPoints+getTradingDays());
+        List<Float> subListOfPrices = realOpenStockPrices.subList(numOfPreviousDataPoints,numOfPreviousDataPoints + SimulationParameters.tradingDays);
         listOfPrices.addAll(subListOfPrices);
 
         List<Float> subHighPrices = Market.realHighStockPrices.subList(0, numOfPreviousDataPoints + 1);
@@ -93,7 +94,7 @@ public class Main extends Application {
                 averageCashForChartists.put(type, new LinkedList<>());
             }
 
-            for (int day = 0; day <= Market.getTradingDays(); day++) {
+            for (int day = 0; day <= SimulationParameters.tradingDays; day++) {
                 Collections.shuffle(traders, randGenr);
                 System.out.println("Current day = " + day);
                 Market.setCurrentDay(day);

@@ -27,6 +27,7 @@ public class Fundamentalist extends Trader {
             this.stockFundamentalValue *= (float) exp(fundamentalValueVolatility * Main.randGenr.nextGaussian());
         }
     }
+
     @Override
     public Decision decideBuyOrSell() {
         float value =  this.stockFundamentalValue - Market.getCurrentPrice();
