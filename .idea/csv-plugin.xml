@@ -38,6 +38,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\s.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\src\Core\Data\AMIA stock prices.csv">
           <value>
             <Attribute>

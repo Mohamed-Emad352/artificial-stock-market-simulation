@@ -26,7 +26,6 @@ import static Core.Market.Market.*;
 public class Main extends Application {
 
     public static final Random randGenr = new Random();
-    static final int runs = 30;
     public static final int numOfPreviousDataPoints = 1340;
     /**
      * Variables used compute the simulation running time by saving start and end time of the simulation.
@@ -59,7 +58,7 @@ public class Main extends Application {
         List<Float> subTradingVolumes = Market.realTradingVolumes.subList(0, numOfPreviousDataPoints + 1);
 
 
-        for (int j = 0; j < runs; j++) {
+        for (int j = 0; j < SimulationParameters.simulationRuns; j++) {
             randGenr.setSeed(j);
             Market.highPrices.addAll(subHighPrices);
             Market.lowPrices.addAll(subLowPrices);
@@ -67,7 +66,7 @@ public class Main extends Application {
             Market.closePrices.addAll(subClosePrices);
             Market.tradeVolumes.addAll(subTradingVolumes);
 
-            for (int f = 0; f < Market.getNumOfFundamentalists(); f++) {
+            for (int f = 0; f < SimulationParameters.numberOfFundamentalists; f++) {
                 Fundamentalist fundamentalTrader = new Fundamentalist();
                 Market.pushTraderInList(fundamentalTrader);
                 Market.fundamentalists.push(fundamentalTrader);
@@ -171,7 +170,7 @@ public class Main extends Application {
 
     public static void initializeCSV() {
         writeFile.print(",");
-        for (int runIndex = 1; runIndex <= runs; runIndex++) {
+        for (int runIndex = 1; runIndex <= SimulationParameters.simulationRuns; runIndex++) {
             writeFile.print(String.format("Run %s,", runIndex));
         }
         writeFile.print("\n");

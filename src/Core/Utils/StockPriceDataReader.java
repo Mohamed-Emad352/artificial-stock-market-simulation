@@ -1,5 +1,7 @@
 package Core.Utils;
 
+import Core.Configurations.SimulationParameters;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -7,7 +9,6 @@ import java.util.Scanner;
 
 public class StockPriceDataReader {
     private Scanner scanner;
-    private String relativeFilePath = "/src/Core/Data/AMIA stock prices.csv";
     private ArrayList<Float> closePrices = new ArrayList<>();
     private ArrayList<Float> openPrices = new ArrayList<>();
     private ArrayList<Float> highPrices = new ArrayList<>();
@@ -16,7 +17,7 @@ public class StockPriceDataReader {
 
     public StockPriceDataReader() throws FileNotFoundException {
         String projectDir = System.getProperty("user.dir");
-        String absoluteFilePath = projectDir + relativeFilePath;
+        String absoluteFilePath = projectDir + SimulationParameters.relativeStockDataPath;
         scanner = new Scanner(new File(absoluteFilePath));
         scanner.nextLine();
         while (scanner.hasNext()) {

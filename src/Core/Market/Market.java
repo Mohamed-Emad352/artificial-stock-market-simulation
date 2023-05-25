@@ -2,6 +2,7 @@ package Core.Market;
 
 import Core.Agents.Chartists.Chartists;
 import Core.Agents.Fundamentalists.Fundamentalist;
+import Core.Configurations.SimulationParameters;
 import Core.Main;
 import Core.Agents.Trader;
 import Core.Configurations.Order;
@@ -20,10 +21,7 @@ public class Market {
     public static HashMap<ChartistType, HashMap<Decision, Integer>> numOfBuyAndSell = new HashMap<>();
     public static Integer currentOrderQuantity = 0;
     private static Integer currentDay = 0;
-    public static Float initialPrice ;
-    public static Float currentPrice = initialPrice;
-    private final static Integer numberOfFundamentalists = 10000;
-    private static Integer numberOfTraders = numberOfFundamentalists;
+    public static Float initialPrice;
     private final static LinkedList<Trader> traders = new LinkedList<>();
     public final static ArrayList<Float> closePrices = new ArrayList<>();
     public final static ArrayList<Float> openPrices = new ArrayList<>();
@@ -50,7 +48,6 @@ public class Market {
     public static void setChartistCount(ChartistType type, int number) {
         numberOfChartistTraders.put(type ,number);
         chartists.put(type, new LinkedList<>());
-        numberOfTraders += number;
     }
 
     public static void setCurrentDay(int day) {
@@ -123,9 +120,6 @@ public class Market {
         }
     }
 
-    public static Integer getNumOfFundamentalists()
-    { return numberOfFundamentalists;}
-
     public static Integer getNumberOfChartistTrader(ChartistType type) {
         return numberOfChartistTraders.get(type);
     }
@@ -161,7 +155,6 @@ public class Market {
         initializeBuySellMap();
         currentOrderQuantity = 0;
         numberOfChartistTraders.clear();
-        numberOfTraders = numberOfFundamentalists;
         chartists.clear();
         fundamentalists.clear();
         traders.clear();
