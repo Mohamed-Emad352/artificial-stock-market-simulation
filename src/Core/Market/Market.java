@@ -21,7 +21,7 @@ public class Market {
     public static Integer currentOrderQuantity = 0;
     private static Integer currentDay = 0;
     public static Float initialPrice ;
-    public static Float currentPrice = initialPrice;
+    //public static Float currentPrice = initialPrice;
     private final static Integer tradingDays = 240;
     private final static Integer numberOfFundamentalists = 10000;
     private static Integer numberOfTraders = numberOfFundamentalists;
