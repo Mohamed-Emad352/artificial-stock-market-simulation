@@ -68,9 +68,9 @@ abstract public class Trader {
 
     public Integer getDesiredOrderVolume(Decision decision) {
         if (decision == Decision.Buy) {
-            return (int) ((this.currentCash / this.getLimitPrice(decision)) * SimulationParameters.traderQuantityFactor);
+            return (int) ((this.currentCash / this.getLimitPrice(decision)) * SimulationParameters.traderConfidenceLevel);
         } else if (decision == Decision.Sell) {
-            return (int) (this.stocksOwned * SimulationParameters.traderQuantityFactor);
+            return (int) (this.stocksOwned * SimulationParameters.traderConfidenceLevel);
         } else {
             return 0;
         }

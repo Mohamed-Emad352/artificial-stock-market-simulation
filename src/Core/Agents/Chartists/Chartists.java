@@ -19,35 +19,37 @@ public class Chartists extends Trader {
     }
 
     public void getValueNew() {
+        int timeFrame = SimulationParameters.timeFrame;
+        int shortTimeFrame = SimulationParameters.timeFrame - 20;
         switch (type) {
-            case SimpleMovingAverage -> forecastValue = TI.calculateSMAIndicator(SimulationParameters.timeFrame, Market.closePrices);
-            case ExpMovingAverage -> forecastValue = TI.calculateEMAIndicator(SimulationParameters.timeFrame, Market.closePrices);
-            case DoubleExpMovingAverage -> forecastValue = TI.calculateDoubleEMAIndicator(SimulationParameters.timeFrame, Market.closePrices);
-            case TripleExpMovingAverage -> forecastValue = TI.calculateTripleEMAIndicator(SimulationParameters.timeFrame, Market.closePrices);
-            case KAMA -> forecastValue = TI.calculateKAMAIndicator(SimulationParameters.timeFrameEffectivenessRatio, SimulationParameters.fastTimeFrame, SimulationParameters.slowTimeFrame, Market.closePrices);
-            case MACD -> forecastValue = TI.calculateMACDIndicator(SimulationParameters.shortTimeFrame, SimulationParameters.longTimeFrame, Market.closePrices);
-            case RAVI -> forecastValue = TI.calculateRAVIIndicator(SimulationParameters.shortTimeFrame, SimulationParameters.longTimeFrame, Market.closePrices);
-            case ROC -> forecastValue = TI.calculateROCIndicator(SimulationParameters.timeFrame, Market.closePrices);
-            case WMA -> forecastValue = TI.calculateWMAIndicator(SimulationParameters.timeFrame, Market.closePrices);
-            case ZLEMA -> forecastValue = TI.calculateZLEMAIndicator(SimulationParameters.timeFrame, Market.closePrices);
-            case HMA -> forecastValue = TI.calculateHMAIndicator(SimulationParameters.timeFrame, Market.closePrices);
-            case CoppCurve -> forecastValue = TI.calculateCoppockCurveIndicator(SimulationParameters.shortRocTimeFrame, SimulationParameters.longRocTimeFrame, SimulationParameters.wmaTimeFrame, Market.closePrices);
-            case RSI -> forecastValue = TI.calculateRSIIndicator(SimulationParameters.timeFrame, Market.closePrices);
+            case SimpleMovingAverage -> forecastValue = TI.calculateSMAIndicator(timeFrame, Market.closePrices);
+            case ExpMovingAverage -> forecastValue = TI.calculateEMAIndicator(timeFrame, Market.closePrices);
+            case DoubleExpMovingAverage -> forecastValue = TI.calculateDoubleEMAIndicator(timeFrame, Market.closePrices);
+            case TripleExpMovingAverage -> forecastValue = TI.calculateTripleEMAIndicator(timeFrame, Market.closePrices);
+            case KAMA -> forecastValue = TI.calculateKAMAIndicator(shortTimeFrame, shortTimeFrame, timeFrame, Market.closePrices);
+            case MACD -> forecastValue = TI.calculateMACDIndicator(shortTimeFrame, timeFrame, Market.closePrices);
+            case RAVI -> forecastValue = TI.calculateRAVIIndicator(shortTimeFrame, timeFrame, Market.closePrices);
+            case ROC -> forecastValue = TI.calculateROCIndicator(timeFrame, Market.closePrices);
+            case WMA -> forecastValue = TI.calculateWMAIndicator(timeFrame, Market.closePrices);
+            case ZLEMA -> forecastValue = TI.calculateZLEMAIndicator(timeFrame, Market.closePrices);
+            case HMA -> forecastValue = TI.calculateHMAIndicator(timeFrame, Market.closePrices);
+            case CoppCurve -> forecastValue = TI.calculateCoppockCurveIndicator(shortTimeFrame, timeFrame, shortTimeFrame, Market.closePrices);
+            case RSI -> forecastValue = TI.calculateRSIIndicator(timeFrame, Market.closePrices);
             case WilliamR ->
-                    forecastValue = TI.calculateWilliamsRIndicator(SimulationParameters.timeFrame, Market.closePrices, Market.highPrices, Market.lowPrices);
+                    forecastValue = TI.calculateWilliamsRIndicator(timeFrame, Market.closePrices, Market.highPrices, Market.lowPrices);
             case AD ->
                     forecastValue = TI.calculateAccumulationDistributionIndicator(Market.highPrices, Market.lowPrices, Market.closePrices,Market.tradeVolumes);
             case Chaikin ->
-                    forecastValue = TI.calculateChaikinMoneyFlowIndicator(SimulationParameters.timeFrame, Market.highPrices, Market.lowPrices, Market.closePrices, Market.tradeVolumes);
+                    forecastValue = TI.calculateChaikinMoneyFlowIndicator(timeFrame, Market.highPrices, Market.lowPrices, Market.closePrices, Market.tradeVolumes);
             case VWAP ->
-                    forecastValue = TI.calculateVWAPIndicator(SimulationParameters.timeFrame, Market.highPrices, Market.lowPrices, Market.closePrices, Market.tradeVolumes);
+                    forecastValue = TI.calculateVWAPIndicator(timeFrame, Market.highPrices, Market.lowPrices, Market.closePrices, Market.tradeVolumes);
             case MVWAP ->
-                    forecastValue = TI.calculateMVWAPIndicator(SimulationParameters.timeFrame, Market.highPrices, Market.lowPrices, Market.closePrices, Market.tradeVolumes);
+                    forecastValue = TI.calculateMVWAPIndicator(timeFrame, Market.highPrices, Market.lowPrices, Market.closePrices, Market.tradeVolumes);
             case NVI -> forecastValue = TI.calculateNVIIndicator(Market.closePrices, Market.tradeVolumes);
             case PVI -> forecastValue = TI.calculatePVIIndicator(Market.closePrices, Market.tradeVolumes);
-            case PPO -> forecastValue = TI.calculatePPOIndicator(SimulationParameters.shortTimeFrame, SimulationParameters.longTimeFrame, Market.closePrices);
+            case PPO -> forecastValue = TI.calculatePPOIndicator(shortTimeFrame, timeFrame, Market.closePrices);
             case StochasticOscillatorK ->
-                    forecastValue = TI.calculateStochasticOscillatorKIndicator(SimulationParameters.timeFrame, Market.closePrices, Market.highPrices, Market.lowPrices);
+                    forecastValue = TI.calculateStochasticOscillatorKIndicator(timeFrame, Market.closePrices, Market.highPrices, Market.lowPrices);
         }
     }
 
