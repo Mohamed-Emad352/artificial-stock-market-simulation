@@ -134,7 +134,7 @@ public class TechnicalIndicator {
     public float calculateSMAIndicator(int timeFrame, ArrayList<Float> timeSeries) {
 
         float sum = 0f;
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
         int realTimeFrame;
 
         if (timeSeries.size() == 0) {
@@ -164,7 +164,8 @@ public class TechnicalIndicator {
 
         float multiplier = 2f / (timeFrame + 1);
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
+        emaPrev = sma;
 
         if (index == 0) {
             // If the timeframe is bigger than the indicator's value count
@@ -226,7 +227,7 @@ public class TechnicalIndicator {
         float nbPeriods = timeFrame;
         float nbPeriodsMinusOne = timeFrame - 1;
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         if (index == 0) {
 
@@ -370,7 +371,7 @@ public class TechnicalIndicator {
 
         calculateEMAIndicator(timeFrame, emaValues, emaEmaValues);
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         float forecastValue;
         if (index != 0) {
@@ -418,7 +419,7 @@ public class TechnicalIndicator {
         origWma.clear();
         indicatorForSqrtWma.clear();
         int index = forecastedValues.size() - 1;
-        if (Market.getCurrentDay() == 0)
+        if (Market.getTechnicalIndicatorIndex() == 0)
             return Market.getCurrentPrice();
         else
             return forecastedValues.get(index);
@@ -442,7 +443,7 @@ public class TechnicalIndicator {
 
         float currentPrice;
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
         if (index != 0) {
             currentPrice = timeSeries.get(index - 1);
         } else {
@@ -553,7 +554,7 @@ public class TechnicalIndicator {
         float nPeriodsAgoValue;
         float currentValue;
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         if (index == 0)
             return (0f);
@@ -581,9 +582,7 @@ public class TechnicalIndicator {
             nPeriodsAgoValue = timeSeries.get(nIndex);
             currentValue = timeSeries.get(index);
 
-            forecastedValues.add(currentValue - (nPeriodsAgoValue)
-                    / (nPeriodsAgoValue)
-                    * (100));
+            forecastedValues.add(((currentValue - nPeriodsAgoValue) / nPeriodsAgoValue) * 100f);
         }
 
 
@@ -604,7 +603,7 @@ public class TechnicalIndicator {
 
         float relativeStrength;
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         if (index == 0) {
             relativeStrength = 0f;
@@ -639,7 +638,7 @@ public class TechnicalIndicator {
 
         calculateEMAIndicator(timeFrame, emaEmaValues, emaEmaEmaValues);
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         float forecastValue;
 
@@ -678,7 +677,7 @@ public class TechnicalIndicator {
 
         float lowestMin = calculateLowestValue(timeFrame, lowPrices);
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         if (index == 0 )
             return (((highestHigh - (Market.getCurrentPrice()))
@@ -703,7 +702,7 @@ public class TechnicalIndicator {
 
         int actualIndex;
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         if (index == 0) {
             return Market.getCurrentPrice();
@@ -720,7 +719,7 @@ public class TechnicalIndicator {
                 value = value + (i * (timeSeries.get(actualIndex-1)));
                 actualIndex--;
             }
-            return (value / ((timeFrame * (timeFrame + 1) / 2)));
+            return (value / (timeFrame * (timeFrame + 1f) / 2f));
         }
 
     }
@@ -767,13 +766,13 @@ public class TechnicalIndicator {
     //@see http://www.fmlabs.com/reference/default.htm?url=ZeroLagExpMA.htm
     public float calculateZLEMAIndicator(int timeFrame, ArrayList<Float> timeSeries) {
 
-        float k = 2 / ((timeFrame + 1));
+        float k = 2f / ((timeFrame + 1));
 
         int lag = (timeFrame - 1) / 2;
 
         float sma = calculateSMAIndicator(timeFrame, timeSeries);
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         if (index + 1 < timeFrame) {
             // Starting point of the ZLEMA
@@ -824,7 +823,7 @@ public class TechnicalIndicator {
         int startIndex;
         float massIndex, emaRatio;
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         startIndex = Math.max(0, index - timeFrame + 1);
         massIndex = 0f;
@@ -859,7 +858,7 @@ public class TechnicalIndicator {
         int startIndex, numberOfObservations;
         float squaredAverage, currentValue, highestValue, percentageDrawdown;
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         startIndex = Math.max(0, index - timeFrame + 1);
         numberOfObservations = index - startIndex + 1;
@@ -903,7 +902,7 @@ public class TechnicalIndicator {
 
         float moneyFlowMultiplier, moneyFlowVolume;
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         ADPrevious = 0f;
 
@@ -943,7 +942,7 @@ public class TechnicalIndicator {
 
         float volumeIndicator = calculateVolumeIndicator(timeFrame, tradingVolume);
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         int startIndex;
 
@@ -992,7 +991,7 @@ public class TechnicalIndicator {
         int startIndex;
         float cumulativeTPV, cumulativeVolume;
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         if (index <= 0) {
             return (typicalPrice);
@@ -1054,7 +1053,7 @@ public class TechnicalIndicator {
 
         ArrayList<Float> vwap = new ArrayList<Float>();
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         int realFrame = Math.min(0, index - timeFrame );
 
@@ -1080,7 +1079,7 @@ public class TechnicalIndicator {
     //@see http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:negative_volume_inde
     public float calculateNVIIndicator(ArrayList<Float> closePrices, ArrayList<Float> tradingVolume) {
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         if (index == 0 || index == 1) {
 
@@ -1113,7 +1112,7 @@ public class TechnicalIndicator {
 
     public float calculateOnBalanceVolumeIndicator(ArrayList<Float> closePrices, ArrayList<Float> tradingVolume) {
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         if (index == 0) {
 
@@ -1144,7 +1143,7 @@ public class TechnicalIndicator {
     //@see http://www.investopedia.com/terms/p/pvi.asp
     public float calculatePVIIndicator(ArrayList<Float> closePrices, ArrayList<Float> tradingVolume) {
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         if (index == 0 || index == 1) {
             PVIPrevious = Market.getCurrentPrice();
@@ -1228,7 +1227,7 @@ public class TechnicalIndicator {
 
         float lowestMin = calculateLowestValue(timeFrame, lowPrices);
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         if (index == 0)
             return 0;
@@ -1253,7 +1252,7 @@ public class TechnicalIndicator {
 
         ArrayList<Float> kIndicator = new ArrayList<Float>();
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         int realFrame = Math.min(0, index - timeFrame1);
 
@@ -1303,7 +1302,7 @@ public class TechnicalIndicator {
 
         float ts, ys, yst, m;
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         if (index ==  0 || index == 1)
             return (0f);
@@ -1346,7 +1345,7 @@ public class TechnicalIndicator {
 
         float TRI = calculateTrueRangeIndicator(highPrices, lowPrices, closePrices);
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         if (index == 0) {
             TRIPrevious = 1;
@@ -1373,7 +1372,7 @@ public class TechnicalIndicator {
         int start;
         float highest;
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         start = Math.max(0, index - timeFrame + 1);
         if(start == 0)
@@ -1401,7 +1400,7 @@ public class TechnicalIndicator {
         int start;
         float lowest;
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         start = Math.max(0, index - timeFrame + 1);
         if(start == 0)
@@ -1427,7 +1426,7 @@ public class TechnicalIndicator {
 
         float sumOfGains;
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         sumOfGains = 0f;
         if (index == 1) {
@@ -1457,7 +1456,7 @@ public class TechnicalIndicator {
 
         float cumulatedGains = calculateCumulatedGainsIndicator(timeFrame, timeSeries);
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         realTimeFrame = Math.min(timeFrame, index + 1);
 
@@ -1477,7 +1476,7 @@ public class TechnicalIndicator {
 
         float sumOfLosses;
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
 
         sumOfLosses = 0f;
@@ -1500,7 +1499,7 @@ public class TechnicalIndicator {
 
         float cumulatedLosses = calculateCumulatedLossesIndicator(timeFrame, timeSeries);
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         int realTimeFrame = Math.min(timeFrame, index + 1);
 
@@ -1516,7 +1515,7 @@ public class TechnicalIndicator {
      */
     public float calculateDirectionalMovementDownIndicator(ArrayList<Float> highPrices, ArrayList<Float> lowPrices) {
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
 
         if (index >= 0) {
@@ -1553,7 +1552,7 @@ public class TechnicalIndicator {
 
         float dmdown = calculateDirectionalMovementDownIndicator(highPrices, lowPrices);
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         if (index == 0) {
             ADMDownPrevious = 1;
@@ -1577,7 +1576,7 @@ public class TechnicalIndicator {
      */
     public float calculateDirectionalMovementUpIndicator(ArrayList<Float> highPrices, ArrayList<Float> lowPrices) {
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         if (index == 0 || index == 1) {
             return 0f;
@@ -1614,7 +1613,7 @@ public class TechnicalIndicator {
 
         float dmup = calculateDirectionalMovementUpIndicator(highPrices, lowPrices);
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         if (index == 0) {
             ADMUpPrevious = 1;
@@ -1638,7 +1637,7 @@ public class TechnicalIndicator {
     //@see http://www.investopedia.com/terms/c/close_location_value.asp
     public float calculateCloseLocationValueIndicator(ArrayList<Float> closePrices, ArrayList<Float> highPrices, ArrayList<Float> lowPrices) {
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
         if (index == 0)
             return 1;
         else {
@@ -1696,7 +1695,7 @@ public class TechnicalIndicator {
 
         float sumOfVolume;
         int startIndex;
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         startIndex = Math.max(0, index - timeFrame + 1);
         sumOfVolume = 0f;
@@ -1722,7 +1721,7 @@ public class TechnicalIndicator {
      */
     public float calculateTypicalPriceIndicator(ArrayList<Float> closePrices, ArrayList<Float> highPrices, ArrayList<Float> lowPrices) {
 
-        int index = Market.getCurrentDay();
+        int index = Market.getTechnicalIndicatorIndex();
 
         if(index == 0)
             return Market.getCurrentPrice();

@@ -10,7 +10,7 @@ public class Fundamentalist extends Trader {
 
     public static int numOfBuyOrders = 0;
     public static int numOfSellOrders = 0;
-    private Float stockFundamentalValue =  Market.getCurrentPrice() + ((Main.randGenr.nextInt(2) * 2 - 1) * 0.3f * Market.getCurrentPrice());
+    private Float stockFundamentalValue =  Market.getCurrentPrice() + ((Main.randGenr.nextFloat() * 0.62f - 0.31f) * Market.getCurrentPrice());
 
     private final int timeStepForUpdatingFundamentalValue = Main.randGenr.nextInt( (5 - 1 + 1 )) + 1;
     public Fundamentalist() {
@@ -20,7 +20,7 @@ public class Fundamentalist extends Trader {
     public void updateFundamentalValue(int currentDay) {
         System.out.println("Fundamental value = " + this.stockFundamentalValue);
         if (currentDay % this.timeStepForUpdatingFundamentalValue == 0) {
-            this.stockFundamentalValue = Market.getCurrentPrice() + ((Main.randGenr.nextInt(2) * 2 - 1) * 0.3f * Market.getCurrentPrice());
+            this.stockFundamentalValue = Market.getCurrentPrice() + ((Main.randGenr.nextFloat() * 0.62f - 0.31f) * Market.getCurrentPrice());
         }
     }
 

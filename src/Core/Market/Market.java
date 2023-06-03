@@ -6,6 +6,7 @@ import Core.Agents.Trader;
 import Core.Configurations.Order;
 import Core.Enums.ChartistType;
 import Core.Enums.Decision;
+import Core.Main;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,7 +68,9 @@ public class Market {
     public static Integer getCurrentDay() {
         return currentDay;
     }
-
+    public static Integer getTechnicalIndicatorIndex() {
+        return (currentDay+ numOfPreviousDataPoints);
+    }
     public static Float getCurrentPrice() {
         return realOpenStockPrices.get(numOfPreviousDataPoints + getCurrentDay());
     }
