@@ -444,6 +444,9 @@ public class TechnicalIndicator {
         float currentPrice;
 
         int index = Market.getTechnicalIndicatorIndex();
+
+        priorKAMA = Market.getCurrentPrice();
+
         if (index != 0) {
             currentPrice = timeSeries.get(index - 1);
         } else {
@@ -601,15 +604,9 @@ public class TechnicalIndicator {
         float averageGainIndicator = calculateAverageGainIndicator(timeFrame, closePrices);
         float averageLossIndicator = calculateAverageLossIndicator(timeFrame, closePrices);
 
-        float relativeStrength;
 
-        int index = Market.getTechnicalIndicatorIndex();
+        float relativeStrength = averageGainIndicator / (averageLossIndicator);
 
-        if (index == 0) {
-            relativeStrength = 0f;
-        } else {
-            relativeStrength = averageGainIndicator / (averageLossIndicator);
-        }
 
         return (100 - (100 / (1 + relativeStrength)));
 
@@ -1081,19 +1078,16 @@ public class TechnicalIndicator {
 
         int index = Market.getTechnicalIndicatorIndex();
 
-        if (index == 0 || index == 1) {
+        NVIPrevious = Market.getCurrentPrice();
 
-            NVIPrevious = Market.getCurrentPrice();
-
-            return NVIPrevious;
-        }
-        else if (tradingVolume.get(index - 1) < (tradingVolume.get(index - 2))) {
+        if (tradingVolume.get(index - 1) < (tradingVolume.get(index - 2))) {
 
             float priceChangeRatio = (closePrices.get(index - 1) - closePrices.get(index - 2)) / closePrices.get(index - 2);
 
             NVIPrevious = NVIPrevious + (priceChangeRatio * (NVIPrevious));
 
             return NVIPrevious;
+
         } else {
 
             return NVIPrevious;
@@ -1145,18 +1139,18 @@ public class TechnicalIndicator {
 
         int index = Market.getTechnicalIndicatorIndex();
 
-        if (index == 0 || index == 1) {
-            PVIPrevious = Market.getCurrentPrice();
-            return PVIPrevious;
-        }
-        else if (tradingVolume.get(index - 1) > (tradingVolume.get(index - 2))) {
+        PVIPrevious = Market.getCurrentPrice();
+
+        if (tradingVolume.get(index - 1) > (tradingVolume.get(index - 2))) {
 
             float priceChangeRatio = (closePrices.get(index - 1) - closePrices.get(index - 2)) / closePrices.get(index - 2);
 
             PVIPrevious = PVIPrevious + (priceChangeRatio * PVIPrevious);
 
             return PVIPrevious;
+
         } else {
+
             return PVIPrevious;
 
         }

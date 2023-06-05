@@ -59,6 +59,7 @@ public class Chartists extends Trader {
         int d = 2;
         float temp;
 
+        int timeFrame = SimulationParameters.timeFrame;
         switch (type) {
             case SimpleMovingAverage, ExpMovingAverage, DoubleExpMovingAverage, TripleExpMovingAverage, KAMA, WMA, ZLEMA, HMA ->
                     d = TI.calculateSignal(forecastValue, Market.closePrices);
@@ -71,7 +72,7 @@ public class Chartists extends Trader {
             case VWAP, MVWAP ->
                     d = TI.calculateVWAPSignal(forecastValue, Market.getCurrentPrice() - 1);
             case NVI, PVI -> {
-                temp = TI.calculateEMAIndicator(10, Market.closePrices);
+                temp = TI.calculateEMAIndicator(timeFrame, Market.closePrices);
                 d = TI.calculateVWAPSignal(forecastValue, temp);
             }
         }
