@@ -82,8 +82,6 @@ public class Main extends Application {
             }
 
             LinkedList<Trader> traders = Market.getTraders();
-            Collections.shuffle(traders, randGenr);
-
             LinkedList<Float> fundamentalistsDailyCash = new LinkedList<>();
             HashMap<ChartistType, LinkedList<Float>> chartistsDailyCash = new HashMap<>();
 
@@ -93,12 +91,12 @@ public class Main extends Application {
             }
 
             for (int day = 0; day <= SimulationParameters.tradingDays; day++) {
-                Collections.shuffle(traders, randGenr);
                 System.out.println("Current day = " + day);
                 Market.setCurrentDay(day);
                 Market.openPrices.add(Market.realOpenStockPrices.get(numOfPreviousDataPoints + day));
 
                 for (Trader trader : traders) {
+                    System.out.println("RUN: " + (j+1));
                     trader.requestOrder();
                     String className = trader.getClass().getName();
                     String classNameOfTrader;
