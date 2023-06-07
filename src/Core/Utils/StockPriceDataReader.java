@@ -20,13 +20,18 @@ public class StockPriceDataReader {
         String absoluteFilePath = projectDir + SimulationParameters.relativeStockDataPath;
         scanner = new Scanner(new File(absoluteFilePath));
         scanner.nextLine();
+        ArrayList<String[]> data = new ArrayList<>();
         while (scanner.hasNext()) {
-            String[] data = scanner.nextLine().split(",");
-            closePrices.add(Float.valueOf(data[1]));
-            openPrices.add(Float.valueOf(data[2]));
-            highPrices.add(Float.valueOf(data[3]));
-            lowPrices.add(Float.valueOf(data[4]));
-            String dirtyVolume = data[5];
+            String[] dataLine = scanner.nextLine().split(",");
+            data.add(dataLine);
+        }
+        for (int i = data.size() - 1;  i >= 0; i--) {
+            String[] dataLine = data.get(i);
+            closePrices.add(Float.valueOf(dataLine[1]));
+            openPrices.add(Float.valueOf(dataLine[2]));
+            highPrices.add(Float.valueOf(dataLine[3]));
+            lowPrices.add(Float.valueOf(dataLine[4]));
+            String dirtyVolume = dataLine[5];
             // Remove K and multiply by 1000
             Float volume = Float.parseFloat(dirtyVolume.substring(0, dirtyVolume.length() - 1)) * 1000;
             volumes.add(volume);
