@@ -41,7 +41,7 @@ public class Main extends Application {
 
     public static void main(String[] args) throws FileNotFoundException {
         readRealStockData();
-        fileOutput = new FileOutputStream("data.csv", false);
+        fileOutput = new FileOutputStream(SimulationParameters.outputFileName + ".csv", false);
         writeFile = new PrintWriter(fileOutput);
         initializeCSV();
         initializeProfitLists();
@@ -257,7 +257,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/GUI/main-view.fxml")));
-        primaryStage.setTitle("Chart");
+        primaryStage.setTitle(SimulationParameters.outputFileName);
         primaryStage.setScene(new Scene(root, 800, 600));
         primaryStage.setMinHeight(600);
         primaryStage.setMinWidth(800);
